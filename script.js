@@ -408,7 +408,7 @@ app.put('/updateUser/:id', bearer, superPrivilege, (req, res, next) => {
   const userId = req.params.id;
   const role = req.body.role;
   const loggedInUser = req.headers.loggedinuser
-  const { userName, email } = req.body;
+  const { userName, email, status, fullName } = req.body;
   checkTokenExpiry(req, res, () => {
     pool.query('SELECT * FROM adminuser WHERE userId = ?', [userId], (error, result) => {
       if (error) {
@@ -426,8 +426,8 @@ app.put('/updateUser/:id', bearer, superPrivilege, (req, res, next) => {
             adminValidations(req, res, () => {
               const updated = result[0].userId
               pool.query(
-                'UPDATE adminuser SET userName = ?, email = ? , role=?,updatedby=?,updateddate=? WHERE userId = ?',
-                [userName, email, role, updated, date, userId],
+                'UPDATE adminuser SET userName = ?, email = ? , role=?,status=?,fullName=?,updatedby=?,updateddate=? WHERE userId = ?',
+                [userName, email, role, status,fullName,updated, date, userId],
                 (error, result) => {
                   if (error) {
                     console.error('Error updating user:', error);

@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Add User</title>
+    <title>Update User</title>
 </head>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
@@ -11,13 +11,12 @@
 
     <p id="success"></p>
 
-    <form id="adduser" method="post">
+    <form id="updateUser" method="post">
         <label for="username">Username:</label>
         <input type="text" id="userName" name="userName">
         <br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password">
-        <br>
+        <input type="hidden" id="userId" name="userId" value="">
+
         <label for="email">Email:</label>
         <input type="email" id="email" name="email">
         <br>
@@ -29,7 +28,6 @@
             <option value="1">Admin User</option>
             <!-- <option value="69">Super User</option> -->
         </select>
-
         <br>
         <label for="status">Status:</label>
 
@@ -43,24 +41,36 @@
         <input type="text" id="fullName" name="fullName">
         <br>
         <p id="error"></p>
-        <input type="submit" id="addUser" value="Add User">
+        <input type="submit" id="addUser" value="Update User">
     </form>
     <script type="text/javascript" src="/loggedIn.js">  </script>
     <script type="text/javascript" src="/menu.js">  </script>
 
     <script>
+
+        const userName = document.getElementById('userName')
+        const email = document.getElementById('email');
+        const role = document.getElementById('userRole');
+        const fullname = document.getElementById('fullName');
+        const status = document.getElementById('userStatus');
+
+
+
+        const loco = new URL(window.location.href)
+        console.log(loco.searchParams.get("role"))
+        document.addEventListener("DOMContentLoaded", function () {
+            userName.value = loco.searchParams.get("userName");
+            email.value = loco.searchParams.get("email");
+            role.value = loco.searchParams.get("role")
+            status.value = loco.searchParams.get("status")
+            fullname.value = loco.searchParams.get("fullName");
+        });
+
+
         document.getElementById('addUser').addEventListener('click', function (e) {
             e.preventDefault();
-
-            const userName= document.getElementById('userName').value
-            const password = document.getElementById('password').value
-            const email = document.getElementById('email').value;
-            const role = document.getElementById('userRole').value;
-            const fullname = document.getElementById('fullName').value;
-            const status = document.getElementById('userStatus').value;
-
-            const data = { "userName": userName, "password": password, "email": email, "role":role,"fullName":fullname,"status":status };
-            addUser(data)
+            const data = { "userName": userName.value, "email": email.value, "role": role.value, "fullName": fullname.value, "status": status.value };
+            updateUser(data)
         });
     </script>
 </body>

@@ -15,6 +15,9 @@ const getUserDetailsURL = `http://localhost:3000/getUserDetails`
 const changePassswordURL = `http://localhost:3000/changePassword`
 const getUsersURL = `http://localhost:3000/getUsers`
 const addUserUrl = `http://localhost:3000/addUsers`
+const updateUserUrl = `http://localhost:3000/updateUser/`
+const deleteUserURL = `http://localhost:3000/deleteUser/`
+
 
 function getUserDetails() {
   axios({
@@ -42,8 +45,8 @@ function getUsers() {
     const tbody = table.querySelector("tbody");
 
     tableData.users.forEach(user => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
+      const row = document.createElement("tr");
+      row.innerHTML = `
             <td>${user.id}</td>
             <td>${user.userName}</td>
             <td>${user.email}</td>
@@ -56,11 +59,28 @@ function getUsers() {
             <td>${user.updateddate}</td>
             <td>${user.updatedby}</td>
             <td><button class="edit-button">Edit</button></td>
+            <td><button class="delete-button" style="color:red">Delete</button></td>
+
 
         `;
-        tbody.appendChild(row);
+      tbody.appendChild(row);
     });
+    const editButtons = document.querySelectorAll(".edit-button");
+    const deleteButtons = document.querySelectorAll(".delete-button");
+    deleteButtons.forEach((button, index) => {
+      button.addEventListener("click", (e) => {
+        e.preventDefault()
+        const userId = tableData.users[index].userId;
 
+        deleteUserTable(userId);
+      });
+    })
+    editButtons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        const userId = tableData.users[index].userId;
+        openEditTab(userId, tableData.users[index]);
+      });
+    });
   })
     .catch((error) => {
       console.error('Error:', error);
@@ -96,6 +116,28 @@ function changePassword(data) {
   });
 }
 
+function openEditTab(userData, tableData) {
+  console.log(tableData.email)
+  const userName = tableData.userName
+  const email = tableData.email
+  const role = tableData.role
+  const status = tableData.status
+  const fullName = tableData.fullName
+  window.location.href = `/updateUser?userId=${userData}&email=${email}&userName=${userName}&role=${role}&status=${status}&fullName=${fullName}`;
+
+  console.log("Opening edit tab for user with ID: " + userData);
+}
+function deleteUserTable(userId) {
+  if(window.confirm("Are you sure you want to delete this user??")){
+    deleteUser(userId)
+    window.location.reload()
+    window.alert("User is deleted!")
+
+  }else{
+    window.location.href = '/getUsers'
+  }
+}
+
 function addUser(data) {
   axios({
     method: 'post',
@@ -117,6 +159,66 @@ function addUser(data) {
       success.style.color = 'black';
       success.innerHTML = '';
 
+    }, 3000);
+  }).catch((error) => {
+    const errorMessage = JSON.parse(JSON.stringify(error.response.data)).error;
+    errorMsg.style.color = 'red';
+    errorMsg.innerHTML = errorMessage;
+    setTimeout(() => {
+      errorMsg.style.color = 'black';
+      errorMsg.innerHTML = '';
+    }, 3000);
+  });
+}
+
+function updateUser(data) {
+  const loco = new URL(window.location.href)
+  const userId = loco.searchParams.get("userId");
+
+  axios({
+    method: 'put',
+    url: `${updateUserUrl + userId}`,
+    data: JSON.stringify(data),
+    headers: headers
+  }).then((response) => {
+    success.innerText = JSON.stringify(response.data, undefined, 4);
+    success.style.color = 'green';
+    success.innerHTML = response.data.message;
+    setTimeout(() => {
+      document.getElementById('userName').value = '';
+      document.getElementById('email').value = '';
+      document.getElementById('userRole').value = '';
+      document.getElementById('fullName').value = '';
+      document.getElementById('userStatus').value = '';
+
+      success.style.color = 'black';
+      success.innerHTML = '';
+      window.location.href = '/getUsers'
+    }, 3000);
+  }).catch((error) => {
+    const errorMessage = JSON.parse(JSON.stringify(error.response.data)).error;
+    errorMsg.style.color = 'red';
+    errorMsg.innerHTML = errorMessage;
+    setTimeout(() => {
+      errorMsg.style.color = 'black';
+      errorMsg.innerHTML = '';
+    }, 3000);
+  });
+}
+
+function deleteUser(userId) {
+  axios({
+    method: 'delete',
+    url: `${deleteUserURL + userId}`,
+    headers: headers
+  }).then((response) => {
+    alert.innerText = JSON.stringify(response.data, undefined, 4);
+    success.style.color = 'green';
+    window.alert = response.data.message;
+    setTimeout(() => {
+      success.style.color = 'black';
+      success.innerHTML = '';
+      window.location.href = '/getUsers'
     }, 3000);
   }).catch((error) => {
     const errorMessage = JSON.parse(JSON.stringify(error.response.data)).error;

@@ -47,6 +47,11 @@ app.get('/menu', requireLogin, (req, res) => {
   res.sendFile(path.join(__dirname, '/menu.html'));
 
 })
+app.get('/updateUser', requireLogin, (req, res) => {
+
+  res.sendFile(path.join(__dirname, '/updateUser.html'));
+
+})
 
 app.get('/getUsers', requireLogin, (req, res) => {
 
