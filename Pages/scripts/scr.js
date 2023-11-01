@@ -24,8 +24,13 @@ login.addEventListener('submit', async (e) => {
         window.location.href = '/profile';
         sessionStorage.setItem("loggedInUser", userName);
         sessionStorage.setItem("jwtToken", jwtToken);
-        profile.innerText = sessionStorage.getItem("jwtToken");
-        console.log(sessionStorage.getItem("jwtToken"))
+        const expirationDate = new Date();
+        expirationDate.setTime(expirationDate.getTime() + 60 * 60 * 1000); // 1 hour
+        document.cookie = `jwtToken=${jwtToken}; expires=${expirationDate.toUTCString()}; path=/`;
+  
+        profile.innerText = jwtToken;
+        console.log(jwtToken);
+
     }).catch(e => {
         const errorMessage = JSON.parse(JSON.stringify(e.response.data)).error
         error.style.color = 'red'

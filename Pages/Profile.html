@@ -1,14 +1,31 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Profile</title>
 </head>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
 <body>
+    <div id="menu"></div>
+
     <p id="profile"></p>
     <p id="error"></p>
 
 </body>
 <script type="text/javascript" src="/loggedin.js">  </script>
+<script type="text/javascript" src="/menu.js">  </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        getUserDetails();
+    });
+    // document.addEventListener("DOMContentLoaded", function () {
+    //     // Load the menu
+    //     menubar();
+    //     // Add the logout event listener
+
+    // });
+    
+</script>
 
 </html>

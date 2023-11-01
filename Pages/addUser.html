@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Add User</title>
+</head>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<body>
+    <div id="menu"></div>
+
+    <p id="success"></p>
+
+    <form id="loginForm" action="/login" method="post">
+        <label for="username">Username:</label>
+        <input type="text" id="userName" name="userName">
+        <br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password">
+        <br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email">
+        <br>
+        <label for="role">Role:</label>
+
+        <select id="userRole">
+            <option value="" selected>select</option>
+
+            <option value="1">Admin User</option>
+            <!-- <option value="69">Super User</option> -->
+        </select>
+        <br>
+        <label for="status">Status:</label>
+
+        <select id="userStatus">
+            <option value="" selected>select</option>
+            <option value="1">Active</option>
+            <option value="0">Blocked</option>
+        </select>
+        <br>
+        <label for="fullName">Full Name:</label>
+        <input type="text" id="fullName" name="fullName">
+        <br>
+        <p id="error"></p>
+        <input type="submit" id="addUser" value="Add User">
+    </form>
+    <script type="text/javascript" src="/loggedIn.js">  </script>
+    <script type="text/javascript" src="/menu.js">  </script>
+
+    <script>
+        document.getElementById('addUser').addEventListener('click', function (e) {
+            e.preventDefault();
+
+            const userName= document.getElementById('userName').value
+            const password = document.getElementById('password').value
+            const email = document.getElementById('email').value;
+            const role = document.getElementById('userRole').value;
+            const fullname = document.getElementById('fullName').value;
+            const status = document.getElementById('userStatus').value;
+
+            const data = { "userName": userName, "password": password, "email": email, "role":role,"fullName":fullname,"status":status };
+            addUser(data)
+        });
+    </script>
+</body>
+
+</html>

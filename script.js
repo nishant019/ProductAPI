@@ -47,14 +47,14 @@ const verifyToken = (token) => {
 }
 
 const bearer = (req, res, next) => {
-  console.log('ecp',req.headers)
 
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
   verifyToken(token)
     .then((decoded) => {
       const uname = decoded.userName
-      if (uname == req.body.loggedInUser) {
+
+      if (uname === req.headers.loggedinuser) {
         return next()
       } else {
         res.status(403).json({ error: 'Forbidden' })
@@ -67,7 +67,7 @@ const bearer = (req, res, next) => {
 
 
 const superPrivilege = (req, res, next) => {
-  pool.query(`SELECT role FROM adminuser WHERE userName=?`, [req.body.loggedInUser], (error, response) => {
+  pool.query(`SELECT role FROM adminuser WHERE userName=?`, [req.headers.loggedinuser], (error, response) => {
     if (error) {
       res.status(500).json({ error: 'Internal Server Error' });
       return;
@@ -100,7 +100,7 @@ const passwordValidations = (req, res, next) => {
   }
 }
 const getCurrentUserId = (req, res, next) => {
-  const user = req.body.loggedInUser
+  const user = req.headers.loggedinuser
   pool.query('SELECT userId from adminuser where userName = ?', [user], (error, result) => {
     if (error) {
       res.status(500).json({ error: 'Internal Server Error' });
@@ -156,8 +156,8 @@ const adminValidations = (req, res, next) => {
 }
 
 const checkTokenExpiry = (req, res, next) => {
-  username = req.body.loggedInUser
-
+  const username = req.headers.loggedinuser
+  const authHeader = req.headers.authorization.slice(7);
   pool.query('SELECT userId from adminuser where userName=?', [username], (error, result) => {
     if (error) {
       console.error('Error getting token', error);
@@ -169,33 +169,38 @@ const checkTokenExpiry = (req, res, next) => {
         if (error) {
           res.status(500).json({ error: 'Internal Server Error' })
         }
-        if (result[0].tkn != '') {
-          pool.query('SELECT updateddate from tkn_store where user=?', [userId], (e, r) => {
-            if (e) {
-              console.error('Error getting token', e);
-              res.status(500).json({ error: 'Internal Server Error' })
-            }
-            if (r.length > 0) {
-              const compareDate = Date.now() - r[0].updateddate;
-              const expiry = 60 * 60 * 1000
-              if (compareDate > expiry) {
-                pool.query('UPDATE tkn_store set tkn = ?  where user=?', ['', userId], (e, r) => {
-                  console.log(e)
-                  if (e) {
-                    res.status(500).json({ error: 'Internal Server Error' })
-                  }
-                  res.status(401).json({ error: 'Session Expired' });
-                })
-              } else {
-                next()
+        if (result[0].tkn === authHeader) {
+          if (result[0].tkn != '') {
+            pool.query('SELECT updateddate from tkn_store where user=?', [userId], (e, r) => {
+              if (e) {
+                console.error('Error getting token', e);
+                res.status(500).json({ error: 'Internal Server Error' })
               }
-            } else {
-              res.status(401).json({ error: 'Authentication failed' });
-            }
-          })
+              if (r.length > 0) {
+                const compareDate = Date.now() - r[0].updateddate;
+                const expiry = 60 * 60 * 1000
+                if (compareDate > expiry) {
+                  pool.query('UPDATE tkn_store set tkn = ?  where user=?', ['', userId], (e, r) => {
+                    console.log(e)
+                    if (e) {
+                      res.status(500).json({ error: 'Internal Server Error' })
+                    }
+                    res.status(401).json({ error: 'Session Expired' });
+                  })
+                } else {
+                  next()
+                }
+              } else {
+                res.status(401).json({ error: 'Authentication failed' });
+              }
+            })
+          } else {
+            res.status(401).json({ error: 'Please Login to continue...' });
+          }
         } else {
-          res.status(401).json({ error: 'Please Login to continue...' });
+          res.status(401).json({ error: 'Token Expired' });
         }
+
       })
     } else {
       res.status(401).json({ error: 'User not found' });
@@ -234,6 +239,7 @@ app.post('/login', basicAuth, (req, res) => {
   let tkn = ''
   let user = ''
   let dbData = ''
+
   pool.query('SELECT * FROM adminuser where userName=?', [req.body.userName], (error, result) => {
     if (error) {
       console.error('Error Listing Admin Users', error);
@@ -307,7 +313,7 @@ app.post('/login', basicAuth, (req, res) => {
 });
 
 app.post('/addUsers', bearer, superPrivilege, (req, res) => {
-  const user = req.body.loggedInUser
+  const user = req.headers.loggedinuser
   const { userName, password, email, role, fullName, status, userId } = req.body;
   checkTokenExpiry(req, res, () => {
     hashPassword(password).then(e => {
@@ -361,8 +367,6 @@ app.get('/getUsers', bearer, superPrivilege, (req, res) => {
       })
     }
   })
-
-
 });
 
 
@@ -398,13 +402,12 @@ app.delete('/deleteUser/:id', bearer, superPrivilege, (req, res) => {
       }
     })
   })
-
 });
 
 app.put('/updateUser/:id', bearer, superPrivilege, (req, res, next) => {
   const userId = req.params.id;
   const role = req.body.role;
-  const loggedInUser = req.body.loggedInUser
+  const loggedInUser = req.headers.loggedinuser
   const { userName, email } = req.body;
   checkTokenExpiry(req, res, () => {
     pool.query('SELECT * FROM adminuser WHERE userId = ?', [userId], (error, result) => {
@@ -448,7 +451,7 @@ app.put('/updateUser/:id', bearer, superPrivilege, (req, res, next) => {
 
 //own info update
 app.put('/manageUserInfo/:id', bearer, (req, res, next) => {
-  const userId = req.body.loggedInUser;
+  const userId = req.headers.loggedinuser;
   const { userName, email } = req.body;
   checkTokenExpiry(req, res, () => {
     pool.query('SELECT * FROM adminuser WHERE userName = ?', [userId], (error, result) => {
@@ -486,29 +489,40 @@ app.put('/manageUserInfo/:id', bearer, (req, res, next) => {
 
 
 app.put('/changePassword', bearer, (req, res, next) => {
-  const { loggedInUser, password, confirmPassword } = req.body;
+  const { oldPassword, password, confirmPassword } = req.body;
+  const loggedInUser = req.headers.loggedinuser
+
   checkTokenExpiry(req, res, () => {
     pool.query('SELECT * FROM adminuser WHERE userName = ?', [loggedInUser], (error, result) => {
       if (error) {
         res.status(500).json({ error: 'Internal Server Error' })
         return;
       }
+
       if (result.length > 0) {
         passwordValidations(req, res, () => {
-          hashPassword(password).then(e => {
-            // password = e
-            pool.query(
-              'UPDATE adminuser SET password = ? WHERE userName = ?',
-              [e, loggedInUser],
-              (error, result) => {
-                if (error) {
-                  console.error('Error updating user:', error);
-                  res.status(500).send('Internal Server Error');
-                } else {
-                  res.status(200).send({ message: 'Password updated successfully' });
-                }
+          hashPassword(password).then(hashed => {
+            comparePasswords(oldPassword, result[0].password).then(e => {
+              if (e === true) {
+                pool.query(
+                  'UPDATE adminuser SET password = ? WHERE userName = ?',
+                  [hashed, loggedInUser],
+                  (error, result) => {
+                    if (error) {
+                      console.error('Error updating user:', error);
+                      res.status(500).send('Internal Server Error');
+                    } else {
+                      res.status(200).send({ message: 'Password updated successfully' });
+                    }
+                  }
+                );
               }
-            );
+              else {
+                res.status(401).json({ error: 'Old Password Didnot Match' });
+
+              }
+            })
+
           });
         })
       } else {
@@ -521,7 +535,7 @@ app.put('/changePassword', bearer, (req, res, next) => {
 
 // app.post('/addProds', bearer, (req, res) => {
 //   const { prodId, prodName, prodLocation, prodImage, prodTitle, prodDescription, user } = req.body;
-//   pool.query(`SELECT role FROM adminuser WHERE userName=?`, [req.body.loggedInUser], (error, response) => {
+//   pool.query(`SELECT role FROM adminuser WHERE userName=?`, [req.headers.loggedinuser], (error, response) => {
 //     if (error) {
 //       res.status(500).json({ error: 'Internal Server Error' });
 //       return;
@@ -587,8 +601,7 @@ app.put('/changePassword', bearer, (req, res, next) => {
 
 //own user info
 app.get('/getUserDetails', bearer, (req, res) => {
-  const userName = req.body.loggedInUser;
-
+  const userName = req.headers.loggedinuser;
   checkTokenExpiry(req, res, () => {
     pool.query('SELECT userId,userName,email FROM adminuser WHERE userName = ?', [userName], (error, result) => {
       if (error) {
@@ -604,7 +617,7 @@ app.get('/getUserDetails', bearer, (req, res) => {
 });
 
 app.post('/logoutAdmin', bearer, (req, res) => {
-  const username = req.body.loggedInUser
+  const username = req.headers.loggedinuser
   pool.query('SELECT userId from adminuser where userName=?', [username], (error, result) => {
     if (error) {
       console.error('Error getting token', error);
@@ -612,12 +625,25 @@ app.post('/logoutAdmin', bearer, (req, res) => {
     }
     if (result.length > 0) {
       const userId = result[0].userId
-      pool.query('UPDATE tkn_store set tkn = ?  where user=?', ['', userId], (e, r) => {
-        if (e) {
+      pool.query('SELECT tkn from tkn_store where user=?', [userId], (err, tknStore) => {
+        const tkn = tknStore[0].tkn
+        if (err) {
           res.status(500).json({ error: 'Internal Server Error' })
         }
-        res.status(200).json({ success: 'User is Logged out' });
+        if (!tkn) {
+          res.status(409).json({ error: 'User already Logged out!' });
+
+        } else {
+          pool.query('UPDATE tkn_store set tkn = ?  where user=?', ['', userId], (e, r) => {
+            if (e) {
+              res.status(500).json({ error: 'Internal Server Error' })
+            }
+          })
+          res.status(200).json({ success: 'User is Logged out' });
+        }
+
       })
+
     } else {
       res.status(401).json({ error: 'Authentication failed' });
 
