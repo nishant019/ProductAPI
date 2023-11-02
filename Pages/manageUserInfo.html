@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Manage User Information</title>
+</head>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<body>
+    <div id="menu"></div>
+
+    <p id="success"></p>
+
+    <form id="updateUser" method="post">
+        <label for="username">Username:</label>
+        <input type="text" id="userName" name="userName">
+        <br>
+        <input type="hidden" id="userId" name="userId" value="">
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email">
+        <br>
+        <label for="role">Role:</label>
+
+        <select id="userRole" disabled>
+            <option value="" selected>select</option>
+
+            <option value="1">Admin User</option>
+            <option value="69">Super User</option>
+        </select>
+        <br>
+        <label for="fullName">Full Name:</label>
+        <input type="text" id="fullName" name="fullName">
+        <br>
+        <p id="error"></p>
+        <input type="submit" id="addUser" value="Update User">
+    </form>
+    <script type="text/javascript" src="/loggedIn.js">  </script>
+    <script type="text/javascript" src="/menu.js">  </script>
+
+    <script>
+
+        const userName = document.getElementById('userName')
+        const email = document.getElementById('email');
+        const role = document.getElementById('userRole');
+        const fullname = document.getElementById('fullName');
+        const status = document.getElementById('userStatus');
+
+
+
+        const loco = new URL(window.location.href)
+        console.log(loco.searchParams.get("role"))
+        document.addEventListener("DOMContentLoaded", function () {
+            userName.value = loco.searchParams.get("userName");
+            email.value = loco.searchParams.get("email");
+            role.value = loco.searchParams.get("role")
+            fullname.value = loco.searchParams.get("fullName");
+        });
+
+
+        document.getElementById('addUser').addEventListener('click', function (e) {
+            e.preventDefault();
+            const data = { "userName": userName.value, "email": email.value, "fullName": fullname.value};
+            updateOwnInfo(data)
+        });
+    </script>
+</body>
+
+</html>

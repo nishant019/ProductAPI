@@ -46,4 +46,6 @@ function handleLogout(e) {
     .catch(function (error) {
         alert("Error occurred during logout.");
     });
+    
 }
+

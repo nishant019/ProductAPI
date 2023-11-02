@@ -11,7 +11,7 @@
     <table id="userTable" border="1">
         <thead>
             <tr>
-                <th>ID</th>
+                <th>SN</th>
                 <th>User Name</th>
                 <th>Email</th>
                 <th>Full Name</th>
@@ -23,10 +23,26 @@
                 <th>Updated Date</th>
                 <th>Updated By</th>
             </tr>
+
+
         </thead>
+
         <tbody>
             <!-- Data will be inserted here dynamically -->
         </tbody>
+    </table>
+    <table style="border:1px">
+        <td>Total Users: <a id="userCount"></a></td>&nbsp;
+        <td>Total Pages: <a id="pageCount"></a></td>&nbsp;
+        <td> <button id="previousPage">
+                < </button>&nbsp;
+        </td>
+        <td>Page Number: <a id="pageNumber"></a></td>&nbsp;
+        <td> <button id="nextPage">> </button> </td>&nbsp;
+        <td>Page Number: <a id="pageDataCount"></a></td>&nbsp;
+        <td>
+            <div id="loadingIndicator" style="display: none;">Loading...</div>
+        </td>
     </table>
     <p id="profile"></p>
     <p id="error"></p>
@@ -35,9 +51,18 @@
 <script type="text/javascript" src="/loggedin.js">  </script>
 <script type="text/javascript" src="/menu.js">  </script>
 <script>
+
     document.addEventListener("DOMContentLoaded", function () {
         getUsers();
+        // viewDetails()
     });
+
+
+
+
+
+
+
     // document.addEventListener("DOMContentLoaded", function () {
     //     // Load the menu
     //     menubar();

@@ -9,7 +9,7 @@ const app = express();
 let token
 app.use(cors());
 
-// Create a connection pool
+// Create a pool pool
 const pool = mysql.createPool({
   host: '127.0.0.1',
   user: 'root',
@@ -52,7 +52,7 @@ const bearer = (req, res, next) => {
   const token = authHeader && authHeader.split(' ')[1];
   verifyToken(token)
     .then((decoded) => {
-      const uname = decoded.userName
+      const uname = decoded.userId
 
       if (uname === req.headers.loggedinuser) {
         return next()
@@ -67,7 +67,7 @@ const bearer = (req, res, next) => {
 
 
 const superPrivilege = (req, res, next) => {
-  pool.query(`SELECT role FROM adminuser WHERE userName=?`, [req.headers.loggedinuser], (error, response) => {
+  pool.query(`SELECT role FROM adminuser WHERE userId=?`, [req.headers.loggedinuser], (error, response) => {
     if (error) {
       res.status(500).json({ error: 'Internal Server Error' });
       return;
@@ -101,7 +101,7 @@ const passwordValidations = (req, res, next) => {
 }
 const getCurrentUserId = (req, res, next) => {
   const user = req.headers.loggedinuser
-  pool.query('SELECT userId from adminuser where userName = ?', [user], (error, result) => {
+  pool.query('SELECT userId from adminuser where userId = ?', [user], (error, result) => {
     if (error) {
       res.status(500).json({ error: 'Internal Server Error' });
     }
@@ -109,56 +109,66 @@ const getCurrentUserId = (req, res, next) => {
     return (result)
   })
 }
+let userId
+
+const adminVals = (req, res, next) => {
+  pool.query(
+    'SELECT * FROM adminuser WHERE userName = ? AND userId!=?',
+    [req.body.userName, userId],
+    (error, userNameResults) => {
+      if (error) {
+        console.error('Error checking userName uniqueness:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+        return;
+      }
+      if (userNameResults.length > 0) {
+        res.status(409).json({ error: 'userName already exists' });
+        return;
+      } else {
+        pool.query(
+          'SELECT * FROM adminuser WHERE email = ? AND userId!=?',
+          [req.body.email, userId],
+          (error, emailResults) => {
+            if (error) {
+              console.error('Error checking email uniqueness:', error);
+              res.status(500).json({ error: 'Internal Server Error' });
+              return;
+            }
+            if (emailResults.length > 0) {
+              res.status(409).json({ error: 'email already exists' });
+              return;
+            } else {
+              next()
+            }
+          })
+      }
+    })
+}
 
 const adminValidations = (req, res, next) => {
-  let userId
   if (req.params.id) {
     userId = req.params.id
   } else {
     userId = ''
   }
-  if (req.body.role === 69 || req.body.role != 1) {
-    res.status(403).json({ error: 'Invalid Role' })
-  } else {
-    pool.query(
-      'SELECT * FROM adminuser WHERE userName = ? AND userId!=?',
-      [req.body.userName, userId],
-      (error, userNameResults) => {
-        if (error) {
-          console.error('Error checking userName uniqueness:', error);
-          res.status(500).json({ error: 'Internal Server Error' });
-          return;
-        }
-        if (userNameResults.length > 0) {
-          res.status(409).json({ error: 'userName already exists' });
-          return;
-        } else {
-          pool.query(
-            'SELECT * FROM adminuser WHERE email = ? AND userId!=?',
-            [req.body.email, userId],
-            (error, emailResults) => {
-              if (error) {
-                console.error('Error checking email uniqueness:', error);
-                res.status(500).json({ error: 'Internal Server Error' });
-                return;
-              }
-              if (emailResults.length > 0) {
-                res.status(409).json({ error: 'email already exists' });
-                return;
-              } else {
-                next()
-              }
-            })
-        }
-      })
+  if (!req.body.role) {
+    adminVals(req, res, next)
   }
+  else {
+    if (req.body.role === '1' || req.body.role === '69') {
+      adminVals(req, res, next)
+    } else {
+      res.status(403).json({ error: 'Invalid Role' })
+    }
+  }
+
 
 }
 
 const checkTokenExpiry = (req, res, next) => {
   const username = req.headers.loggedinuser
   const authHeader = req.headers.authorization.slice(7);
-  pool.query('SELECT userId from adminuser where userName=?', [username], (error, result) => {
+  pool.query('SELECT * from adminuser where userId=?', [username], (error, result) => {
     if (error) {
       console.error('Error getting token', error);
       res.status(500).json({ error: 'Internal Server Error' })
@@ -257,7 +267,8 @@ app.post('/login', basicAuth, (req, res) => {
                 token = jwt.sign(
                   {
                     userName: adminUser.userName,
-                    password: adminUser.password
+                    password: adminUser.password,
+                    userId: result[0].userId
                   },
                   'your-secret-key'
                 );
@@ -290,7 +301,7 @@ app.post('/login', basicAuth, (req, res) => {
                   }
                   if (isAuthenticated === true) {
 
-                    res.status(200).json({ token });
+                    res.status(200).json({ token, user });
 
                   } else {
                     res.status(401).json({ error: 'Authentication failed' });
@@ -317,11 +328,10 @@ app.post('/addUsers', bearer, superPrivilege, (req, res) => {
   const { userName, password, email, role, fullName, status, userId } = req.body;
   checkTokenExpiry(req, res, () => {
     hashPassword(password).then(e => {
-      pool.query('SELECT userId from adminuser where userName = ?', [user], (error, result) => {
+      pool.query('SELECT * from adminuser where userId = ?', [user], (error, result) => {
         if (error) {
           res.status(500).json({ error: 'Internal Server Error' });
         }
-        console.log(result)
         const createdby = result[0].userId
         let createddate
         const adminUser = { userName, password, email, role, status, fullName, userId, createddate, createdby };
@@ -346,10 +356,11 @@ app.post('/addUsers', bearer, superPrivilege, (req, res) => {
 
 });
 
-app.get('/getUsers', bearer, superPrivilege, (req, res) => {
-  const userId = req.body.userId
+app.get('/getUsers/:id', bearer, superPrivilege, (req, res) => {
+  const userId = req.params.id
+  console.log(userId)
   checkTokenExpiry(req, res, () => {
-    if (!userId) {
+    if (userId === ':id') {
       pool.query('SELECT * FROM adminuser', (error, result) => {
         res.status(200).json({ users: result })
         if (error) {
@@ -417,7 +428,7 @@ app.put('/updateUser/:id', bearer, superPrivilege, (req, res, next) => {
       }
       if (result.length > 0) {
         const date = Date.now()
-        pool.query('SELECT userId FROM adminuser WHERE userName = ?', [loggedInUser], (error, result) => {
+        pool.query('SELECT userId FROM adminuser WHERE userId = ?', [loggedInUser], (error, result) => {
           if (error) {
             res.status(500).json({ error: 'Internal Server Error' })
             return;
@@ -427,7 +438,7 @@ app.put('/updateUser/:id', bearer, superPrivilege, (req, res, next) => {
               const updated = result[0].userId
               pool.query(
                 'UPDATE adminuser SET userName = ?, email = ? , role=?,status=?,fullName=?,updatedby=?,updateddate=? WHERE userId = ?',
-                [userName, email, role, status,fullName,updated, date, userId],
+                [userName, email, role, status, fullName, updated, date, userId],
                 (error, result) => {
                   if (error) {
                     console.error('Error updating user:', error);
@@ -452,9 +463,9 @@ app.put('/updateUser/:id', bearer, superPrivilege, (req, res, next) => {
 //own info update
 app.put('/manageUserInfo/:id', bearer, (req, res, next) => {
   const userId = req.headers.loggedinuser;
-  const { userName, email } = req.body;
+  const { userName, email, fullName } = req.body;
   checkTokenExpiry(req, res, () => {
-    pool.query('SELECT * FROM adminuser WHERE userName = ?', [userId], (error, result) => {
+    pool.query('SELECT * FROM adminuser WHERE userId = ?', [userId], (error, result) => {
       if (error) {
         res.status(500).json({ error: 'Internal Server Error' })
         return;
@@ -466,8 +477,8 @@ app.put('/manageUserInfo/:id', bearer, (req, res, next) => {
       if (result.length > 0) {
         adminValidations(req, res, () => {
           pool.query(
-            'UPDATE adminuser SET userName = ?, email = ? ,updatedby = ? ,updateddate = ? WHERE userName = ?',
-            [userName, email, user, date, userId],
+            'UPDATE adminuser SET userName = ?, email = ? ,fullName=?,updatedby = ? ,updateddate = ? WHERE userId = ?',
+            [userName, email, fullName, user, date, userId],
             (error, result) => {
               if (error) {
                 console.error('Error updating user:', error);
@@ -493,7 +504,7 @@ app.put('/changePassword', bearer, (req, res, next) => {
   const loggedInUser = req.headers.loggedinuser
 
   checkTokenExpiry(req, res, () => {
-    pool.query('SELECT * FROM adminuser WHERE userName = ?', [loggedInUser], (error, result) => {
+    pool.query('SELECT * FROM adminuser WHERE userId = ?', [loggedInUser], (error, result) => {
       if (error) {
         res.status(500).json({ error: 'Internal Server Error' })
         return;
@@ -501,11 +512,12 @@ app.put('/changePassword', bearer, (req, res, next) => {
 
       if (result.length > 0) {
         passwordValidations(req, res, () => {
+          console.log(oldPassword, result[0].password)
           hashPassword(password).then(hashed => {
             comparePasswords(oldPassword, result[0].password).then(e => {
               if (e === true) {
                 pool.query(
-                  'UPDATE adminuser SET password = ? WHERE userName = ?',
+                  'UPDATE adminuser SET password = ? WHERE userId = ?',
                   [hashed, loggedInUser],
                   (error, result) => {
                     if (error) {
@@ -603,7 +615,7 @@ app.put('/changePassword', bearer, (req, res, next) => {
 app.get('/getUserDetails', bearer, (req, res) => {
   const userName = req.headers.loggedinuser;
   checkTokenExpiry(req, res, () => {
-    pool.query('SELECT userId,userName,email FROM adminuser WHERE userName = ?', [userName], (error, result) => {
+    pool.query('SELECT userId,userName,email,role,fullName FROM adminuser WHERE userId = ?', [userName], (error, result) => {
       if (error) {
         console.error('Error Listing Admin Users', error);
         res.status(500).json({ error: 'Internal Server Error' })
@@ -618,7 +630,7 @@ app.get('/getUserDetails', bearer, (req, res) => {
 
 app.post('/logoutAdmin', bearer, (req, res) => {
   const username = req.headers.loggedinuser
-  pool.query('SELECT userId from adminuser where userName=?', [username], (error, result) => {
+  pool.query('SELECT * from adminuser where userId=?', [username], (error, result) => {
     if (error) {
       console.error('Error getting token', error);
       res.status(500).json({ error: 'Internal Server Error' })
@@ -649,6 +661,52 @@ app.post('/logoutAdmin', bearer, (req, res) => {
 
     }
   })
+});
+const itemsPerPage = 10;
+app.get('/getData', bearer, superPrivilege, (req, res) => {
+  const userId = req.headers.loggedinuser
+
+  const page = parseInt(req.query.page) || 1; // Get the requested page number
+  const offset = (page - 1) * itemsPerPage; // Calculate the offset
+  const sql = 'SELECT * FROM adminuser LIMIT ? OFFSET ?'; // SQL query to retrieve data
+  checkTokenExpiry(req, res, () => {
+    if (userId===':id') {
+      pool.query('SELECT * FROM adminuser', (error, result) => {
+        res.status(200).json({ users: result })
+        if (error) {
+          res.status(500).json({ error: 'Internal Server Error' });
+          return;
+        }
+      })
+    } else {
+  pool.query(sql, [itemsPerPage, offset], (error, results) => {
+    if (error) {
+      console.error('Error executing SQL query:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      // Fetch the total count of records
+      pool.query('SELECT COUNT(*) as total FROM adminuser', (error, totalCountResult) => {
+        if (error) {
+          console.error('Error fetching total count:', error);
+          res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+          const totalData = totalCountResult[0].total;
+          const totalPages = Math.ceil(totalData / itemsPerPage);
+
+          res.json({
+            users: results,
+            totalData,
+            totalPages,
+            currentPage: page,
+          });
+        }
+      });
+    }
+  });
+    }
+  })
+
+
 });
 
 

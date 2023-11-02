@@ -22,7 +22,7 @@ login.addEventListener('submit', async (e) => {
     }).then(r => {
         const jwtToken = r.data.token; // Replace with your actual JWT
         window.location.href = '/profile';
-        sessionStorage.setItem("loggedInUser", userName);
+        sessionStorage.setItem("loggedInUser", r.data.user);
         sessionStorage.setItem("jwtToken", jwtToken);
         const expirationDate = new Date();
         expirationDate.setTime(expirationDate.getTime() + 60 * 60 * 1000); // 1 hour
