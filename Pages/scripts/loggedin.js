@@ -15,6 +15,7 @@ var historyStates = [];
 var currentIndex = -1;
 
 
+
 const user = { "loggedInUser": loggedInUser }
 const getUserDetailsURL = `http://localhost:3000/getUserDetails`
 const changePassswordURL = `http://localhost:3000/changePassword`
@@ -88,25 +89,51 @@ function pushUserListState(pageNo, url) {
   var pageTitle = "Page " + pageNo; // Set a title for the new history state
   const state = { "page": pageNo }
   history.pushState(state, pageTitle, url);
-  console.log(state)
   historyStates.push(state);
+  localStorage.setItem("state", JSON.stringify(historyStates))
   currentIndex = historyStates.length - 1;
 }
 
+window.addEventListener("popstate", function () {
+  historyManagement()
+});
 
-window.addEventListener("popstate", function (event) {
-  if (event.state) {
+function historyManagement() {
+  historyStates.pop()
+  if (historyStates.length > 0) {
+    getUsers(historyStates[historyStates.length - 1].page)
     historyStates.pop()
-    if (historyStates.length > 0) {
-      getUsers(historyStates[historyStates.length - 1].page)
-      historyStates.pop()
-    } else {
-      history.back()
-      getUsers(`1`)
-      history.back()
+  } else {
+    history.back()
+    getUsers(`1`)
+    history.back()
+  }
+}
+let index = 1;
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
+  let sta = []
+  let hasPageBeenLoaded = localStorage.getItem('pageLoaded');
+
+  if (!hasPageBeenLoaded) {
+    localStorage.setItem('pageLoaded', 'true');
+    window.addEventListener("unload", function () {
+      getUsers('1');
+    });
+  } else {
+    sta = JSON.parse(localStorage.getItem("state"))
+    if (sta[sta.length - 1].page) {
+      index = sta[sta.length - 1].page
     }
   }
-});
+  getUsers(index);
+
+})
+
+
+
 
 function getUsers(currentPage) {
   axios({
@@ -116,7 +143,7 @@ function getUsers(currentPage) {
   }).then((response) => {
     var url = "/getUsers?page=" + currentPage; // Set the URL for the new history state
     pushUserListState(currentPage, url)
-
+    // getUsersUnUrl = new URL(window.location.href)
     const tableData = JSON.parse(JSON.stringify(response.data))
     const table = document.getElementById("userTable");
     const tbody = table.querySelector("tbody");
