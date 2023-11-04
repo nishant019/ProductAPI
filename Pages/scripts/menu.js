@@ -21,8 +21,8 @@ function handleLogout(e) {
     e.preventDefault();
 
     const headers = {
-        'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`,
-        'loggedinuser': sessionStorage.getItem("loggedInUser"),
+        'Authorization': `Bearer ${localStorage.getItem("jwtToken")}`,
+        'loggedinuser': localStorage.getItem("loggedInUser"),
         'Content-Type': 'application/json',
     };
 
@@ -45,7 +45,7 @@ function handleLogout(e) {
             }
         })
         .catch(function (error) {
-            alert("Error occurred during logout.");
+            alert("Error occurred during logout.",error);
         });
 
 }
