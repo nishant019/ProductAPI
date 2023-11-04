@@ -63,7 +63,7 @@ function createPagination(totalPages, activePage) {
     }
 
     // Add event listeners for the "Previous Page" and "Next Page" buttons
-    
+
 
 }
 document.getElementById("previousPage").addEventListener("click", (e) => {
@@ -94,3 +94,25 @@ document.getElementById("pagination-container").addEventListener("click", functi
         getUsers(currentPage);
     }
 });
+
+// handling browser redirects while pagination [ for user list]
+function pushUserListState(pageNo, url) {
+    var pageTitle = "Page " + pageNo;
+    const state = { "page": pageNo }
+    history.pushState(state, pageTitle, url);
+    historyStates.push(state);
+    localStorage.setItem("state", JSON.stringify(historyStates))
+    currentIndex = historyStates.length - 1;
+}
+function historyManagement() {
+    historyStates.pop()
+    if (historyStates.length > 0) {
+        getUsers(historyStates[historyStates.length - 1].page)
+        historyStates.pop()
+    } else {
+        history.back()
+        getUsers(`1`)
+        history.back()
+    }
+}
+

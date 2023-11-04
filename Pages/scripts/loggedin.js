@@ -84,52 +84,7 @@ function getUserDetails() {
     });
 }
 
-// handling browser redirects while pagination [ for user list]
-function pushUserListState(pageNo, url) {
-  var pageTitle = "Page " + pageNo;
-  const state = { "page": pageNo }
-  history.pushState(state, pageTitle, url);
-  historyStates.push(state);
-  localStorage.setItem("state", JSON.stringify(historyStates))
-  currentIndex = historyStates.length - 1;
-}
 
-window.addEventListener("popstate", function () {
-  historyManagement()
-});
-
-function historyManagement() {
-  historyStates.pop()
-  if (historyStates.length > 0) {
-    getUsers(historyStates[historyStates.length - 1].page)
-    historyStates.pop()
-  } else {
-    history.back()
-    getUsers(`1`)
-    history.back()
-  }
-}
-let index = 1;
-
-
-
-document.addEventListener('DOMContentLoaded', function () {
-  let sta = []
-  let hasPageBeenLoaded = localStorage.getItem('pageLoaded');
-  if (!hasPageBeenLoaded) {
-    localStorage.setItem('pageLoaded', 'true');
-    window.addEventListener("unload", function () {
-      getUsers('1');
-    });
-  } else {
-    sta = JSON.parse(localStorage.getItem("state"))
-    if (sta[sta.length - 1].page) {
-      index = sta[sta.length - 1].page
-    }
-  }
-  getUsers(index);
-
-})
 
 
 
