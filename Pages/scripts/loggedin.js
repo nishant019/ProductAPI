@@ -84,9 +84,9 @@ function getUserDetails() {
     });
 }
 
-
+// handling browser redirects while pagination [ for user list]
 function pushUserListState(pageNo, url) {
-  var pageTitle = "Page " + pageNo; // Set a title for the new history state
+  var pageTitle = "Page " + pageNo;
   const state = { "page": pageNo }
   history.pushState(state, pageTitle, url);
   historyStates.push(state);
@@ -116,7 +116,6 @@ let index = 1;
 document.addEventListener('DOMContentLoaded', function () {
   let sta = []
   let hasPageBeenLoaded = localStorage.getItem('pageLoaded');
-
   if (!hasPageBeenLoaded) {
     localStorage.setItem('pageLoaded', 'true');
     window.addEventListener("unload", function () {
@@ -141,9 +140,8 @@ function getUsers(currentPage) {
     url: `${getUsersURL + "?page=" + currentPage}`,
     headers: headers
   }).then((response) => {
-    var url = "/getUsers?page=" + currentPage; // Set the URL for the new history state
+    var url = "/getUsers?page=" + currentPage; 
     pushUserListState(currentPage, url)
-    // getUsersUnUrl = new URL(window.location.href)
     const tableData = JSON.parse(JSON.stringify(response.data))
     const table = document.getElementById("userTable");
     const tbody = table.querySelector("tbody");
@@ -202,7 +200,7 @@ function getUsers(currentPage) {
       console.error('Error:', error);
     });
 }
-
+// userlist code ends
 
 
 function changePassword(data) {
