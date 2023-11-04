@@ -20,6 +20,7 @@ const user = { "loggedInUser": loggedInUser }
 const getUserDetailsURL = `http://localhost:3000/getUserDetails`
 const changePassswordURL = `http://localhost:3000/changePassword`
 const getUsersURL = `http://localhost:3000/getAdminUsers`
+const getProdsUrl = `http://localhost:3000/getProds`
 const addUserUrl = `http://localhost:3000/addUsers`
 const updateUserUrl = `http://localhost:3000/updateUser/`
 const deleteUserURL = `http://localhost:3000/deleteUser/`
@@ -156,7 +157,74 @@ function getUsers(currentPage) {
     });
 }
 // userlist code ends
+function getProducts(currentPage) {
+  axios({
+    method: 'get',
+    url: `${getProdsUrl + "?page=" + currentPage}`,
+    headers: headers
+  }).then((response) => {
+    var url = "/getProds?page=" + currentPage; 
+    pushUserListState(currentPage, url)
+    const tableData = JSON.parse(JSON.stringify(response.data))
+    const table = document.getElementById("userTable");
+    const tbody = table.querySelector("tbody");
+    tbody.innerHTML = '';
+    let page
+    tableData.prods.forEach((prod, index) => {
+      const row = document.createElement("tr");
+      if (currentPage === 1) {
+        page = index
+      } else {
+        page = index + (currentPage - 1) * 10
+      }
+      row.innerHTML = `
+            <td>${page + 1}</td>
+            <td>${prod.prodId}</td>
+            <td>${prod.prodName}</td>
+            <td>${prod.prodLocation}</td>
+            <td>${prod.prodLocation1}</td>
+            <td>${prod.prodLocation2}</td>
+            <td>${prod.prodImage}</td>
+            <td>${prod.prodTitle}</td>
+            <td>${prod.prodDescription}</td>
+            <td>${prod.user}</td>
+            <td>${prod.createddate}</td>
+            <td>${prod.updateddate}</td>
+            <td>${prod.updatedBy}</td>
+            <td><button class="edit-button">Edit</button></td>
+            <td><button class="delete-button" style="color:red">Delete</button></td>
+        `;
+      tbody.appendChild(row);
+    });
+    document.getElementById("userCount").innerHTML = tableData.totalData
+    document.getElementById("pageCount").innerHTML = tableData.totalPages
+    document.getElementById("pageNumber").innerHTML = tableData.currentPage
+    createPagination(tableData.totalPages, tableData.currentPage);
+    maxPages = tableData.totalPages; // Maximum number of pages
 
+    const editButtons = document.querySelectorAll(".edit-button");
+    const deleteButtons = document.querySelectorAll(".delete-button");
+
+    deleteButtons.forEach((button, index) => {
+      button.addEventListener("click", (e) => {
+        e.preventDefault()
+        const userId = tableData.users[index].userId;
+
+        deleteUserTable(userId);
+      });
+    })
+    editButtons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        const userId = tableData.users[index].userId;
+        openEditTab(userId, tableData.users[index]);
+      });
+    });
+
+  })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+}
 
 function changePassword(data) {
   axios({

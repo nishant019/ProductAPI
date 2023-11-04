@@ -41,6 +41,11 @@ app.get('/addUser', requireLogin, (req, res) => {
   res.sendFile(path.join(__dirname, '/addUser.html'));
 
 });
+app.get('/addProds', requireLogin, (req, res) => {
+
+  res.sendFile(path.join(__dirname, '/addProds.html'));
+
+});
 
 app.get('/menu', requireLogin, (req, res) => {
 
@@ -61,6 +66,12 @@ app.get('/manageUserInfo', requireLogin, (req, res) => {
 app.get('/getUsers', requireLogin, (req, res) => {
 
   res.sendFile(path.join(__dirname, '/getUsers.html'));
+
+})
+
+app.get('/getProds', requireLogin, (req, res) => {
+
+  res.sendFile(path.join(__dirname, '/getProds.html'));
 
 })
 

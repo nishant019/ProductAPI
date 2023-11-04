@@ -62,38 +62,8 @@ function createPagination(totalPages, activePage) {
         paginationContainer.appendChild(lastLink);
     }
 
-    // Add event listeners for the "Previous Page" and "Next Page" buttons
-
-
 }
-document.getElementById("previousPage").addEventListener("click", (e) => {
 
-    if (currentPage > 1) {
-        currentPage--; // Decrement the current page number
-
-    }
-    getUsers(currentPage)
-});
-
-document.getElementById("nextPage").addEventListener("click", (e) => {
-    if (currentPage < maxPages) {
-        currentPage++; // Increment the current page number
-    }
-    getUsers(currentPage)
-
-});
-document.getElementById("pagination-container").addEventListener("click", function (event) {
-    if (event.target.tagName === "A") {
-        event.preventDefault(); // Prevent the default link behavior
-
-        const clickedPage = parseInt(event.target.textContent);
-
-        // Set the active page
-        currentPage = clickedPage;
-
-        getUsers(currentPage);
-    }
-});
 
 // handling browser redirects while pagination [ for user list]
 function pushUserListState(pageNo, url) {
@@ -104,15 +74,3 @@ function pushUserListState(pageNo, url) {
     localStorage.setItem("state", JSON.stringify(historyStates))
     currentIndex = historyStates.length - 1;
 }
-function historyManagement() {
-    historyStates.pop()
-    if (historyStates.length > 0) {
-        getUsers(historyStates[historyStates.length - 1].page)
-        historyStates.pop()
-    } else {
-        history.back()
-        getUsers(`1`)
-        history.back()
-    }
-}
-

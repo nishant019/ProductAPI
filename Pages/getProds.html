@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>Users List</title>
+    <title>Users List</title>
 </head>
 <link rel="stylesheet" href="/pagination.css">
 
@@ -12,49 +12,53 @@
 </style>
 
 <body>
-  <div id="menu"></div>
-  <table id="userTable" border="1">
-    <thead>
-      <tr>
-        <th>SN</th>
-        <th>User Name</th>
-        <th>Email</th>
-        <th>Full Name</th>
-        <th>User ID</th>
-        <th>Status</th>
-        <th>Role</th>
-        <th>Created Date</th>
-        <th>Created By</th>
-        <th>Updated Date</th>
-      </tr>
+    <div id="menu"></div>
+    <table id="userTable" border="1">
+        <thead>
+            <tr>
+                <th>SN</th>
+                <th>Product ID</th>
+                <th>Product Name</th>
+                <th>Address</th>
+                <th>Address1</th>
+                <th>Address2</th>
+                <th>Image</th>
+                <th>Product Title</th>
+                <th>Product Description</th>
+                <th>Created By</th>
+                <th>Updated Date</th>
+                <th>Updated Date</th>
+                <th>Updated By</th>
+
+            </tr>
 
 
-    </thead>
+        </thead>
 
-    <tbody>
-      <!-- Data will be inserted here dynamically -->
-    </tbody>
-  </table>
-  <table style="border:1px">
-    <td>Total Users: <a id="userCount"></a></td>&nbsp;
-    <td>Total Pages: <a id="pageCount"></a></td>&nbsp;
+        <tbody>
+            <!-- Data will be inserted here dynamically -->
+        </tbody>
+    </table>
+    <table style="border:1px">
+        <td>Total Users: <a id="userCount"></a></td>&nbsp;
+        <td>Total Pages: <a id="pageCount"></a></td>&nbsp;
 
-    <td>Page Number: <a id="pageNumber"></a></td>&nbsp;
-    <td>
-      <div id="loadingIndicator" style="display: none;">Loading...</div>
-    </td>
+        <td>Page Number: <a id="pageNumber"></a></td>&nbsp;
+        <td>
+            <div id="loadingIndicator" style="display: none;">Loading...</div>
+        </td>
 
-  </table>
-  <div id="page">
-    <button id="previousPage">
-      < </button>
-        <div class="pagination" id="pagination-container">
-        </div>
+    </table>
+    <div id="page">
+        <button id="previousPage">
+            < </button>
+                <div class="pagination" id="pagination-container">
+                </div>
 
-        <button id="nextPage">> </button>
-  </div>
-  <p id="profile"></p>
-  <p id="error"></p>
+                <button id="nextPage">> </button>
+    </div>
+    <p id="profile"></p>
+    <p id="error"></p>
 
 </body>
 <script type="text/javascript" src="/pagination.js">  </script>
@@ -65,11 +69,11 @@
   function historyManagement() {
     historyStates.pop()
     if (historyStates.length > 0) {
-      getUsers(historyStates[historyStates.length - 1].page)
+      getProducts(historyStates[historyStates.length - 1].page)
       historyStates.pop()
     } else {
       history.back()
-      getUsers(`1`)
+      getProducts(`1`)
       history.back()
     }
   }
@@ -83,7 +87,7 @@
     if (!hasPageBeenLoaded) {
       localStorage.setItem('pageLoaded', 'true');
       window.addEventListener("unload", function () {
-        getUsers('1');
+        getProducts('1');
       });
     } else {
       sta = JSON.parse(localStorage.getItem("state"))
@@ -91,21 +95,21 @@
         index = sta[sta.length - 1].page
       }
     }
-    getUsers(index);
+    getProducts(index);
 
   })
   document.getElementById("previousPage").addEventListener("click", (e) => {
     if (currentPage > 1) {
       currentPage--; // Decrement the current page number
     }
-    getUsers(currentPage)
+    getProducts(currentPage)
   });
 
   document.getElementById("nextPage").addEventListener("click", (e) => {
     if (currentPage < maxPages) {
       currentPage++; // Increment the current page number
     }
-    getUsers(currentPage)
+    getProducts(currentPage)
 
   });
   document.getElementById("pagination-container").addEventListener("click", function (event) {
@@ -114,7 +118,7 @@
       const clickedPage = parseInt(event.target.textContent);
       // Set the active page
       currentPage = clickedPage;
-      getUsers(currentPage);
+      getProducts(currentPage);
     }
   });
 
