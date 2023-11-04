@@ -6,6 +6,7 @@ const cors = require('cors'); // Import the cors middleware
 
 const bcrypt = require('bcrypt')
 const app = express();
+const itemsPerPage = 10;
 let token
 app.use(cors());
 
@@ -218,6 +219,51 @@ const checkTokenExpiry = (req, res, next) => {
   })
 }
 
+function checkUserRole(req, res, next) {
+  const userId = req.headers.loggedinuser;
+
+  pool.query('SELECT role FROM adminuser WHERE userId = ?', [userId], (err, result) => {
+    if (err) {
+      return res.status(500).json({ error: 'Database error' });
+    }
+
+    if (result.length === 0) {
+      return res.status(401).json({ message: 'User not found' });
+    }
+
+    const userRole = result[0].role;
+
+    if (userRole === 69) {
+      req.isAdmin = 1;
+    } else {
+      req.isAdmin = 0;
+    }
+
+    next();
+  });
+}
+
+// pool.query(`SELECT role FROM adminuser WHERE userId=?`, [req.headers.loggedinuser], (error, response) => {
+//   if (error) {
+//     res.status(500).json({ error: 'Internal Server Error' });
+//     return;
+//   }
+//   if (response.length > 0) {
+//     if (response[0].role === 69) {
+//       return next();
+//     } else {
+//       res.status(403).json({ error: 'Forbidden Request' });
+
+//     }
+//   } else {
+//     res.status(401).json({ error: "Logged in user not found" })
+//   }
+// })
+
+
+
+
+
 async function hashPassword(password) {
   try {
     const salt = await bcrypt.genSalt(10);
@@ -284,6 +330,7 @@ app.post('/login', basicAuth, (req, res) => {
                   if (error) {
                     console.error('Error listing token:', error);
                   }
+                  console.log(result)
                   if (result.length > 0) {
                     pool.query('UPDATE tkn_store SET tkn=? ,updateddate=? WHERE user=?', [tkn, date, userId], (error, result) => {
                       if (error) {
@@ -292,7 +339,7 @@ app.post('/login', basicAuth, (req, res) => {
                     })
                   }
                   else {
-                    pool.query('INSERT INTO tkn_store SET ?,', dbData, (error, result) => {
+                    pool.query('INSERT INTO tkn_store SET ?', dbData, (error, result) => {
                       if (error) {
                         console.error('Error inserting token:', error);
                       }
@@ -544,73 +591,99 @@ app.put('/changePassword', bearer, (req, res, next) => {
 
 })
 
-// app.post('/addProds', bearer, (req, res) => {
-//   const { prodId, prodName, prodLocation, prodImage, prodTitle, prodDescription, user } = req.body;
-//   pool.query(`SELECT role FROM adminuser WHERE userName=?`, [req.headers.loggedinuser], (error, response) => {
-//     if (error) {
-//       res.status(500).json({ error: 'Internal Server Error' });
-//       return;
-//     }
-//     if (response[0].role === 69) {
-//       pool.query(
-//         'SELECT * FROM adminuser WHERE userName = ?',
-//         [userName],
-//         (error, userNameResults) => {
-//           // console.log(userNameResults[0].role)
-//           if (error) {
-//             console.error('Error checking username uniqueness:', error);
-//             res.status(500).json({ error: 'Internal Server Error' });
-//             return;
-//           }
-//           if (userNameResults.length > 0) {
-//             res.status(409).json({ error: 'Username already exists' });
-//             return;
-//           }
+app.post('/addProds', bearer, (req, res) => {
+  const user = req.headers.loggedinuser
+  const { prodName, prodLocation, prodLocation1, prodLocation2, prodImage, prodTitle, prodDescription } = req.body;
+  checkTokenExpiry(req, res, () => {
+    pool.query('SELECT * from adminuser where userId = ?', [user], (error, result) => {
+      if (error) {
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
+      let prodId
+      const user = result[0].userId
+      let createddate, updateddate
+      createddate = Date.now()
+      updateddate = Date.now()
 
-//           pool.query(
-//             'SELECT * FROM adminuser WHERE email = ?',
-//             [email],
-//             (error, emailResults) => {
-//               if (error) {
-//                 console.error('Error checking email uniqueness:', error);
-//                 res.status(500).json({ error: 'Internal Server Error' });
-//                 return;
-//               }
-//               if (emailResults.length > 0) {
-//                 res.status(409).json({ error: 'Email already exists' });
-//                 return;
-//               }
-//               hashPassword(password).then(e => {
-//                 const adminUser = { userName, password, email, role, status, fullName, userId };
-//                 adminUser.password = e
-//                 pool.query('SELECT MAX(userId) as last FROM adminuser', (e, r) => {
-//                   adminUser.userId = r[0].last++ + 1;
-//                   pool.query('INSERT INTO adminuser SET ?', adminUser, (error, result) => {
+      pool.query('SELECT MAX(prodId) as last FROM prods', (e, r) => {
+        console.log('r', r)
+        if (r[0].last === null) {
+          prodId = 10000
 
-//                     if (error) {
-//                       console.error('Error inserting admin user:', error);
-//                       res.status(500).json({ error: 'Internal Server Error' });
-//                     } else {
+        } else {
+          prodId = r[0].last++ + 1;
+
+        }
+        const productTable = { prodId, prodName, prodLocation, prodLocation1, prodLocation2, prodImage, prodTitle, prodDescription, user, createddate, updateddate };
+
+        pool.query('INSERT INTO prods SET ?', productTable, (error, result) => {
+          if (error) {
+            res.status(500).json({ error: 'Internal Server Error' });
+          } else {
+            res.status(201).json({ message: 'product created successfully' });
+          }
+        })
+        // })
+      });
+    });
+  })
+})
+
+app.get('/getProds', bearer, checkUserRole, (req, res) => {
+  const userId = req.headers.loggedinuser
+  const page = parseInt(req.query.page) || 1; // Get the requested page number
+  const offset = (page - 1) * itemsPerPage; // Calculate the offset
+  let pageArr = []
+  let sql, dataCount; // SQL query to retrieve data
+
+  checkTokenExpiry(req, res, () => {
+
+    if (userId === ':id') {
+      pool.query('SELECT * FROM prods', (error, result) => {
+        res.status(200).json({ prods: result })
+        if (error) {
+          res.status(500).json({ error: 'Internal Server Error' });
+          return;
+        }
+      })
+    } else {
+      if (req.isAdmin === 1) {
+        sql = 'SELECT * FROM prods LIMIT ? OFFSET ?'
+        dataCountSql = 'SELECT COUNT(*) as total FROM prods'
+        pageArr.push(itemsPerPage, offset)
+      } else {
+        sql = 'SELECT * FROM prods where user = ? LIMIT ? OFFSET ?'
+        dataCountSql = 'SELECT COUNT(*) as total FROM prods where user = ?'
+        pageArr.push(userId, itemsPerPage, offset)
+      }
+      pool.query(sql, pageArr, (error, results) => {
+        if (error) {
+          res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+          pool.query(dataCountSql, userId, (error, totalCountResult) => {
+            if (error) {
+              console.error('Error fetching total count:', error);
+              res.status(500).json({ error: 'Internal Server Error' });
+            } else {
+              const totalData = totalCountResult[0].total;
+              const totalPages = Math.ceil(totalData / itemsPerPage);
+
+              res.json({
+                prods: results,
+                totalData,
+                totalPages,
+                currentPage: page,
+              });
+            }
+          });
+        }
+      });
+
+    }
+  })
+})
 
 
-//                       res.status(201).json({ message: 'Admin user created successfully' });
-//                     }
-//                   });
-//                 })
-
-
-//               })
-//             }
-//           );
-//         }
-//       );
-//     } else {
-//       res.status(401).json({ error: 'Unauthorized Request' });;
-//     }
-//   })
-// });
-
-//own user info
 app.get('/getUserDetails', bearer, (req, res) => {
   const userName = req.headers.loggedinuser;
   checkTokenExpiry(req, res, () => {
@@ -661,7 +734,7 @@ app.post('/logoutAdmin', bearer, (req, res) => {
     }
   })
 });
-const itemsPerPage = 10;
+
 app.get('/getAdminUsers', bearer, superPrivilege, (req, res) => {
   const userId = req.headers.loggedinuser
 
