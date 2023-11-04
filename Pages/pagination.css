@@ -1,0 +1,74 @@
+#page {
+    display: flex;
+}
+
+a.disabled {
+    pointer-events: none;
+    /* Disable pointer events */
+    background-color: none;
+    border-radius: none;
+    color: none;
+    /* Change the color to indicate it's disabled */
+    text-decoration: none;
+    /* Remove the underline */
+    cursor: not-allowed;
+    /* Change the cursor */
+}
+.pagination {
+width: 25%; 
+display: inline-block;
+margin: 20 auto; 
+
+
+}
+
+#previousPage,
+#nextPage {
+    margin-left: 10px;
+    margin-right: 10px;
+    background-color: #eceaea;
+    border-radius: 5px;
+    padding: 8px 16px;
+
+}
+
+#previousPage:hover,
+#nextPage:hover {
+    background-color: #ddd;
+    border-radius: 5px;
+    padding: 8px 16px;
+
+}
+
+a.disabled:hover {
+    color: none;
+
+}
+
+.pagination a {
+    margin: 0 auto; 
+    background-color: #eceaea;
+    border-radius: 5px;
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+}
+
+.pagination a.disabled {
+    background-color: #ffffff;
+    border-radius: 5px;
+    float: left;
+    text-decoration: none;
+}
+
+.pagination a.active {
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 5px;
+}
+
+.pagination a:hover:not(.active) {
+    background-color: #ddd;
+    border-radius: 5px;
+}

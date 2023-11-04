@@ -76,6 +76,14 @@ app.get('/menu.js', (req, res) => {
   res.sendFile(path.join(__dirname, '/scripts/menu.js'));
 
 });
+app.get('/pagination.css', (req, res) => {
+  res.sendFile(path.join(__dirname, '/pagination.css'));
+
+});
+app.get('/pagination.js', (req, res) => {
+  res.sendFile(path.join(__dirname, '/scripts/pagination.js'));
+
+});
 
 
 

@@ -4,7 +4,12 @@
 <head>
     <title>Users List</title>
 </head>
+<link rel="stylesheet" href="/pagination.css">
+
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<style>
+
+</style>
 
 <body>
     <div id="menu"></div>
@@ -34,41 +39,43 @@
     <table style="border:1px">
         <td>Total Users: <a id="userCount"></a></td>&nbsp;
         <td>Total Pages: <a id="pageCount"></a></td>&nbsp;
-        <td> <button id="previousPage">
-                < </button>&nbsp;
-        </td>
+
         <td>Page Number: <a id="pageNumber"></a></td>&nbsp;
-        <td> <button id="nextPage">> </button> </td>&nbsp;
-        <td>Page Number: <a id="pageDataCount"></a></td>&nbsp;
         <td>
             <div id="loadingIndicator" style="display: none;">Loading...</div>
         </td>
+
     </table>
+    <div id="page">
+        <button id="previousPage">
+            < </button>
+                <div class="pagination" id="pagination-container">
+                </div>
+
+                <button id="nextPage">> </button>
+    </div>
     <p id="profile"></p>
     <p id="error"></p>
 
 </body>
+<script type="text/javascript" src="/pagination.js">  </script>
 <script type="text/javascript" src="/loggedin.js">  </script>
 <script type="text/javascript" src="/menu.js">  </script>
 <script>
+let newPage = "1";
+let domContentLoadedExecuted = false; // Flag to track whether DOMContentLoaded has been executed
 
-    document.addEventListener("DOMContentLoaded", function () {
-        getUsers();
-        // viewDetails()
-    });
+document.addEventListener("DOMContentLoaded", function () {
+  if (!domContentLoadedExecuted) {
+    // historyStates.push("1")
+    getUsers(newPage);
+    domContentLoadedExecuted = true; // Set the flag to true
+  }
+});
 
 
 
 
-
-
-
-    // document.addEventListener("DOMContentLoaded", function () {
-    //     // Load the menu
-    //     menubar();
-    //     // Add the logout event listener
-
-    // });
 
 </script>
 

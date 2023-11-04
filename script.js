@@ -183,7 +183,6 @@ const checkTokenExpiry = (req, res, next) => {
           if (result[0].tkn != '') {
             pool.query('SELECT updateddate from tkn_store where user=?', [userId], (e, r) => {
               if (e) {
-                console.error('Error getting token', e);
                 res.status(500).json({ error: 'Internal Server Error' })
               }
               if (r.length > 0) {
@@ -293,7 +292,7 @@ app.post('/login', basicAuth, (req, res) => {
                     })
                   }
                   else {
-                    pool.query('INSERT INTO tkn_store SET ?', dbData, (error, result) => {
+                    pool.query('INSERT INTO tkn_store SET ?,', dbData, (error, result) => {
                       if (error) {
                         console.error('Error inserting token:', error);
                       }
@@ -663,14 +662,14 @@ app.post('/logoutAdmin', bearer, (req, res) => {
   })
 });
 const itemsPerPage = 10;
-app.get('/getData', bearer, superPrivilege, (req, res) => {
+app.get('/getAdminUsers', bearer, superPrivilege, (req, res) => {
   const userId = req.headers.loggedinuser
 
   const page = parseInt(req.query.page) || 1; // Get the requested page number
   const offset = (page - 1) * itemsPerPage; // Calculate the offset
   const sql = 'SELECT * FROM adminuser LIMIT ? OFFSET ?'; // SQL query to retrieve data
   checkTokenExpiry(req, res, () => {
-    if (userId===':id') {
+    if (userId === ':id') {
       pool.query('SELECT * FROM adminuser', (error, result) => {
         res.status(200).json({ users: result })
         if (error) {
@@ -679,30 +678,30 @@ app.get('/getData', bearer, superPrivilege, (req, res) => {
         }
       })
     } else {
-  pool.query(sql, [itemsPerPage, offset], (error, results) => {
-    if (error) {
-      console.error('Error executing SQL query:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    } else {
-      // Fetch the total count of records
-      pool.query('SELECT COUNT(*) as total FROM adminuser', (error, totalCountResult) => {
+      pool.query(sql, [itemsPerPage, offset], (error, results) => {
         if (error) {
-          console.error('Error fetching total count:', error);
+          console.error('Error executing SQL query:', error);
           res.status(500).json({ error: 'Internal Server Error' });
         } else {
-          const totalData = totalCountResult[0].total;
-          const totalPages = Math.ceil(totalData / itemsPerPage);
+          // Fetch the total count of records
+          pool.query('SELECT COUNT(*) as total FROM adminuser', (error, totalCountResult) => {
+            if (error) {
+              console.error('Error fetching total count:', error);
+              res.status(500).json({ error: 'Internal Server Error' });
+            } else {
+              const totalData = totalCountResult[0].total;
+              const totalPages = Math.ceil(totalData / itemsPerPage);
 
-          res.json({
-            users: results,
-            totalData,
-            totalPages,
-            currentPage: page,
+              res.json({
+                users: results,
+                totalData,
+                totalPages,
+                currentPage: page,
+              });
+            }
           });
         }
       });
-    }
-  });
     }
   })
 

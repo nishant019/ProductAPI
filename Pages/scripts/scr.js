@@ -22,8 +22,8 @@ login.addEventListener('submit', async (e) => {
     }).then(r => {
         const jwtToken = r.data.token; // Replace with your actual JWT
         window.location.href = '/profile';
-        sessionStorage.setItem("loggedInUser", r.data.user);
-        sessionStorage.setItem("jwtToken", jwtToken);
+        localStorage.setItem("loggedInUser", r.data.user);
+        localStorage.setItem("jwtToken", jwtToken);
         const expirationDate = new Date();
         expirationDate.setTime(expirationDate.getTime() + 60 * 60 * 1000); // 1 hour
         document.cookie = `jwtToken=${jwtToken}; expires=${expirationDate.toUTCString()}; path=/`;

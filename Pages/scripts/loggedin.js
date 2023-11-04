@@ -1,24 +1,30 @@
-
 const errorMsg = document.getElementById('error')
 const login = document.getElementById('loginForm')
 const profile = document.getElementById('profile')
 const success = document.getElementById('success')
-const loggedInUser = sessionStorage.getItem("loggedInUser")
+const loggedInUser = localStorage.getItem("loggedInUser")
 const headers = {
-  'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`,
+  'Authorization': `Bearer ${localStorage.getItem("jwtToken")}`,
   'loggedinuser': loggedInUser,
   'Content-Type': 'application/json',
 };
-let currentPage = 1; // Current page number
+let currentPage = 1;
 let maxPages
+
+var historyStates = [];
+var currentIndex = -1;
+
+
 const user = { "loggedInUser": loggedInUser }
 const getUserDetailsURL = `http://localhost:3000/getUserDetails`
 const changePassswordURL = `http://localhost:3000/changePassword`
-const getUsersURL = `http://localhost:3000/getData`
+const getUsersURL = `http://localhost:3000/getAdminUsers`
 const addUserUrl = `http://localhost:3000/addUsers`
 const updateUserUrl = `http://localhost:3000/updateUser/`
 const deleteUserURL = `http://localhost:3000/deleteUser/`
 const updateUserInfoUrl = `http://localhost:3000/manageUserInfo/`
+
+
 
 function updateOwnInfo(data) {
   const loco = new URL(window.location.href)
@@ -30,7 +36,7 @@ function updateOwnInfo(data) {
     data: JSON.stringify(data),
     headers: headers
   }).then((response) => {
-    sessionStorage.setItem("loggedInUser", userId);
+    localStorage.setItem("loggedInUser", userId);
 
     success.innerText = JSON.stringify(response.data, undefined, 4);
     success.style.color = 'green';
@@ -53,6 +59,7 @@ function updateOwnInfo(data) {
     }, 3000);
   });
 }
+
 function getUserDetails() {
   axios({
     method: 'get',
@@ -76,18 +83,44 @@ function getUserDetails() {
     });
 }
 
-function getUsers() {
+
+function pushUserListState(pageNo, url) {
+  var pageTitle = "Page " + pageNo; // Set a title for the new history state
+  const state = { "page": pageNo }
+  history.pushState(state, pageTitle, url);
+  console.log(state)
+  historyStates.push(state);
+  currentIndex = historyStates.length - 1;
+}
+
+
+window.addEventListener("popstate", function (event) {
+  if (event.state) {
+    historyStates.pop()
+    if (historyStates.length > 0) {
+      getUsers(historyStates[historyStates.length - 1].page)
+      historyStates.pop()
+    } else {
+      history.back()
+      getUsers(`1`)
+      history.back()
+    }
+  }
+});
+
+function getUsers(currentPage) {
   axios({
     method: 'get',
     url: `${getUsersURL + "?page=" + currentPage}`,
     headers: headers
   }).then((response) => {
+    var url = "/getUsers?page=" + currentPage; // Set the URL for the new history state
+    pushUserListState(currentPage, url)
+
     const tableData = JSON.parse(JSON.stringify(response.data))
     const table = document.getElementById("userTable");
     const tbody = table.querySelector("tbody");
-    tbody.innerHTML = ''; // Clear the existing rows
-    const loadingIndicator = document.getElementById("loadingIndicator");
-    loadingIndicator.style.display = "none";
+    tbody.innerHTML = '';
     let page
     tableData.users.forEach((user, index) => {
       const row = document.createElement("tr");
@@ -96,7 +129,6 @@ function getUsers() {
       } else {
         page = index + (currentPage - 1) * 10
       }
-
       row.innerHTML = `
             <td>${page + 1}</td>
             <td>${user.userName}</td>
@@ -117,12 +149,12 @@ function getUsers() {
     document.getElementById("userCount").innerHTML = tableData.totalData
     document.getElementById("pageCount").innerHTML = tableData.totalPages
     document.getElementById("pageNumber").innerHTML = tableData.currentPage
-    document.getElementById("pageDataCount").innerHTML = tableData.totalData
-
+    createPagination(tableData.totalPages, tableData.currentPage);
     maxPages = tableData.totalPages; // Maximum number of pages
 
     const editButtons = document.querySelectorAll(".edit-button");
     const deleteButtons = document.querySelectorAll(".delete-button");
+
     deleteButtons.forEach((button, index) => {
       button.addEventListener("click", (e) => {
         e.preventDefault()
@@ -137,33 +169,14 @@ function getUsers() {
         openEditTab(userId, tableData.users[index]);
       });
     });
+
   })
     .catch((error) => {
       console.error('Error:', error);
     });
 }
 
-// Add event listeners for the "Previous Page" and "Next Page" buttons
-document.getElementById("previousPage").addEventListener("click", (e) => {
-  const loadingIndicator = document.getElementById("loadingIndicator");
-  loadingIndicator.style.display = "block";
-  if (currentPage > 1) {
-    currentPage--; // Decrement the current page number
 
-  }
-  getUsers()
-});
-
-document.getElementById("nextPage").addEventListener("click", (e) => {
-  const loadingIndicator = document.getElementById("loadingIndicator");
-  loadingIndicator.style.display = "block";
-  if (currentPage < maxPages) {
-    currentPage++; // Increment the current page number
-
-  }
-  getUsers()
-
-});
 
 function changePassword(data) {
   axios({
