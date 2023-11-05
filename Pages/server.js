@@ -21,59 +21,63 @@ const requireLogin = (req, res, next) => {
 }
 
 app.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname, '/Login.html'));
+  res.sendFile(path.join(__dirname, '/profile/Login.html'));
 });
 
 
-app.get('/profile', requireLogin,(req, res) => {
+app.get('/profile', requireLogin, (req, res) => {
 
-  res.sendFile(path.join(__dirname, '/Profile.html'));
+  res.sendFile(path.join(__dirname, '/profile/Profile.html'));
 
 });
+app.get('/manageUserInfo', requireLogin, (req, res) => {
+
+  res.sendFile(path.join(__dirname, '/profile/manageUserInfo.html'));
+
+})
 
 app.get('/changePassword', requireLogin, (req, res) => {
 
-  res.sendFile(path.join(__dirname, '/changePassword.html'));
+  res.sendFile(path.join(__dirname, '/profile/changePassword.html'));
 
 });
+
 app.get('/addUser', requireLogin, (req, res) => {
 
-  res.sendFile(path.join(__dirname, '/addUser.html'));
+  res.sendFile(path.join(__dirname, '/userManagement/addUser.html'));
 
 });
-app.get('/addProds', requireLogin, (req, res) => {
 
-  res.sendFile(path.join(__dirname, '/addProds.html'));
+app.get('/updateUser', requireLogin, (req, res) => {
 
-});
+  res.sendFile(path.join(__dirname, '/userManagement/updateUser.html'));
+
+})
+app.get('/getUsers', requireLogin, (req, res) => {
+
+  res.sendFile(path.join(__dirname, '/userManagement/getUsers.html'));
+
+})
 
 app.get('/menu', requireLogin, (req, res) => {
 
-  res.sendFile(path.join(__dirname, '/menu.html'));
-
-})
-app.get('/updateUser', requireLogin, (req, res) => {
-
-  res.sendFile(path.join(__dirname, '/updateUser.html'));
-
-})
-app.get('/manageUserInfo', requireLogin, (req, res) => {
-
-  res.sendFile(path.join(__dirname, '/manageUserInfo.html'));
-
-})
-
-app.get('/getUsers', requireLogin, (req, res) => {
-
-  res.sendFile(path.join(__dirname, '/getUsers.html'));
+  res.sendFile(path.join(__dirname, '/navs/menu.html'));
 
 })
 
 app.get('/getProds', requireLogin, (req, res) => {
 
-  res.sendFile(path.join(__dirname, '/getProds.html'));
+  res.sendFile(path.join(__dirname, '/productManagement/getProds.html'));
 
 })
+app.get('/addProds', requireLogin, (req, res) => {
+
+  res.sendFile(path.join(__dirname, '/productManagement/addProds.html'));
+
+});
+
+
+
 
 app.get('/scr.js', (req, res) => {
   res.sendFile(path.join(__dirname, '/scripts/scr.js'));
@@ -88,7 +92,7 @@ app.get('/menu.js', (req, res) => {
 
 });
 app.get('/pagination.css', (req, res) => {
-  res.sendFile(path.join(__dirname, '/pagination.css'));
+  res.sendFile(path.join(__dirname, '/styles/pagination.css'));
 
 });
 app.get('/pagination.js', (req, res) => {
