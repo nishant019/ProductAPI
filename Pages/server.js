@@ -19,7 +19,7 @@ const requireLogin = (req, res, next) => {
     localStorage.setItem("productPageState",'')
     localStorage.setItem("jwtToken",'')
     localStorage.setItem("userPageLoaded",'')
-    localStorage.setItem("prodPageLoaded",'')
+    localStorage.setItem("productPageLoaded",'')
     localStorage.setItem("userPageState",'')
     res.redirect('/login');
   }
