@@ -61,33 +61,24 @@
 <script type="text/javascript" src="/loggedin.js">  </script>
 <script type="text/javascript" src="/menu.js">  </script>
 <script>
-  let index = 1;
-  function historyManagement() {
-    historyStates.pop()
-    if (historyStates.length > 0) {
-      getUsers(historyStates[historyStates.length - 1].page)
-      historyStates.pop()
-    } else {
-      history.back()
-      getUsers(`1`)
-      history.back()
-    }
-  }
+
   window.addEventListener("popstate", function () {
-    historyManagement()
+    historyManagement(userInfoStates)
+    getUsers(index);
+
   });
 
   document.addEventListener('DOMContentLoaded', function () {
     let sta = []
-    let hasPageBeenLoaded = localStorage.getItem('pageLoaded');
+    let hasPageBeenLoaded = localStorage.getItem('userPageLoaded');
     if (!hasPageBeenLoaded) {
-      localStorage.setItem('pageLoaded', 'true');
-      window.addEventListener("unload", function () {
-        getUsers('1');
-      });
+      localStorage.setItem('userPageLoaded', 'true');
+      // window.addEventListener("unload", function () {
+        index = 1
+      // });
     } else {
-      sta = JSON.parse(localStorage.getItem("state"))
-      if (sta[sta.length - 1].page) {
+      sta = JSON.parse(localStorage.getItem("userPageState"))
+      if (sta) {
         index = sta[sta.length - 1].page
       }
     }
@@ -117,6 +108,7 @@
       getUsers(currentPage);
     }
   });
+
 
 </script>
 

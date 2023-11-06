@@ -191,7 +191,6 @@ const checkTokenExpiry = (req, res, next) => {
                 const expiry = 60 * 60 * 1000
                 if (compareDate > expiry) {
                   pool.query('UPDATE tkn_store set tkn = ?  where user=?', ['', userId], (e, r) => {
-                    console.log(e)
                     if (e) {
                       res.status(500).json({ error: 'Internal Server Error' })
                     }
@@ -330,7 +329,6 @@ app.post('/login', basicAuth, (req, res) => {
                   if (error) {
                     console.error('Error listing token:', error);
                   }
-                  console.log(result)
                   if (result.length > 0) {
                     pool.query('UPDATE tkn_store SET tkn=? ,updateddate=? WHERE user=?', [tkn, date, userId], (error, result) => {
                       if (error) {
@@ -404,7 +402,6 @@ app.post('/addUsers', bearer, superPrivilege, (req, res) => {
 
 app.get('/getUsers/:id', bearer, superPrivilege, (req, res) => {
   const userId = req.params.id
-  console.log(userId)
   checkTokenExpiry(req, res, () => {
     if (userId === ':id') {
       pool.query('SELECT * FROM adminuser', (error, result) => {
@@ -517,7 +514,6 @@ app.put('/manageUserInfo/:id', bearer, (req, res, next) => {
         return;
       }
       req.params.id = result[0].userId
-      console.log(req.params.id)
       const user = result[0].userId
       const date = Date.now()
       if (result.length > 0) {
@@ -558,7 +554,6 @@ app.put('/changePassword', bearer, (req, res, next) => {
 
       if (result.length > 0) {
         passwordValidations(req, res, () => {
-          console.log(oldPassword, result[0].password)
           hashPassword(password).then(hashed => {
             comparePasswords(oldPassword, result[0].password).then(e => {
               if (e === true) {
@@ -606,7 +601,6 @@ app.post('/addProds', bearer, (req, res) => {
       updateddate = Date.now()
 
       pool.query('SELECT MAX(prodId) as last FROM prods', (e, r) => {
-        console.log('r', r)
         if (r[0].last === null) {
           prodId = 10000
 

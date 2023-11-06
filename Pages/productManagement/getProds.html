@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Users List</title>
+  <title>Users List</title>
 </head>
 <link rel="stylesheet" href="/pagination.css">
 
@@ -12,92 +12,87 @@
 </style>
 
 <body>
-    <div id="menu"></div>
-    <table id="userTable" border="1">
-        <thead>
-            <tr>
-                <th>SN</th>
-                <th>Product ID</th>
-                <th>Product Name</th>
-                <th>Address</th>
-                <th>Address1</th>
-                <th>Address2</th>
-                <th>Image</th>
-                <th>Product Title</th>
-                <th>Product Description</th>
-                <th>Created By</th>
-                <th>Updated Date</th>
-                <th>Updated Date</th>
-                <th>Updated By</th>
+  <div id="menu"></div>
+  <table id="userTable" border="1">
+    <thead>
+      <tr>
+        <th>SN</th>
+        <th>Product ID</th>
+        <th>Product Name</th>
+        <th>Address</th>
+        <th>Address1</th>
+        <th>Address2</th>
+        <th>Image</th>
+        <th>Product Title</th>
+        <th>Product Description</th>
+        <th>Created By</th>
+        <th>Updated Date</th>
+        <th>Updated Date</th>
+        <th>Updated By</th>
 
-            </tr>
+      </tr>
 
 
-        </thead>
+    </thead>
 
-        <tbody>
-            <!-- Data will be inserted here dynamically -->
-        </tbody>
-    </table>
-    <table style="border:1px">
-        <td>Total Users: <a id="userCount"></a></td>&nbsp;
-        <td>Total Pages: <a id="pageCount"></a></td>&nbsp;
+    <tbody>
+      <!-- Data will be inserted here dynamically -->
+    </tbody>
+  </table>
+  <table style="border:1px">
+    <td>Total Users: <a id="userCount"></a></td>&nbsp;
+    <td>Total Pages: <a id="pageCount"></a></td>&nbsp;
 
-        <td>Page Number: <a id="pageNumber"></a></td>&nbsp;
-        <td>
-            <div id="loadingIndicator" style="display: none;">Loading...</div>
-        </td>
+    <td>Page Number: <a id="pageNumber"></a></td>&nbsp;
+    <td>
+      <div id="loadingIndicator" style="display: none;">Loading...</div>
+    </td>
 
-    </table>
-    <div id="page">
-        <button id="previousPage">
-            < </button>
-                <div class="pagination" id="pagination-container">
-                </div>
+  </table>
+  <div id="page">
+    <button id="previousPage">
+      < </button>
+        <div class="pagination" id="pagination-container">
+        </div>
 
-                <button id="nextPage">> </button>
-    </div>
-    <p id="profile"></p>
-    <p id="error"></p>
+        <button id="nextPage">> </button>
+  </div>
+  <p id="profile"></p>
+  <p id="error"></p>
 
 </body>
 <script type="text/javascript" src="/pagination.js">  </script>
 <script type="text/javascript" src="/loggedin.js">  </script>
 <script type="text/javascript" src="/menu.js">  </script>
 <script>
-  let index = 1;
-  function historyManagement() {
-    historyStates.pop()
-    if (historyStates.length > 0) {
-      getProducts(historyStates[historyStates.length - 1].page)
-      historyStates.pop()
-    } else {
-      history.back()
-      getProducts(`1`)
-      history.back()
-    }
-  }
+
   window.addEventListener("popstate", function () {
-    historyManagement()
+    historyManagement(productInfoStates)
+    getProducts(1)
+
   });
 
+
   document.addEventListener('DOMContentLoaded', function () {
+
     let sta = []
-    let hasPageBeenLoaded = localStorage.getItem('pageLoaded');
+    let hasPageBeenLoaded = localStorage.getItem('prodPageLoaded');
     if (!hasPageBeenLoaded) {
-      localStorage.setItem('pageLoaded', 'true');
-      window.addEventListener("unload", function () {
-        getProducts('1');
-      });
+      localStorage.setItem('prodPageLoaded', 'true');
+      // window.addEventListener("unload", function () {
+        index = 1
+      // });
     } else {
-      sta = JSON.parse(localStorage.getItem("state"))
-      if (sta[sta.length - 1].page) {
+      sta = JSON.parse(localStorage.getItem("productPageState"))
+      if (sta) {
         index = sta[sta.length - 1].page
       }
     }
     getProducts(index);
 
   })
+
+
   document.getElementById("previousPage").addEventListener("click", (e) => {
     if (currentPage > 1) {
       currentPage--; // Decrement the current page number

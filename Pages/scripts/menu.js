@@ -39,6 +39,12 @@ function handleLogout(e) {
             if (response.data.success) {
                 // Redirect to the login page on successful logout
                 alert(response.data.success);
+                localStorage.setItem("productPageState",'')
+                localStorage.setItem("jwtToken",'')
+                localStorage.setItem("userPageLoaded",'')
+                localStorage.setItem("prodPageLoaded",'')
+                localStorage.setItem("userPageLoaded",'')
+
                 window.location.href = 'http://localhost:3001/login';
             } else {
                 alert("Logout was not successful.");

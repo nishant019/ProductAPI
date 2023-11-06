@@ -1,3 +1,4 @@
+let index = 1;
 
 function createPagination(totalPages, activePage) {
 
@@ -65,12 +66,18 @@ function createPagination(totalPages, activePage) {
 }
 
 
-// handling browser redirects while pagination [ for user list]
-function pushUserListState(pageNo, url) {
-    var pageTitle = "Page " + pageNo;
-    const state = { "page": pageNo }
-    history.pushState(state, pageTitle, url);
-    historyStates.push(state);
-    localStorage.setItem("state", JSON.stringify(historyStates))
-    currentIndex = historyStates.length - 1;
+
+
+function historyManagement(historyStates) {
+
+    historyStates.pop()
+    if (historyStates.length > 0) {
+        console.log(historyStates)
+        index = (historyStates[historyStates.length - 1].page)
+        historyStates.pop()
+    } else {
+        history.back()
+        index = 1
+        history.back()
+    }
 }

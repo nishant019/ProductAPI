@@ -4,18 +4,14 @@
 
 a.disabled {
     pointer-events: none;
-    /* Disable pointer events */
     background-color: none;
     border-radius: none;
     color: none;
-    /* Change the color to indicate it's disabled */
     text-decoration: none;
-    /* Remove the underline */
     cursor: not-allowed;
-    /* Change the cursor */
 }
 .pagination {
-width: 25%; 
+width: 26%; 
 display: inline-block;
 margin: 20 auto; 
 

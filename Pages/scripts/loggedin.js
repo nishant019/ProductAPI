@@ -11,7 +11,8 @@ const headers = {
 let currentPage = 1;
 let maxPages
 
-var historyStates = [];
+var productInfoStates = [];
+var userInfoStates = [];
 var currentIndex = -1;
 
 
@@ -85,10 +86,14 @@ function getUserDetails() {
     });
 }
 
-
-
-
-
+function historyListState(pageNo, url, historyStates,pageState) {
+  var pageTitle = "Page " + pageNo;
+  const state = { "page": pageNo }
+  history.pushState(state, pageTitle, url);
+  historyStates.push(state);
+  localStorage.setItem(pageState, JSON.stringify(historyStates))
+  currentIndex = historyStates.length - 1;
+}
 
 function getUsers(currentPage) {
   axios({
@@ -96,9 +101,9 @@ function getUsers(currentPage) {
     url: `${getUsersURL + "?page=" + currentPage}`,
     headers: headers
   }).then((response) => {
-    var url = "/getUsers?page=" + currentPage; 
-    pushUserListState(currentPage, url)
-    const tableData = JSON.parse(JSON.stringify(response.data))
+    var url = "/getUsers?page=" + currentPage;
+    historyListState(currentPage, url, userInfoStates,"userPageState");
+    const tableData = JSON.parse(JSON.stringify(response.data));
     const table = document.getElementById("userTable");
     const tbody = table.querySelector("tbody");
     tbody.innerHTML = '';
@@ -147,7 +152,7 @@ function getUsers(currentPage) {
     editButtons.forEach((button, index) => {
       button.addEventListener("click", () => {
         const userId = tableData.users[index].userId;
-        openEditTab(userId, tableData.users[index]);
+        openUserUpdatePage(userId, tableData.users[index]);
       });
     });
 
@@ -163,8 +168,8 @@ function getProducts(currentPage) {
     url: `${getProdsUrl + "?page=" + currentPage}`,
     headers: headers
   }).then((response) => {
-    var url = "/getProds?page=" + currentPage; 
-    pushUserListState(currentPage, url)
+    var url = "/getProds?page=" + currentPage;
+    historyListState(currentPage, url, productInfoStates,"productPageState");
     const tableData = JSON.parse(JSON.stringify(response.data))
     const table = document.getElementById("userTable");
     const tbody = table.querySelector("tbody");
@@ -216,7 +221,7 @@ function getProducts(currentPage) {
     editButtons.forEach((button, index) => {
       button.addEventListener("click", () => {
         const userId = tableData.users[index].userId;
-        openEditTab(userId, tableData.users[index]);
+        openUserUpdatePage(userId, tableData.users[index]);
       });
     });
 
@@ -255,7 +260,7 @@ function changePassword(data) {
   });
 }
 
-function openEditTab(userData, tableData) {
+function openUserUpdatePage(userData, tableData) {
   console.log(tableData.email)
   const userName = tableData.userName
   const email = tableData.email
@@ -332,8 +337,18 @@ function updateUser(data) {
 
       success.style.color = 'black';
       success.innerHTML = '';
-      window.location.href = '/getUsers'
+
     }, 3000);
+    const referrer = new URL(document.referrer).search
+
+    const pageNumber = referrer.substring(6)
+    // history.back()
+    window.location.href = new URL(document.referrer).origin+"/getUsers"
+    window.addEventListener("popstate", function (event) {
+      if (event.state !== null) {
+        getUsers(pageNumber);
+      }
+    });
   }).catch((error) => {
     const errorMessage = JSON.parse(JSON.stringify(error.response.data)).error;
     errorMsg.style.color = 'red';

@@ -52,15 +52,16 @@
         document.getElementById('addUser').addEventListener('click', function (e) {
             e.preventDefault();
 
-            const userName= document.getElementById('userName').value
+            const userName = document.getElementById('userName').value
             const password = document.getElementById('password').value
             const email = document.getElementById('email').value;
             const role = document.getElementById('userRole').value;
             const fullname = document.getElementById('fullName').value;
             const status = document.getElementById('userStatus').value;
 
-            const data = { "userName": userName, "password": password, "email": email, "role":role,"fullName":fullname,"status":status };
-            addUser(data)
+            const data = { "userName": userName, "password": password, "email": email, "role": role, "fullName": fullname, "status": status };
+            addUser(data);
+
         });
     </script>
 </body>

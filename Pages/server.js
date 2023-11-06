@@ -16,6 +16,11 @@ const requireLogin = (req, res, next) => {
   if (req.cookies.jwtToken) {
     next();
   } else {
+    localStorage.setItem("productPageState",'')
+    localStorage.setItem("jwtToken",'')
+    localStorage.setItem("userPageLoaded",'')
+    localStorage.setItem("prodPageLoaded",'')
+    localStorage.setItem("userPageState",'')
     res.redirect('/login');
   }
 }
@@ -76,8 +81,10 @@ app.get('/addProds', requireLogin, (req, res) => {
 
 });
 
+app.get('/pagination.js', (req, res) => {
+  res.sendFile(path.join(__dirname, '/scripts/pagination.js'));
 
-
+});
 
 app.get('/scr.js', (req, res) => {
   res.sendFile(path.join(__dirname, '/scripts/scr.js'));
@@ -93,10 +100,6 @@ app.get('/menu.js', (req, res) => {
 });
 app.get('/pagination.css', (req, res) => {
   res.sendFile(path.join(__dirname, '/styles/pagination.css'));
-
-});
-app.get('/pagination.js', (req, res) => {
-  res.sendFile(path.join(__dirname, '/scripts/pagination.js'));
 
 });
 
