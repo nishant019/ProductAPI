@@ -43,7 +43,7 @@ function handleLogout(e) {
                 localStorage.setItem("jwtToken",'')
                 localStorage.setItem("userPageLoaded",'')
                 localStorage.setItem("productPageLoaded",'')
-                localStorage.setItem("userPageLoaded",'')
+                localStorage.setItem("userPageState",'')
 
                 window.location.href = 'http://localhost:3001/login';
             } else {
