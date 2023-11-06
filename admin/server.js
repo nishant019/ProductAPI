@@ -26,58 +26,58 @@ const requireLogin = (req, res, next) => {
 }
 
 app.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname, '/profile/Login.html'));
+  res.sendFile(path.join(__dirname, '/views/profile/Login.html'));
 });
 
 
 app.get('/profile', requireLogin, (req, res) => {
 
-  res.sendFile(path.join(__dirname, '/profile/Profile.html'));
+  res.sendFile(path.join(__dirname, '/views/profile/Profile.html'));
 
 });
 app.get('/manageUserInfo', requireLogin, (req, res) => {
 
-  res.sendFile(path.join(__dirname, '/profile/manageUserInfo.html'));
+  res.sendFile(path.join(__dirname, '/views/profile/manageUserInfo.html'));
 
 })
 
 app.get('/changePassword', requireLogin, (req, res) => {
 
-  res.sendFile(path.join(__dirname, '/profile/changePassword.html'));
+  res.sendFile(path.join(__dirname, '/views/profile/changePassword.html'));
 
 });
 
 app.get('/addUser', requireLogin, (req, res) => {
 
-  res.sendFile(path.join(__dirname, '/userManagement/addUser.html'));
+  res.sendFile(path.join(__dirname, '/views/userManagement/addUser.html'));
 
 });
 
 app.get('/updateUser', requireLogin, (req, res) => {
 
-  res.sendFile(path.join(__dirname, '/userManagement/updateUser.html'));
+  res.sendFile(path.join(__dirname, '/views/userManagement/updateUser.html'));
 
 })
 app.get('/getUsers', requireLogin, (req, res) => {
 
-  res.sendFile(path.join(__dirname, '/userManagement/getUsers.html'));
+  res.sendFile(path.join(__dirname, '/views/userManagement/getUsers.html'));
 
 })
 
 app.get('/menu', requireLogin, (req, res) => {
 
-  res.sendFile(path.join(__dirname, '/navs/menu.html'));
+  res.sendFile(path.join(__dirname, '/views/navs/menu.html'));
 
 })
 
 app.get('/getProds', requireLogin, (req, res) => {
 
-  res.sendFile(path.join(__dirname, '/productManagement/getProds.html'));
+  res.sendFile(path.join(__dirname, '/views/productManagement/getProds.html'));
 
 })
 app.get('/addProds', requireLogin, (req, res) => {
 
-  res.sendFile(path.join(__dirname, '/productManagement/addProds.html'));
+  res.sendFile(path.join(__dirname, '/views/productManagement/addProds.html'));
 
 });
 
