@@ -3,7 +3,7 @@ const app = express();
 const path = require('path');
 const fs = require('fs')
 const axios = require('axios');
-
+// const localStorage = require('loca')
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser')
 
@@ -16,11 +16,6 @@ const requireLogin = (req, res, next) => {
   if (req.cookies.jwtToken) {
     next();
   } else {
-    localStorage.setItem("productPageState",'')
-    localStorage.setItem("jwtToken",'')
-    localStorage.setItem("userPageLoaded",'')
-    localStorage.setItem("productPageLoaded",'')
-    localStorage.setItem("userPageState",'')
     res.redirect('/login');
   }
 }

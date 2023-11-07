@@ -2,6 +2,11 @@
 const error = document.getElementById('error')
 const login = document.getElementById('loginForm')
 const profile = document.getElementById('profile')
+
+if (document.cookie === '') {
+    localStorage.clear()
+}
+
 const headers = {
     'Authorization': 'Basic YWRtaW46cGFzc3dvcmQ=',
     'Content-Type': 'application/json',
@@ -27,7 +32,7 @@ login.addEventListener('submit', async (e) => {
         const expirationDate = new Date();
         expirationDate.setTime(expirationDate.getTime() + 60 * 60 * 1000); // 1 hour
         document.cookie = `jwtToken=${jwtToken}; expires=${expirationDate.toUTCString()}; path=/`;
-  
+
         profile.innerText = jwtToken;
         console.log(jwtToken);
 

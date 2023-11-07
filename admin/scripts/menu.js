@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", function () {
     loadMenu();
 });
 
-
 function loadMenu() {
     fetch("/menu")
         .then(response => response.text())
@@ -28,7 +27,6 @@ function handleLogout(e) {
 
     // Send a POST request to the logout endpoint
     const logoutUrl = 'http://localhost:3000/logoutAdmin';
-    document.cookie = 'jwtToken=;';
 
     axios({
         method: 'post',
@@ -39,11 +37,8 @@ function handleLogout(e) {
             if (response.data.success) {
                 // Redirect to the login page on successful logout
                 alert(response.data.success);
-                localStorage.setItem("productPageState",'')
-                localStorage.setItem("jwtToken",'')
-                localStorage.setItem("userPageLoaded",'')
-                localStorage.setItem("productPageLoaded",'')
-                localStorage.setItem("userPageState",'')
+                document.cookie = 'jwtToken='
+                localStorage.clear()
 
                 window.location.href = 'http://localhost:3001/login';
             } else {
@@ -51,7 +46,7 @@ function handleLogout(e) {
             }
         })
         .catch(function (error) {
-            alert("Error occurred during logout.",error);
+            alert("Error occurred during logout.", error);
         });
 
 }

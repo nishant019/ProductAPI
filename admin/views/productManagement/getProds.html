@@ -65,56 +65,15 @@
 <script type="text/javascript" src="/loggedin.js">  </script>
 <script type="text/javascript" src="/menu.js">  </script>
 <script>
+  document.getElementById("previousPage").addEventListener("click", () => handlePreviousPageClick(getProducts));
+  document.getElementById("nextPage").addEventListener("click", () => handleNextPageClick(getProducts));
+  document.getElementById("pagination-container").addEventListener("click", (e) => handlePageChange(e, getProducts));
 
-  window.addEventListener("popstate", function () {
-    historyManagement(productInfoStates)
-    getProducts(1)
+  document.addEventListener('DOMContentLoaded', () => initPage(getProducts, 'prodPageLoaded', 'productPageState'));
+  window.addEventListener("popstate", (event) => {
 
-  });
+    historyManagement(productInfoStates);
 
-
-  document.addEventListener('DOMContentLoaded', function () {
-
-    let sta = []
-    let hasPageBeenLoaded = localStorage.getItem('prodPageLoaded');
-    if (!hasPageBeenLoaded) {
-      localStorage.setItem('prodPageLoaded', 'true');
-      // window.addEventListener("unload", function () {
-        index = 1
-      // });
-    } else {
-      sta = JSON.parse(localStorage.getItem("productPageState"))
-      if (sta) {
-        index = sta[sta.length - 1].page
-      }
-    }
-    getProducts(index);
-
-  })
-
-
-  document.getElementById("previousPage").addEventListener("click", (e) => {
-    if (currentPage > 1) {
-      currentPage--; // Decrement the current page number
-    }
-    getProducts(currentPage)
-  });
-
-  document.getElementById("nextPage").addEventListener("click", (e) => {
-    if (currentPage < maxPages) {
-      currentPage++; // Increment the current page number
-    }
-    getProducts(currentPage)
-
-  });
-  document.getElementById("pagination-container").addEventListener("click", function (event) {
-    if (event.target.tagName === "A") {
-      event.preventDefault(); // Prevent the default link behavior
-      const clickedPage = parseInt(event.target.textContent);
-      // Set the active page
-      currentPage = clickedPage;
-      getProducts(currentPage);
-    }
   });
 
 </script>

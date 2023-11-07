@@ -62,53 +62,17 @@
 <script type="text/javascript" src="/menu.js">  </script>
 <script>
 
-  window.addEventListener("popstate", function () {
-    historyManagement(userInfoStates)
-    getUsers(index);
+
+  document.getElementById("previousPage").addEventListener("click", () => handlePreviousPageClick(getUsers));
+  document.getElementById("nextPage").addEventListener("click", () => handleNextPageClick(getUsers));
+  document.getElementById("pagination-container").addEventListener("click", (e) => handlePageChange(e, getUsers));
+
+  document.addEventListener('DOMContentLoaded', () => initPage(getUsers, 'userPageLoaded', 'userPageState'));
+  window.addEventListener("popstate", (event) => {
+
+    historyManagement(userInfoStates);
 
   });
-
-  document.addEventListener('DOMContentLoaded', function () {
-    let sta = []
-    let hasPageBeenLoaded = localStorage.getItem('userPageLoaded');
-    if (!hasPageBeenLoaded) {
-      localStorage.setItem('userPageLoaded', 'true');
-      // window.addEventListener("unload", function () {
-        index = 1
-      // });
-    } else {
-      sta = JSON.parse(localStorage.getItem("userPageState"))
-      if (sta) {
-        index = sta[sta.length - 1].page
-      }
-    }
-    getUsers(index);
-
-  })
-  document.getElementById("previousPage").addEventListener("click", (e) => {
-    if (currentPage > 1) {
-      currentPage--; // Decrement the current page number
-    }
-    getUsers(currentPage)
-  });
-
-  document.getElementById("nextPage").addEventListener("click", (e) => {
-    if (currentPage < maxPages) {
-      currentPage++; // Increment the current page number
-    }
-    getUsers(currentPage)
-
-  });
-  document.getElementById("pagination-container").addEventListener("click", function (event) {
-    if (event.target.tagName === "A") {
-      event.preventDefault(); // Prevent the default link behavior
-      const clickedPage = parseInt(event.target.textContent);
-      // Set the active page
-      currentPage = clickedPage;
-      getUsers(currentPage);
-    }
-  });
-
 
 </script>
 

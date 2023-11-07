@@ -72,12 +72,93 @@ function historyManagement(historyStates) {
 
     historyStates.pop()
     if (historyStates.length > 0) {
-        console.log(historyStates)
         index = (historyStates[historyStates.length - 1].page)
         historyStates.pop()
     } else {
         history.back()
         index = 1
         history.back()
+
     }
+}
+
+//for handling pagination in refresh, or navigation
+function getPagePath(url) {
+    const pathname = new URL(url).pathname;
+    return pathname;
+}
+function resetPage(pageLoaded) {
+    let currentPath = getPagePath(window.location.href);
+    let referrerPath = getPagePath(document.referrer);
+
+    if (currentPath !== referrerPath) {
+        localStorage.setItem(pageLoaded, '');
+    }
+}
+function historyListState(pageNo, url, historyStates, pageState) {
+    var pageTitle = "Page " + pageNo;
+    const state = { "page": pageNo };
+    history.pushState(state, pageTitle, url);
+    historyStates.push(state);
+    localStorage.setItem(pageState, JSON.stringify(historyStates));
+    currentIndex = historyStates.length - 1;
+}
+
+function initPage(executionFunction, pageLoaded, pageState) {
+    // window.addEventListener("load", (event) => {
+    //     let currentPath = getPagePath(window.location.href);
+    //     let referrerPath = getPagePath(document.referrer);
+    //     console.log(         currentPath , referrerPath
+    //     )
+    //     if (currentPath !== referrerPath || referrerPath !== '/updateUser') {
+    //         // The page was visited from another page and not from '/updateUser'
+    //         localStorage.setItem(pageState, '');
+    //         localStorage.setItem(pageLoaded, '');
+    //       }
+    // })
+
+
+    let sta = [];
+    let hasPageBeenLoaded = localStorage.getItem(pageLoaded);
+
+    if (!hasPageBeenLoaded) {
+        localStorage.setItem(pageLoaded, 'true');
+        index = 1;
+    } else {
+        sta = JSON.parse(localStorage.getItem(pageState));
+        if (sta) {
+            index = sta[sta.length - 1].page;
+        } else {
+            index = 1
+        }
+    }
+
+    execFunction(executionFunction, index);
+}
+
+function handlePageChange(e, func) {
+    if (e.target.tagName === "A") {
+        e.preventDefault();
+        const clickedPage = parseInt(e.target.textContent);
+        currentPage = clickedPage;
+        execFunction(func, currentPage);
+    }
+}
+
+function handlePreviousPageClick(func) {
+    if (currentPage > 1) {
+        currentPage--;
+        execFunction(func, currentPage);
+    }
+}
+
+function handleNextPageClick(func) {
+    if (currentPage < maxPages) {
+        currentPage++;
+        execFunction(func, currentPage);
+    }
+}
+
+function execFunction(func, currentPage) {
+    func(currentPage);
 }
