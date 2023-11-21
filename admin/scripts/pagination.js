@@ -68,33 +68,26 @@ function createPagination(totalPages, activePage) {
 
 
 
-function historyManagement(historyStates) {
+// function historyManagement(historyStates) {
 
-    historyStates.pop()
-    if (historyStates.length > 0) {
-        index = (historyStates[historyStates.length - 1].page)
-        historyStates.pop()
-    } else {
-        history.back()
-        index = 1
-        history.back()
+//     // historyStates.pop()
+//     if (historyStates.length > 0) {
+//         index = (historyStates[historyStates.length - 1].page)
+//         historyStates.pop()
+//     } 
+//     else {
+//         history.back()
+//         index = 1
+//         history.back()
+//     }
+//     // history.back()
+//     // index = 1
 
-    }
-}
 
-//for handling pagination in refresh, or navigation
-function getPagePath(url) {
-    const pathname = new URL(url).pathname;
-    return pathname;
-}
-function resetPage(pageLoaded) {
-    let currentPath = getPagePath(window.location.href);
-    let referrerPath = getPagePath(document.referrer);
 
-    if (currentPath !== referrerPath) {
-        localStorage.setItem(pageLoaded, '');
-    }
-}
+// }
+
+
 function historyListState(pageNo, url, historyStates, pageState) {
     var pageTitle = "Page " + pageNo;
     const state = { "page": pageNo };
@@ -105,22 +98,8 @@ function historyListState(pageNo, url, historyStates, pageState) {
 }
 
 function initPage(executionFunction, pageLoaded, pageState) {
-    // window.addEventListener("load", (event) => {
-    //     let currentPath = getPagePath(window.location.href);
-    //     let referrerPath = getPagePath(document.referrer);
-    //     console.log(         currentPath , referrerPath
-    //     )
-    //     if (currentPath !== referrerPath || referrerPath !== '/updateUser') {
-    //         // The page was visited from another page and not from '/updateUser'
-    //         localStorage.setItem(pageState, '');
-    //         localStorage.setItem(pageLoaded, '');
-    //       }
-    // })
-
-
     let sta = [];
     let hasPageBeenLoaded = localStorage.getItem(pageLoaded);
-
     if (!hasPageBeenLoaded) {
         localStorage.setItem(pageLoaded, 'true');
         index = 1;
@@ -132,7 +111,6 @@ function initPage(executionFunction, pageLoaded, pageState) {
             index = 1
         }
     }
-
     execFunction(executionFunction, index);
 }
 
@@ -143,6 +121,7 @@ function handlePageChange(e, func) {
         currentPage = clickedPage;
         execFunction(func, currentPage);
     }
+
 }
 
 function handlePreviousPageClick(func) {
@@ -150,6 +129,7 @@ function handlePreviousPageClick(func) {
         currentPage--;
         execFunction(func, currentPage);
     }
+
 }
 
 function handleNextPageClick(func) {
@@ -157,8 +137,10 @@ function handleNextPageClick(func) {
         currentPage++;
         execFunction(func, currentPage);
     }
+
 }
 
 function execFunction(func, currentPage) {
+
     func(currentPage);
 }

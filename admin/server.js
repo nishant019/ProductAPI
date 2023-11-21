@@ -42,18 +42,18 @@ app.get('/changePassword', requireLogin, (req, res) => {
 
 });
 
-app.get('/addUser', requireLogin, (req, res) => {
+app.get('/userManagement/addUser', requireLogin, (req, res) => {
 
   res.sendFile(path.join(__dirname, '/views/userManagement/addUser.html'));
 
 });
 
-app.get('/updateUser', requireLogin, (req, res) => {
+app.get('/userManagement/updateUser', requireLogin, (req, res) => {
 
   res.sendFile(path.join(__dirname, '/views/userManagement/updateUser.html'));
 
 })
-app.get('/getUsers', requireLogin, (req, res) => {
+app.get('/userManagement/getUsers', requireLogin, (req, res) => {
 
   res.sendFile(path.join(__dirname, '/views/userManagement/getUsers.html'));
 
@@ -65,12 +65,12 @@ app.get('/menu', requireLogin, (req, res) => {
 
 })
 
-app.get('/getProds', requireLogin, (req, res) => {
+app.get('/productManagement/getProds', requireLogin, (req, res) => {
 
   res.sendFile(path.join(__dirname, '/views/productManagement/getProds.html'));
 
 })
-app.get('/addProds', requireLogin, (req, res) => {
+app.get('/productManagement/addProds', requireLogin, (req, res) => {
 
   res.sendFile(path.join(__dirname, '/views/productManagement/addProds.html'));
 

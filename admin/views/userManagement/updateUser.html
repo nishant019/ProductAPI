@@ -47,7 +47,6 @@
     <script type="text/javascript" src="/menu.js">  </script>
 
     <script>
-
         const userName = document.getElementById('userName')
         const email = document.getElementById('email');
         const role = document.getElementById('userRole');
@@ -57,7 +56,6 @@
 
 
         const loco = new URL(window.location.href)
-        console.log(loco.searchParams.get("role"))
         document.addEventListener("DOMContentLoaded", function () {
             userName.value = loco.searchParams.get("userName");
             email.value = loco.searchParams.get("email");

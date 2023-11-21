@@ -26,6 +26,7 @@
         <th>Created Date</th>
         <th>Created By</th>
         <th>Updated Date</th>
+        <th>Updated By</th>
       </tr>
 
 
@@ -62,16 +63,17 @@
 <script type="text/javascript" src="/menu.js">  </script>
 <script>
 
+  document.addEventListener('DOMContentLoaded', () => {
+    initPage(getUsers, 'userPageLoaded', 'userPageState');
+  });
 
   document.getElementById("previousPage").addEventListener("click", () => handlePreviousPageClick(getUsers));
   document.getElementById("nextPage").addEventListener("click", () => handleNextPageClick(getUsers));
   document.getElementById("pagination-container").addEventListener("click", (e) => handlePageChange(e, getUsers));
-
-  document.addEventListener('DOMContentLoaded', () => initPage(getUsers, 'userPageLoaded', 'userPageState'));
+  
   window.addEventListener("popstate", (event) => {
-
-    historyManagement(userInfoStates);
-
+    initPage(getUsers, 'userPageLoaded', '[{"page":1}]')
+    history.back()
   });
 
 </script>

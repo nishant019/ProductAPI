@@ -37,7 +37,7 @@ function handleLogout(e) {
             if (response.data.success) {
                 // Redirect to the login page on successful logout
                 alert(response.data.success);
-                document.cookie = 'jwtToken='
+                document.cookie = 'jwtToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
                 localStorage.clear()
 
                 window.location.href = 'http://localhost:3001/login';
@@ -50,4 +50,29 @@ function handleLogout(e) {
         });
 
 }
+function getPagePath(url) {
+    const pathname = new URL(url).pathname;
+    return pathname;
+}
+document.addEventListener('DOMContentLoaded', () => {
+    const currentUrl = document.location
+    console.log('currentUrl', currentUrl)
+
+    if (!getPagePath(currentUrl).includes('userManagement')) {
+        localStorage.setItem('userPageLoaded', '');
+        // localStorage.setItem('userPageState', '[{"page":1}]');
+
+    } else if (!getPagePath(currentUrl).includes('productManagement')) {
+        localStorage.setItem('prodPageLoaded', '');
+        // localStorage.setItem('prodPageState', '[{"page":1}]');
+
+    }else {
+        localStorage.setItem('userPageLoaded', '');
+        // localStorage.setItem('userPageState', '[{"page":1}]');
+
+        localStorage.setItem('prodPageLoaded', '');
+        // localStorage.setItem('prodPageState', '[{"page":1}]');
+
+    }
+})
 

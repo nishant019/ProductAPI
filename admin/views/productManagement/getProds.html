@@ -65,15 +65,16 @@
 <script type="text/javascript" src="/loggedin.js">  </script>
 <script type="text/javascript" src="/menu.js">  </script>
 <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    initPage(getProducts, 'prodPageLoaded', 'prodPageState')
+  })
   document.getElementById("previousPage").addEventListener("click", () => handlePreviousPageClick(getProducts));
   document.getElementById("nextPage").addEventListener("click", () => handleNextPageClick(getProducts));
   document.getElementById("pagination-container").addEventListener("click", (e) => handlePageChange(e, getProducts));
 
-  document.addEventListener('DOMContentLoaded', () => initPage(getProducts, 'prodPageLoaded', 'productPageState'));
   window.addEventListener("popstate", (event) => {
-
-    historyManagement(productInfoStates);
-
+    history.back()
+    initPage(getProducts, 'prodPageLoaded', '[{"page":1}]')
   });
 
 </script>

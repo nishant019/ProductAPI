@@ -74,147 +74,140 @@ function getUserDetails() {
       window.location.href = `/manageUserInfo?userId=${userData}&email=${email}&userName=${userName}&role=${role}&fullName=${fullName}`;
     });
   })
-  .catch((error) => {
-    console.error('Error:', error);
-  });
+    .catch((error) => {
+      console.error('Error:', error);
+    });
 }
 
 
 
 function getUsers(currentPage) {
-  axios({
-    method: 'get',
-    url: `${getUsersURL + "?page=" + currentPage}`,
-    headers: headers
-  }).then((response) => {
-    var url = "/getUsers?page=" + currentPage;
-    historyListState(currentPage, url, userInfoStates, "userPageState");
-    const tableData = JSON.parse(JSON.stringify(response.data));
-    const table = document.getElementById("userTable");
-    const tbody = table.querySelector("tbody");
-    tbody.innerHTML = '';
-    let page;
-    tableData.users.forEach((user, index) => {
-      const row = document.createElement("tr");
-      if (currentPage === 1) {
-        page = index;
-      } else {
-        page = index + (currentPage - 1) * 10;
-      }
-      row.innerHTML = `
-        <td>${page + 1}</td>
-        <td>${user.userName}</td>
-        <td>${user.email}</td>
-        <td>${user.fullName}</td>
-        <td>${user.userId}</td>
-        <td>${user.status}</td>
-        <td>${user.role}</td>
-        <td>${user.createddate}</td>
-        <td>${user.createdby}</td>
-        <td>${user.updateddate}</td>
-        <td>${user.updatedby}</td>
-        <td><button class="edit-button">Edit</button></td>
-        <td><button class="delete-button" style="color:red">Delete</button></td>
-      `;
-      tbody.appendChild(row);
-    });
-    document.getElementById("userCount").innerHTML = tableData.totalData;
-    document.getElementById("pageCount").innerHTML = tableData.totalPages;
-    document.getElementById("pageNumber").innerHTML = tableData.currentPage;
-    createPagination(tableData.totalPages, tableData.currentPage);
-    maxPages = tableData.totalPages;
+  axios.get(`${getUsersURL}?page=${currentPage}`, { headers })
+    .then((response) => {
+      const tableData = response.data;
+      const table = document.getElementById("userTable");
+      const tbody = table.querySelector("tbody");
+      tbody.innerHTML = '';
 
-    const editButtons = document.querySelectorAll(".edit-button");
-    const deleteButtons = document.querySelectorAll(".delete-button");
-
-    deleteButtons.forEach((button, index) => {
-      button.addEventListener("click", (e) => {
-        e.preventDefault();
-        const userId = tableData.users[index].userId;
-        deleteUserTable(userId);
+      tableData.users.forEach((user, index) => {
+        const row = document.createElement("tr");
+        const page = (currentPage === 1) ? index : index + (currentPage - 1) * 10;
+        row.innerHTML = `
+                  <td>${page + 1}</td>
+                  <td>${user.userName}</td>
+                  <td>${user.email}</td>
+                  <td>${user.fullName}</td>
+                  <td>${user.userId}</td>
+                  <td>${user.status}</td>
+                  <td>${user.role}</td>
+                  <td>${user.createddate}</td>
+                  <td>${user.createdby}</td>
+                  <td>${user.updateddate}</td>
+                  <td>${user.updatedby}</td>
+                  <td><button class="edit-button">Edit</button></td>
+                  <td><button class="delete-button" style="color:red">Delete</button></td>
+              `;
+        tbody.appendChild(row);
       });
-    });
 
-    editButtons.forEach((button, index) => {
-      button.addEventListener("click", (e) => {
-        e.preventDefault();
-        const userId = tableData.users[index].userId;
-        openUserUpdatePage(userId, tableData.users[index]);
+      document.getElementById("userCount").innerHTML = tableData.totalData;
+      document.getElementById("pageCount").innerHTML = tableData.totalPages;
+      document.getElementById("pageNumber").innerHTML = tableData.currentPage;
+      createPagination(tableData.totalPages, tableData.currentPage);
+      maxPages = tableData.totalPages;
+
+      const editButtons = document.querySelectorAll(".edit-button");
+      const deleteButtons = document.querySelectorAll(".delete-button");
+
+      deleteButtons.forEach((button, index) => {
+        button.addEventListener("click", (e) => {
+          e.preventDefault();
+          const userId = tableData.users[index].userId;
+          deleteUserTable(userId);
+        });
       });
+
+      editButtons.forEach((button, index) => {
+        button.addEventListener("click", (e) => {
+          e.preventDefault();
+          const userId = tableData.users[index].userId;
+          openUserUpdatePage(userId, tableData.users[index]);
+        });
+      });
+
+      const url = `/userManagement/getUsers?page=${currentPage}`;
+      historyListState(currentPage, url, userInfoStates,"userPageState");
+    })
+    .catch((error) => {
+      console.error('Error:', error);
     });
-  })
-  .catch((error) => {
-    console.error('Error:', error);
-  });
 }
+
 
 function getProducts(currentPage) {
-  axios({
-    method: 'get',
-    url: `${getProdsUrl + "?page=" + currentPage}`,
-    headers: headers
-  }).then((response) => {
-    var url = "/getProds?page=" + currentPage;
-    historyListState(currentPage, url, productInfoStates, "productPageState");
-    const tableData = JSON.parse(JSON.stringify(response.data));
-    const table = document.getElementById("userTable");
-    const tbody = table.querySelector("tbody");
-    tbody.innerHTML = '';
-    let page;
-    tableData.prods.forEach((prod, index) => {
-      const row = document.createElement("tr");
-      if (currentPage === 1) {
-        page = index;
-      } else {
-        page = index + (currentPage - 1) * 10;
-      }
-      row.innerHTML = `
-        <td>${page + 1}</td>
-        <td>${prod.prodId}</td>
-        <td>${prod.prodName}</td>
-        <td>${prod.prodLocation}</td>
-        <td>${prod.prodLocation1}</td>
-        <td>${prod.prodLocation2}</td>
-        <td>${prod.prodImage}</td>
-        <td>${prod.prodTitle}</td>
-        <td>${prod.prodDescription}</td>
-        <td>${prod.user}</td>
-        <td>${prod.createddate}</td>
-        <td>${prod.updateddate}</td>
-        <td>${prod.updatedBy}</td>
-        <td><button class="edit-button">Edit</button></td>
-        <td><button class="delete-button" style="color:red">Delete</button></td>
-      `;
-      tbody.appendChild(row);
-    });
-    document.getElementById("userCount").innerHTML = tableData.totalData;
-    document.getElementById("pageCount").innerHTML = tableData.totalPages;
-    document.getElementById("pageNumber").innerHTML = tableData.currentPage;
-    createPagination(tableData.totalPages, tableData.currentPage);
-    maxPages = tableData.totalPages;
+  axios.get(`${getProdsUrl}?page=${currentPage}`, { headers })
+    .then((response) => {
+      const tableData = response.data;
+      const table = document.getElementById("userTable");
+      const tbody = table.querySelector("tbody");
+      tbody.innerHTML = '';
 
-    const editButtons = document.querySelectorAll(".edit-button");
-    const deleteButtons = document.querySelectorAll(".delete-button");
-
-    deleteButtons.forEach((button, index) => {
-      button.addEventListener("click", (e) => {
-        e.preventDefault();
-        const userId = tableData.users[index].userId;
-        deleteUserTable(userId);
+      tableData.prods.forEach((prod, index) => {
+        const row = document.createElement("tr");
+        const page = (currentPage === 1) ? index : index + (currentPage - 1) * 10;
+        row.innerHTML = `
+          <td>${page + 1}</td>
+          <td>${prod.prodId}</td>
+          <td>${prod.prodName}</td>
+          <td>${prod.prodLocation}</td>
+          <td>${prod.prodLocation1}</td>
+          <td>${prod.prodLocation2}</td>
+          <td>${prod.prodImage}</td>
+          <td>${prod.prodTitle}</td>
+          <td>${prod.prodDescription}</td>
+          <td>${prod.user}</td>
+          <td>${prod.createddate}</td>
+          <td>${prod.updateddate}</td>
+          <td>${prod.updatedBy}</td>
+          <td><button class="edit-button">Edit</button></td>
+          <td><button class="delete-button" style="color:red">Delete</button></td>
+        `;
+        tbody.appendChild(row);
       });
-    });
 
-    editButtons.forEach((button, index) => {
-      button.addEventListener("click", () => {
-        const userId = tableData.users[index].userId;
-        openUserUpdatePage(userId, tableData.users[index]);
+      document.getElementById("userCount").innerHTML = tableData.totalData;
+      document.getElementById("pageCount").innerHTML = tableData.totalPages;
+      document.getElementById("pageNumber").innerHTML = tableData.currentPage;
+      createPagination(tableData.totalPages, tableData.currentPage);
+      maxPages = tableData.totalPages;
+
+      const editButtons = document.querySelectorAll(".edit-button");
+      const deleteButtons = document.querySelectorAll(".delete-button");
+
+      deleteButtons.forEach((button, index) => {
+        button.addEventListener("click", (e) => {
+          e.preventDefault();
+          const prodId = tableData.prods[index].prodId;
+          deleteProduct(prodId);
+        });
       });
+
+      editButtons.forEach((button, index) => {
+        button.addEventListener("click", (e) => {
+          e.preventDefault();
+          const prodId = tableData.prods[index].prodId;
+          openProdUpdatePage(prodId, tableData.prods[index]);
+        });
+      });
+
+      const url = `/productManagement/getProds?page=${currentPage}`;
+      historyListState(currentPage, url, productInfoStates, "prodPageState");
+    })
+    .catch((error) => {
+      console.error('Error:', error);
     });
-  })
-  .catch((error) => {
-    console.error('Error:', error);
-  });
 }
+
 
 function changePassword(data) {
   axios({
@@ -250,7 +243,7 @@ function openUserUpdatePage(userData, tableData) {
   const role = tableData.role;
   const status = tableData.status;
   const fullName = tableData.fullName;
-  window.location.href = `/updateUser?userId=${userData}&email=${email}&userName=${userName}&role=${role}&status=${status}&fullName=${fullName}`;
+  window.location.href = `/userManagement/updateUser?userId=${userData}&email=${email}&userName=${userName}&role=${role}&status=${status}&fullName=${fullName}`;
 }
 
 function deleteUserTable(userId) {
@@ -259,7 +252,7 @@ function deleteUserTable(userId) {
     window.location.reload();
     window.alert("User is deleted!");
   } else {
-    window.location.href = '/getUsers';
+    window.location.href = '/userManagement/getUsers';
   }
 }
 
@@ -318,7 +311,7 @@ function updateUser(data) {
       success.style.color = 'black';
       success.innerHTML = '';
     }, 3000);
-    window.location.href = new URL(document.referrer).origin + "/getUsers";
+    window.location.href = new URL(document.referrer).origin + "/userManagement/getUsers";
   }).catch((error) => {
     const errorMessage = JSON.parse(JSON.stringify(error.response.data)).error;
     errorMsg.style.color = 'red';
@@ -342,7 +335,7 @@ function deleteUser(userId) {
     setTimeout(() => {
       success.style.color = 'black';
       success.innerHTML = '';
-      window.location.href = '/getUsers';
+      window.location.href = '/userManagement/getUsers';
     }, 3000);
   }).catch((error) => {
     const errorMessage = JSON.parse(JSON.stringify(error.response.data)).error;
