@@ -45,37 +45,5 @@ login.addEventListener('submit', async (e) => {
             error.innerHTML = '';
         }, 3000);
 
-    }).finally(e => {
-
-    });
+    })
 })
-//         if (response.status === 200) {
-//             res.json({ message: 'Login successful', data: response.data });
-//         } else {
-//             res.status(response.status).json({ message: 'Unexpected response', data: response.data });
-//         }
-//     } catch (error) {
-//         if (error.response) {
-//             // The request was made, but the server responded with an error status code
-//             errorMessage = `Request failed with status ${error.response.status}`;
-//         } else if (error.request) {
-//             // The request was made but no response was received
-//             errorMessage = 'No response received from the server';
-//         } else {
-//             // Something else went wrong
-//             errorMessage = error.message;
-//         }
-//         error.innerText = errorMessage
-
-//         // res.status(500).json({ message: errorMessage, data: JSON.parse(JSON.stringify(error.response.data)) });
-//     }
-// });
-
-// axios.post('/login', async (req, res) => {
-
-// axios.post(apiUrl, { username, password }, { headers })
-
-
-
-// });
-

@@ -223,7 +223,7 @@ function checkUserRole(req, res, next) {
 
   pool.query('SELECT role FROM adminuser WHERE userId = ?', [userId], (err, result) => {
     if (err) {
-      return res.status(500).json({ error: 'Database error' });
+      return res.status(500).json({ error: 'Internal Server error' });
     }
 
     if (result.length === 0) {
@@ -614,7 +614,7 @@ app.post('/addProds', bearer, (req, res) => {
           if (error) {
             res.status(500).json({ error: 'Internal Server Error' });
           } else {
-            res.status(201).json({ message: 'product created successfully' });
+            res.status(201).json({ message: 'Product created successfully' });
           }
         })
         // })
@@ -623,59 +623,190 @@ app.post('/addProds', bearer, (req, res) => {
   })
 })
 
-app.get('/getProds', bearer, checkUserRole, (req, res) => {
-  const userId = req.headers.loggedinuser
-  const page = parseInt(req.query.page) || 1; // Get the requested page number
-  const offset = (page - 1) * itemsPerPage; // Calculate the offset
-  let pageArr = []
-  let sql, dataCount; // SQL query to retrieve data
+app.put('/updateProds/:id', bearer, (req, res, next) => {
+  const prodId = req.params.id;
+  const loggedInUser = req.headers.loggedinuser;
+  const {
+    prodName,
+    prodLocation,
+    prodLocation1,
+    prodLocation2,
+    prodImage,
+    prodTitle,
+    prodDescription,
+  } = req.body;
+  const updatedBy = loggedInUser;
+  const updateddate = Date.now();
+  const productTable = {
+    prodId,
+    prodName,
+    prodLocation,
+    prodLocation1,
+    prodLocation2,
+    prodImage,
+    prodTitle,
+    prodDescription,
+    updateddate,
+    updatedBy,
+  };
 
   checkTokenExpiry(req, res, () => {
-
-    if (userId === ':id') {
-      pool.query('SELECT * FROM prods', (error, result) => {
-        res.status(200).json({ prods: result })
-        if (error) {
-          res.status(500).json({ error: 'Internal Server Error' });
-          return;
-        }
-      })
-    } else {
-      if (req.isAdmin === 1) {
-        sql = 'SELECT * FROM prods LIMIT ? OFFSET ?'
-        dataCountSql = 'SELECT COUNT(*) as total FROM prods'
-        pageArr.push(itemsPerPage, offset)
-      } else {
-        sql = 'SELECT * FROM prods where user = ? LIMIT ? OFFSET ?'
-        dataCountSql = 'SELECT COUNT(*) as total FROM prods where user = ?'
-        pageArr.push(userId, itemsPerPage, offset)
+    pool.query('SELECT role FROM adminuser WHERE userId = ?', [loggedInUser], (error, result) => {
+      if (error) {
+        console.log(error)
+        res.status(500).json({ error: 'Internal Server Error' });
+        return;
       }
-      pool.query(sql, pageArr, (error, results) => {
-        if (error) {
-          res.status(500).json({ error: 'Internal Server Error' });
-        } else {
-          pool.query(dataCountSql, userId, (error, totalCountResult) => {
+
+      if (result.length > 0 && result[0].role === 69) {
+        pool.query(
+          'UPDATE prods SET ? WHERE prodId = ?',
+          [productTable, prodId],
+          (error, result) => {
             if (error) {
-              console.error('Error fetching total count:', error);
-              res.status(500).json({ error: 'Internal Server Error' });
+              console.error('Error updating user:', error);
+              res.status(500).send('Internal Server Error');
             } else {
-              const totalData = totalCountResult[0].total;
-              const totalPages = Math.ceil(totalData / itemsPerPage);
-
-              res.json({
-                prods: results,
-                totalData,
-                totalPages,
-                currentPage: page,
-              });
+              res.status(200).send({ message: 'Product updated successfully' });
             }
-          });
-        }
-      });
+          }
+        );
+      } else {
+        pool.query('SELECT prodId FROM prods WHERE user = ? AND prodId = ?', [loggedInUser, prodId], (error, result) => {
+          if (error) {
+            console.log(error)
 
+            res.status(500).json({ error: 'Internal Server Error' });
+            return;
+          }
+
+          if (result.length > 0) {
+            // User can edit only their own products
+            pool.query(
+              'UPDATE prods SET ? WHERE prodId = ?',
+              [productTable, prodId],
+              (error, result) => {
+                if (error) {
+                  console.error('Error updating user:', error);
+                  res.status(500).send('Internal Server Error');
+                } else {
+                  res.status(200).send({ message: 'Product updated successfully' });
+                }
+              }
+            );
+          } else {
+            // User doesn't have permission to edit this prod
+            res.status(403).send({ error: 'Unauthorized - Insufficient privileges' });
+          }
+        });
+      }
+    });
+  });
+});
+
+app.delete('/deleteProd/:id', bearer, (req, res, next) => {
+  const prodId = req.params.id;
+  const loggedInUser = req.headers.loggedinuser;
+
+  checkTokenExpiry(req, res, () => {
+    pool.query('SELECT role FROM adminuser WHERE userId = ?', [loggedInUser], (error, result) => {
+      if (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+        return;
+      }
+
+      if (result.length > 0 && result[0].role === 69) {
+        pool.query(
+          'DELETE FROM prods WHERE prodId = ?',
+          [prodId],
+          (error, result) => {
+            if (error) {
+              console.error('Error deleting product:', error);
+              res.status(500).send('Internal Server Error');
+            } else {
+              res.status(200).send({ message: 'Product deleted successfully' });
+            }
+          }
+        );
+      } else {
+        pool.query('SELECT prodId FROM prods WHERE user = ? AND prodId = ?', [loggedInUser, prodId], (error, result) => {
+          if (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal Server Error' });
+            return;
+          }
+
+          if (result.length > 0) {
+            // User can delete only their own products
+            pool.query(
+              'DELETE FROM prods WHERE prodId = ?',
+              [prodId],
+              (error, result) => {
+                if (error) {
+                  console.error('Error deleting product:', error);
+                  res.status(500).send('Internal Server Error');
+                } else {
+                  res.status(200).send({ message: 'Product deleted successfully' });
+                }
+              }
+            );
+          } else {
+            // User doesn't have permission to delete this product
+            res.status(403).send({ error: 'Unauthorized - Insufficient privileges' });
+          }
+        });
+      }
+    });
+  });
+});
+
+
+app.get('/getProds/:id', bearer, checkUserRole, (req, res) => {
+  const prodId = req.params.id;
+  const userId = req.headers.loggedinuser;
+  const page = parseInt(req.query.page) || 1;
+  const offset = (page - 1) * itemsPerPage;
+  let sql, dataCountSql, queryParams;
+
+  checkTokenExpiry(req, res, () => {
+    if (prodId === ':id') {
+      sql = req.isAdmin === 1 ? 'SELECT * FROM prods LIMIT ? OFFSET ?' : 'SELECT * FROM prods WHERE user = ? LIMIT ? OFFSET ?';
+      dataCountSql = req.isAdmin === 1 ? 'SELECT COUNT(*) as total FROM prods' : 'SELECT COUNT(*) as total FROM prods WHERE user = ?';
+      queryParams = req.isAdmin === 1 ? [itemsPerPage, offset] : [userId, itemsPerPage, offset];
+    } else {
+      sql = req.isAdmin === 1 ? 'SELECT * FROM prods WHERE prodId = ? LIMIT ? OFFSET ?' : 'SELECT * FROM prods WHERE user = ? AND prodId = ? LIMIT ? OFFSET ?';
+      dataCountSql = req.isAdmin === 1 ? 'SELECT COUNT(*) as total FROM prods WHERE prodId = ?' : 'SELECT COUNT(*) as total FROM prods WHERE user = ? AND prodId = ?';
+      queryParams = req.isAdmin === 1 ? [prodId, itemsPerPage, offset] : [userId, prodId, itemsPerPage, offset];
     }
-  })
-})
+
+    pool.query(sql, queryParams, (error, results) => {
+      if (error) {
+        res.status(500).json({ error: 'Internal Server Error' });
+      } else {
+        const countParams = queryParams.filter(param => typeof param === 'string');
+
+        pool.query(dataCountSql, countParams, (error, totalCountResult) => {
+          if (error) {
+            console.error('Error fetching total count:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
+          } else {
+            const totalData = totalCountResult[0].total;
+            const totalPages = Math.ceil(totalData / itemsPerPage);
+
+            res.json({
+              prods: results,
+              totalData,
+              totalPages,
+              currentPage: page,
+            });
+          }
+        });
+      }
+    });
+  });
+});
+
 
 
 app.get('/getUserDetails', bearer, (req, res) => {
@@ -729,51 +860,51 @@ app.post('/logoutAdmin', bearer, (req, res) => {
   })
 });
 
-app.get('/getAdminUsers', bearer, superPrivilege, (req, res) => {
-  const userId = req.headers.loggedinuser
+app.get('/getAdminUsers/:id', bearer, checkUserRole, (req, res) => {
+  const userId = req.params.id;
+  const loggedInUser = req.headers.loggedinuser;
+  const page = parseInt(req.query.page) || 1;
+  const offset = (page - 1) * itemsPerPage;
+  let sql, dataCountSql, queryParams;
 
-  const page = parseInt(req.query.page) || 1; // Get the requested page number
-  const offset = (page - 1) * itemsPerPage; // Calculate the offset
-  const sql = 'SELECT * FROM adminuser LIMIT ? OFFSET ?'; // SQL query to retrieve data
   checkTokenExpiry(req, res, () => {
     if (userId === ':id') {
-      pool.query('SELECT * FROM adminuser', (error, result) => {
-        res.status(200).json({ users: result })
-        if (error) {
-          res.status(500).json({ error: 'Internal Server Error' });
-          return;
-        }
-      })
+      sql = req.isAdmin === 1 ? 'SELECT * FROM adminuser LIMIT ? OFFSET ?' : 'SELECT * FROM adminuser WHERE userId = ? LIMIT ? OFFSET ?';
+      dataCountSql = req.isAdmin === 1 ? 'SELECT COUNT(*) as total FROM adminuser' : 'SELECT COUNT(*) as total FROM adminuser WHERE userId = ?';
+      queryParams = req.isAdmin === 1 ? [itemsPerPage, offset] : [loggedInUser, itemsPerPage, offset];
     } else {
-      pool.query(sql, [itemsPerPage, offset], (error, results) => {
-        if (error) {
-          console.error('Error executing SQL query:', error);
-          res.status(500).json({ error: 'Internal Server Error' });
-        } else {
-          // Fetch the total count of records
-          pool.query('SELECT COUNT(*) as total FROM adminuser', (error, totalCountResult) => {
-            if (error) {
-              console.error('Error fetching total count:', error);
-              res.status(500).json({ error: 'Internal Server Error' });
-            } else {
-              const totalData = totalCountResult[0].total;
-              const totalPages = Math.ceil(totalData / itemsPerPage);
-
-              res.json({
-                users: results,
-                totalData,
-                totalPages,
-                currentPage: page,
-              });
-            }
-          });
-        }
-      });
+      sql = req.isAdmin === 1 ? 'SELECT * FROM adminuser WHERE userId = ? LIMIT ? OFFSET ?' : 'SELECT * FROM adminuser WHERE userId = ? AND userId = ? LIMIT ? OFFSET ?';
+      dataCountSql = req.isAdmin === 1 ? 'SELECT COUNT(*) as total FROM adminuser WHERE userId = ?' : 'SELECT COUNT(*) as total FROM users WHERE userId = ? AND user_id = ?';
+      queryParams = req.isAdmin === 1 ? [userId, itemsPerPage, offset] : [loggedInUser, userId, itemsPerPage, offset];
     }
-  })
 
+    pool.query(sql, queryParams, (error, results) => {
+      if (error) {
+        res.status(500).json({ error: 'Internal Server Error' });
+      } else {
+        const countParams = queryParams.filter(param => typeof param === 'string');
 
+        pool.query(dataCountSql, countParams, (error, totalCountResult) => {
+          if (error) {
+            console.error('Error fetching total count:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
+          } else {
+            const totalData = totalCountResult[0].total;
+            const totalPages = Math.ceil(totalData / itemsPerPage);
+
+            res.json({
+              users: results,
+              totalData,
+              totalPages,
+              currentPage: page,
+            });
+          }
+        });
+      }
+    });
+  });
 });
+
 
 
 app.listen(3000, () => {
