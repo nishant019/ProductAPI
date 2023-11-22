@@ -23,9 +23,11 @@
         <br>
         <label for="prodLocation2">Location 2:</label>
         <input type="text" id="prodLocation2" name="prodLocation2">
-        <br>
-        <label for="prodImage">Image URL:</label>
-        <input type="text" id="prodImage" name="prodImage">
+        <!-- <br>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <input type="file" id="fileInput" name="prodImages" accept="image/*" multiple>
+            <button type="button" onclick="uploadImages()" >Upload</button>
+        </form> -->
         <br>
         <label for="prodTitle">Title:</label>
         <input type="text" id="prodTitle" name="prodTitle">
@@ -37,8 +39,8 @@
         <input type="submit" id="addProductButton" value="Add Product">
     </form>
 
-    <script type="text/javascript" src="/loggedIn.js"></script>
     <script type="text/javascript" src="/menu.js"></script>
+    <script type="text/javascript" src="/loggedIn.js"></script>
 
     <script>
 
@@ -49,7 +51,7 @@
             const prodLocation = document.getElementById('prodLocation').value;
             const prodLocation1 = document.getElementById('prodLocation1').value;
             const prodLocation2 = document.getElementById('prodLocation2').value;
-            const prodImage = document.getElementById('prodImage').value;
+            // const prodImage = document.getElementById('prodImage').value;
             const prodTitle = document.getElementById('prodTitle').value;
             const prodDescription = document.getElementById('prodDescription').value;
 
@@ -58,12 +60,12 @@
                 "prodLocation": prodLocation,
                 "prodLocation1": prodLocation1,
                 "prodLocation2": prodLocation2,
-                "prodImage": prodImage,
                 "prodTitle": prodTitle,
                 "prodDescription": prodDescription
             };
 
             addProduct(data);
+        
         });
 
     </script>

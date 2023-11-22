@@ -26,6 +26,8 @@ const deleteUserURL = `http://localhost:3000/deleteUser/`;
 const deleteProductUrl = `http://localhost:3000/deleteProd/`
 const updateUserInfoUrl = `http://localhost:3000/manageUserInfo/`;
 const updateProdsUrl = `http://localhost:3000/updateProds/`
+const addProductUrl = `http://localhost:3000/addProds`
+const uploadImageUrl = `http://localhost:3000/uploadImage/`
 function updateUser(data) {
   const loco = new URL(window.location.href);
   const userId = loco.searchParams.get("userId");
@@ -217,7 +219,7 @@ function openUserUpdatePage(userData, tableData) {
   const fullName = tableData.fullName;
   window.location.href = `/userManagement/updateUser?userId=${userData}&email=${email}&userName=${userName}&role=${role}&status=${status}&fullName=${fullName}`;
 }
-function openProdUpdatePage(prodId,prodData) {
+function openProdUpdatePage(prodId, prodData) {
   const {
     prodName,
     prodLocation,
@@ -294,12 +296,47 @@ function addUser(data) {
   });
 }
 
+function addProduct(data) {
+  axios({
+    method: 'post',
+    url: `${addProductUrl}`, // Replace with your product add URL
+    data: JSON.stringify(data),
+    headers: headers
+  }).then((response) => {
+    success.innerText = JSON.stringify(response.data, undefined, 4);
+    success.style.color = 'green';
+    success.innerHTML = response.data.message;
+    setTimeout(() => {
+      document.getElementById('prodName').value = '';
+      document.getElementById('prodLocation').value = '';
+      document.getElementById('prodLocation1').value = '';
+      document.getElementById('prodLocation2').value = '';
+      // document.getElementById('prodImage').value = '';
+      document.getElementById('prodTitle').value = '';
+      document.getElementById('prodDescription').value = '';
+
+      success.style.color = 'black';
+      success.innerHTML = '';
+    }, 3000);
+    window.location.href='/productManagement/uploadImage?prodId='+response.data.prodId
+  }).catch((error) => {
+    const errorMessage = JSON.parse(JSON.stringify(error)).error;
+    errorMsg.style.color = 'red';
+    errorMsg.innerHTML = errorMessage;
+    setTimeout(() => {
+      errorMsg.style.color = 'black';
+      errorMsg.innerHTML = '';
+    }, 3000);
+  });
+}
+
+
 function updateProds(data) {
   const loco = new URL(window.location.href);
   const prodId = loco.searchParams.get("prodId");
   axios({
     method: 'put',
-    url: `${updateProdsUrl}`+`${prodId}`,
+    url: `${updateProdsUrl}` + `${prodId}`,
     data: JSON.stringify(data),
     headers: headers
   }).then((response) => {
@@ -349,7 +386,7 @@ function deleteUser(userId) {
     }, 3000);
   });
 }
-function deleteProduct(prodId){
+function deleteProduct(prodId) {
   axios({
     method: 'delete',
     url: `${deleteProductUrl + prodId}`,
@@ -392,7 +429,7 @@ function getProducts(currentPage) {
           <td>${prod.prodLocation}</td>
           <td>${prod.prodLocation1}</td>
           <td>${prod.prodLocation2}</td>
-          <td>${prod.prodImage}</td>
+          <td><img id="prodImage" src=${new URL(response.request.responseURL).origin + prod.prodImage}></td>
           <td>${prod.prodTitle}</td>
           <td>${prod.prodDescription}</td>
           <td>${prod.user}</td>
@@ -402,7 +439,10 @@ function getProducts(currentPage) {
           <td><button class="edit-button">Edit</button></td>
           <td><button class="delete-button" style="color:red">Delete</button></td>
         `;
+
+
         tbody.appendChild(row);
+
       });
 
       document.getElementById("userCount").innerHTML = tableData.totalData;
@@ -436,6 +476,26 @@ function getProducts(currentPage) {
     .catch((error) => {
       console.error('Error:', error);
     });
+}
+
+function uploadImages() {
+  const fileInput = document.getElementById('fileInput');
+  const file = fileInput.files[0]; // Get the selected file
+
+  const formData = new FormData();
+  formData.append('prodImage', file);
+
+  axios.post(`${uploadImageUrl}${prodId}`, formData, {
+    headers: { ...headers, 'Content-Type': 'multipart/form-data' }
+  })
+  .then(response => {
+    console.log('Upload successful:', response.data);
+    
+  })
+  .catch(error => {
+    console.error('Error uploading image:', error);
+    // Handle error if needed
+  });
 }
 
 

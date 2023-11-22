@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Image Upload</title>
+</head>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<body>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" id="fileInput" name="prodImages" multiple>
+        <button type="button" id='imgUpload'>Upload</button>
+    </form>
+</body>
+<script type="text/javascript" src="/loggedIn.js"></script>
+
+<script>
+
+    const loco = new URL(window.location.href);
+    const prodId = loco.searchParams.get("prodId");
+    document.getElementById('imgUpload').addEventListener('click', () => {
+        uploadImages(prodId)
+    })
+</script>
+
+</html>

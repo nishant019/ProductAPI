@@ -81,6 +81,12 @@ app.get('/productManagement/updateProds', requireLogin, (req, res) => {
 
 });
 
+app.get('/productManagement/uploadImage', requireLogin, (req, res) => {
+
+  res.sendFile(path.join(__dirname, '/views/productManagement/addImages.html'));
+
+});
+
 app.get('/pagination.js', (req, res) => {
   res.sendFile(path.join(__dirname, '/scripts/pagination.js'));
 

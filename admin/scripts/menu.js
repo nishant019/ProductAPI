@@ -56,7 +56,6 @@ function getPagePath(url) {
 }
 document.addEventListener('DOMContentLoaded', () => {
     const currentUrl = document.location
-    console.log('currentUrl', currentUrl)
 
     if (!getPagePath(currentUrl).includes('userManagement')) {
         localStorage.setItem('userPageLoaded', '');

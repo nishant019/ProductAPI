@@ -1,6 +1,8 @@
 const express = require('express');
 const mysql = require('mysql');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const path = require('path');
 // const axios = require('axios');
 const cors = require('cors'); // Import the cors middleware
 
@@ -17,6 +19,7 @@ const pool = mysql.createPool({
   password: '',
   database: 'my api db',
 });
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const basicAuth = (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -242,24 +245,117 @@ function checkUserRole(req, res, next) {
   });
 }
 
-// pool.query(`SELECT role FROM adminuser WHERE userId=?`, [req.headers.loggedinuser], (error, response) => {
-//   if (error) {
-//     res.status(500).json({ error: 'Internal Server Error' });
-//     return;
-//   }
-//   if (response.length > 0) {
-//     if (response[0].role === 69) {
-//       return next();
-//     } else {
-//       res.status(403).json({ error: 'Forbidden Request' });
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    const ext = path.extname(file.originalname);
+    cb(null, `${file.fieldname}-${Date.now()}${ext}`);
+  }
+});
 
-//     }
-//   } else {
-//     res.status(401).json({ error: "Logged in user not found" })
-//   }
-// })
+const upload = multer({ storage: storage });
+
+app.post('/uploadImage/:prodId', bearer, upload.array('prodImage',10), (req, res) => {
+  const prodId = req.params.prodId;
+  const loggedInUser = req.headers.loggedinuser;
+  const uploadedImages = req.files; // Access the uploaded image using req.file
+  if (!uploadedImages || uploadedImages.length === 0) {
+    return res.status(400).send('No files were uploaded.');
+  }
+
+  const imageTable = uploadedImages.map(file => {
+    const imageUrl = `/uploads/${file.filename}`; // Adjust the URL/path as needed
+
+    return {
+      prodId,
+      imageUrl,
+      createddate: new Date(),
+      createdby: loggedInUser,
+    };
+  });
 
 
+  pool.query('INSERT INTO productImages (prodId, imageUrl, createddate, createdby) VALUES ?', [imageTable.map(e => Object.values(e))], (error, result) => {
+    if (error) {
+      console.error('Error uploading image:', error);
+      res.status(500).send('Internal Server Error');
+    } else {
+      console.log('Image uploaded:', imageTable);
+      res.status(200).send({ message: 'Image uploaded successfully', imageTable });
+    }
+  });
+});
+
+
+
+app.put('/updateImage/:imageId', bearer, (req, res, next) => {
+  const imageId = req.params.imageId;
+  const loggedInUser = req.headers.loggedinuser;
+  const { imageUrl } = req.body;
+
+  checkTokenExpiry(req, res, () => {
+    pool.query('SELECT role FROM adminuser WHERE userId = ?', [loggedInUser], (error, result) => {
+      if (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+        return;
+      }
+
+      if (result.length > 0 && result[0].role === 69) {
+        const updatedBy = loggedInUser;
+        const updateddate = new Date();
+
+        const imageTable = {
+          imageUrl,
+          updateddate,
+          updatedby: loggedInUser,
+        };
+
+        pool.query('UPDATE productimages SET ? WHERE imageId = ?', [imageTable, imageId], (error, result) => {
+          if (error) {
+            console.error('Error updating image:', error);
+            res.status(500).send('Internal Server Error');
+          } else {
+            res.status(200).send({ message: 'Image updated successfully' });
+          }
+        });
+      } else {
+        res.status(403).send({ error: 'Unauthorized - Insufficient privileges' });
+      }
+    });
+  });
+});
+
+// Method to delete an image associated with a product
+app.delete('/deleteImage/:imageId', bearer, (req, res, next) => {
+  const imageId = req.params.imageId;
+  const loggedInUser = req.headers.loggedinuser;
+
+  checkTokenExpiry(req, res, () => {
+    pool.query('SELECT role FROM adminuser WHERE userId = ?', [loggedInUser], (error, result) => {
+      if (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+        return;
+      }
+
+      if (result.length > 0 && result[0].role === 69) {
+        pool.query('DELETE FROM productimages WHERE imageId = ?', [imageId], (error, result) => {
+          if (error) {
+            console.error('Error deleting image:', error);
+            res.status(500).send('Internal Server Error');
+          } else {
+            res.status(200).send({ message: 'Image deleted successfully' });
+          }
+        });
+      } else {
+        res.status(403).send({ error: 'Unauthorized - Insufficient privileges' });
+      }
+    });
+  });
+});
 
 
 
@@ -614,7 +710,8 @@ app.post('/addProds', bearer, (req, res) => {
           if (error) {
             res.status(500).json({ error: 'Internal Server Error' });
           } else {
-            res.status(201).json({ message: 'Product created successfully' });
+            // console.log(result)
+            res.status(201).json({ message: 'Product created successfully',prodId });
           }
         })
         // })
