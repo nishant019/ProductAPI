@@ -36,6 +36,8 @@
         <p id="error"></p>
         <input type="submit" id="updateProductButton" value="Update Product">
     </form>
+    <button id="uploadImage" href="">Upload Image</button>
+
 
     <script type="text/javascript" src="/loggedIn.js"></script>
     <script type="text/javascript" src="/menu.js"></script>
@@ -77,7 +79,7 @@
             updateProds(data);
         });
 
-
+        uploadImageButton(loco.searchParams.get("prodId"))
     </script>
 </body>
 

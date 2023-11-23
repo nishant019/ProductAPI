@@ -4,13 +4,33 @@
 <head>
     <title>Image Upload</title>
 </head>
+<style>
+    #productImages {
+        max-width: 100%;
+        /* Ensures images don't exceed their container */
+        height: auto;
+        /* Maintains aspect ratio */
+        width: 20%;
+        /* Custom size for images within the container */
+        margin-right: 10px;
+    }
+
+    .image-wrapper {
+        display: flex;
+    }
+</style>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 <body>
+
+
     <form id="uploadForm" enctype="multipart/form-data">
         <input type="file" id="fileInput" name="prodImages" multiple>
         <button type="button" id='imgUpload'>Upload</button>
     </form>
+    <br>
+    <div id="productImage">
+    </div>
 </body>
 <script type="text/javascript" src="/loggedIn.js"></script>
 
@@ -21,6 +41,55 @@
     document.getElementById('imgUpload').addEventListener('click', () => {
         uploadImages(prodId)
     })
+    const showImages = async () => {
+        try {
+            const imageUrls = await getProductImage(prodId);
+            console.log('Product Image Data:', imageUrls);
+
+            const imageContainer = document.getElementById('productImage');
+            imageContainer.innerHTML = '';
+
+            imageUrls.forEach(imageUrl => {
+                const pathname = new URL(imageUrl).pathname;
+
+                console.log("Image ID:", pathname);
+
+                const imageWrapper = document.createElement('div');
+                imageWrapper.setAttribute('class', 'image-wrapper');
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                // Assuming deleteButton is your delete button element
+                deleteButton.addEventListener('click', () => {
+                    const confirmation = confirm('Are you sure you want to delete this image?');
+                    if (confirmation) {
+                        deleteImage(encodeURIComponent(pathname)); // Trigger deleteImage function with the image pathname
+                    } else {
+                        // Handle if user cancels deletion
+                        console.log('Deletion cancelled by user');
+                    }
+                });
+
+
+                const imgElement = document.createElement('img');
+                imgElement.setAttribute('id', 'productImages');
+                imgElement.src = imageUrl;
+                imgElement.alt = 'Product Image';
+
+                imageWrapper.appendChild(deleteButton);
+                imageWrapper.appendChild(imgElement);
+
+                imageContainer.appendChild(imageWrapper);
+            });
+        } catch (err) {
+            console.error('Error:', err);
+        }
+    };
+
+    window.onload = showImages
+
+
+
 </script>
 
 </html>

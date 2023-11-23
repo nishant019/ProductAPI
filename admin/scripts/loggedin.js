@@ -28,6 +28,10 @@ const updateUserInfoUrl = `http://localhost:3000/manageUserInfo/`;
 const updateProdsUrl = `http://localhost:3000/updateProds/`
 const addProductUrl = `http://localhost:3000/addProds`
 const uploadImageUrl = `http://localhost:3000/uploadImage/`
+
+const deleteImageUrl = `http://localhost:3000/deleteImage/`
+const getProdUrl = 'http://localhost:3000/getProds/'
+const getImageUrl = 'http://localhost:3000/prodImage/'
 function updateUser(data) {
   const loco = new URL(window.location.href);
   const userId = loco.searchParams.get("userId");
@@ -318,7 +322,7 @@ function addProduct(data) {
       success.style.color = 'black';
       success.innerHTML = '';
     }, 3000);
-    window.location.href='/productManagement/uploadImage?prodId='+response.data.prodId
+    window.location.href = '/productManagement/uploadImage?prodId=' + response.data.prodId
   }).catch((error) => {
     const errorMessage = JSON.parse(JSON.stringify(error)).error;
     errorMsg.style.color = 'red';
@@ -411,6 +415,11 @@ function deleteProduct(prodId) {
   });
 }
 
+function viewProdDetails(prodId) {
+  window.location.href = '/productManagement/getProdDetail?prodId=' + prodId
+}
+
+
 function getProducts(currentPage) {
   axios.get(`${getProdsUrl}${'/:id'}?page=${currentPage}`, { headers })
     .then((response) => {
@@ -429,7 +438,6 @@ function getProducts(currentPage) {
           <td>${prod.prodLocation}</td>
           <td>${prod.prodLocation1}</td>
           <td>${prod.prodLocation2}</td>
-          <td><img id="prodImage" src=${new URL(response.request.responseURL).origin + prod.prodImage}></td>
           <td>${prod.prodTitle}</td>
           <td>${prod.prodDescription}</td>
           <td>${prod.user}</td>
@@ -437,7 +445,11 @@ function getProducts(currentPage) {
           <td>${prod.updateddate}</td>
           <td>${prod.updatedBy}</td>
           <td><button class="edit-button">Edit</button></td>
+          <td><button class="image-button" style="color:blue">Add Images</button></td>
+
           <td><button class="delete-button" style="color:red">Delete</button></td>
+          <td><button class="view-button" style="color:green">View Details</button></td>
+          
         `;
 
 
@@ -453,6 +465,8 @@ function getProducts(currentPage) {
 
       const editButtons = document.querySelectorAll(".edit-button");
       const deleteButtons = document.querySelectorAll(".delete-button");
+      const detailsButton = document.querySelectorAll(".view-button");
+      const imageButton = document.querySelectorAll(".image-button");
 
       deleteButtons.forEach((button, index) => {
         button.addEventListener("click", (e) => {
@@ -469,6 +483,27 @@ function getProducts(currentPage) {
           openProdUpdatePage(prodId, tableData.prods[index]);
         });
       });
+      detailsButton.forEach((button, index) => {
+        button.addEventListener("click", (e) => {
+          e.preventDefault();
+          const prodId = tableData.prods[index].prodId;
+          viewProdDetails(prodId);
+        });
+      });
+      imageButton.forEach((button, index) => {
+        button.addEventListener("click", (e) => {
+          e.preventDefault();
+          const prodId = tableData.prods[index].prodId;
+          const imgUrl = (document.location.origin)
+          // console.log('imgurl',)
+          const newUrl = new URL(imgUrl + '/productManagement/uploadImage')
+          newUrl.searchParams.set('prodId', prodId);
+
+          const modifiedUrlString = newUrl.toString();
+          window.location.href = modifiedUrlString
+
+        });
+      });
 
       const url = `/productManagement/getProds?page=${currentPage}`;
       historyListState(currentPage, url, productInfoStates, "prodPageState");
@@ -478,24 +513,100 @@ function getProducts(currentPage) {
     });
 }
 
-function uploadImages() {
+function uploadImages(prodId) {
   const fileInput = document.getElementById('fileInput');
-  const file = fileInput.files[0]; // Get the selected file
+  const files = fileInput.files; // Get all selected files
 
   const formData = new FormData();
-  formData.append('prodImage', file);
 
+  for (let i = 0; i < files.length; i++) {
+    formData.append('prodImage', files[i]);
+  }
   axios.post(`${uploadImageUrl}${prodId}`, formData, {
     headers: { ...headers, 'Content-Type': 'multipart/form-data' }
   })
-  .then(response => {
-    console.log('Upload successful:', response.data);
-    
-  })
-  .catch(error => {
-    console.error('Error uploading image:', error);
-    // Handle error if needed
-  });
+    .then(response => {
+      console.log('Upload successful:', response.data);
+      window.location.href = '/productManagement/getProdDetail?prodId=' + prodId
+    })
+    .catch(error => {
+      console.error('Error uploading image:', error);
+      // Handle error if needed
+    });
 }
 
+const getProduct = async (productId) => {
+  try {
+    const response = await axios.get(`${getProdsUrl}/${productId}`, { headers });
+    return response.data.prods[0];
+  } catch (error) {
+    console.error('Error fetching product:', error);
+    throw error;
+  }
+};
 
+const getProductImage = async (productId) => {
+  try {
+    const response = await axios.get(`${getImageUrl}${productId}`);
+    return response.data.result.map(item => new URL(response.request.responseURL).origin + item.imageUrl);
+  } catch (error) {
+    console.error('Error fetching product image:', error);
+    throw error;
+  }
+};
+
+const displayProduct = async (productId) => {
+  try {
+    const productData = await getProduct(productId);
+
+    document.getElementById('productInfo').innerHTML = `
+      <h2>${productData.prodName}</h2>
+      <p>Title: ${productData.prodTitle}</p>
+
+      <p>Location: ${productData.prodLocation}</p>
+      <p>Location1: ${productData.prodLocation1}</p>
+      <p>Location2: ${productData.prodLocation2}</p>
+      <p>Description: ${productData.prodDescription}</p>
+    `;
+
+    // Fetch and display product images
+    const imageUrls = await getProductImage(productId);
+    console.log('Product Image Data:', imageUrls);
+
+    // Display the images (if available)
+    const imageContainer = document.getElementById('productImage');
+    imageContainer.innerHTML = ''; // Clear existing content
+
+    imageUrls.forEach(imageUrl => {
+      const imgElement = document.createElement('img');
+      imgElement.setAttribute('id', 'productImages');
+      imgElement.src = imageUrl;
+      imgElement.alt = 'Product Image';
+      imageContainer.appendChild(imgElement);
+    });
+  } catch (err) {
+    console.error('Error:', err);
+  }
+};
+
+async function deleteImage(imagePath) {
+  console.log(`${deleteImageUrl}${imagePath}`)
+  
+  try {
+    const response = await axios.delete(`${deleteImageUrl}${imagePath}`, {
+      headers
+    });
+    window.location.reload()
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting image:', error);
+    throw error; // Throw the error for handling in the calling code if needed
+  }
+}
+
+function uploadImageButton(prodId) {
+  document.getElementById("uploadImage").addEventListener('click', (e) => {
+    e.preventDefault()
+    window.location.href = window.location.origin + "/productManagement/uploadImage?prodId=" + prodId
+  })
+}

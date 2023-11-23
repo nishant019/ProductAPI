@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Product Details</title>
+</head>
+<style>
+  #productImages {
+    max-width: 100%;
+    /* Ensures images don't exceed their container */
+    height: auto;
+    /* Maintains aspect ratio */
+    width: 20%;
+    /* Custom size for images within the container */
+    margin-right: 10px;
+  }
+</style>
+
+<body>
+  <h1>Product Details</h1>
+
+  <div id="productInfo">
+    <!-- Product information will be displayed here -->
+  </div>
+
+  <div id="productImage">
+    <!-- Product image will be displayed here -->
+  </div>
+  <button id="uploadImage" href="">Upload Image</button>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script type="text/javascript" src="/loggedin.js">  </script>
+  <!-- <script type="text/javascript" src="/menu.js">  </script> -->
+  <script>
+    const url = new URL(window.location.href)
+    const prodId = url.searchParams.get('prodId')
+    window.onload = displayProduct(prodId);
+    uploadImageButton(prodId)
+  </script>
+</body>
+
+</html>
