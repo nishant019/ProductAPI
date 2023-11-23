@@ -364,6 +364,7 @@ app.delete('/deleteImage/:imageUrl', bearer, (req, res, next) => {
   const imageUrl = decodeURIComponent(encodedImgURl)
   const loggedInUser = req.headers.loggedinuser;
   const replacedUrl = imageUrl.replace('/image', '/uploads');
+  const imagePath = path.join('D:', 'productapi', replacedUrl);
 
   checkTokenExpiry(req, res, () => {
     pool.query('SELECT role FROM adminuser WHERE userId = ?', [loggedInUser], (error, result) => {
@@ -373,56 +374,40 @@ app.delete('/deleteImage/:imageUrl', bearer, (req, res, next) => {
       }
 
       if (result.length > 0 && result[0].role === 69) {
-        pool.query('DELETE FROM productimages WHERE imageUrl = ?', [imageUrl], (error, result) => {
+        deleteImage(imageUrl, imagePath, res);
+      } else {
+        pool.query('SELECT p.createdBy FROM productimages pi JOIN prods p ON pi.prodId = p.prodId WHERE pi.imageUrl = ?', [imageUrl], (error, result) => {
           if (error) {
+            console.error('Error retrieving image details:', error);
             res.status(500).send('Internal Server Error');
+          } else if (result.length > 0 && result[0].createdBy === loggedInUser) {
+            deleteImage(imageUrl, imagePath, res);
           } else {
-            const imagePath = path.join('D:', 'productAPI', replacedUrl);
-            fs.unlink(imagePath, (err) => {
-              if (err) {
-                console.error('Error deleting image file:', err);
-                res.status(500).send('Internal Server Error');
-              } else {
-                res.status(200).send({ message: 'Image deleted successfully' });
-              }
-            });
+            res.status(403).send({ error: 'Unauthorized - Insufficient privileges' });
           }
         });
-      } else {
-        pool.query(
-          'SELECT p.createdBy FROM productimages pi JOIN prods p ON pi.prodId = p.prodId WHERE pi.imageUrl = ?',
-          [imageUrl],
-          (error, result) => {
-            if (error) {
-              console.error('Error retrieving image details:', error);
-              res.status(500).send('Internal Server Error');
-            } else if (result.length > 0 && result[0].createdBy === loggedInUser) {
-              pool.query('DELETE FROM productimages WHERE imageUrl = ?', [imageUrl], (error, result) => {
-                if (error) {
-                  console.error('Error deleting image from database:', error);
-                  res.status(500).send('Internal Server Error');
-                } else {
-                  // Remove image from the server's file system
-                  const imagePath = replacedUrl; // Replace this with your image directory path
-                  fs.unlink(imagePath, (err) => {
-                    if (err) {
-                      console.error('Error deleting image file:', err);
-                      res.status(500).send('Internal Server Error');
-                    } else {
-                      res.status(200).send({ message: 'Image deleted successfully' });
-                    }
-                  });
-                }
-              });
-            } else {
-              res.status(403).send({ error: 'Unauthorized - Insufficient privileges' });
-            }
-          }
-        );
       }
     });
   });
 });
+
+function deleteImage(imageUrl, replacedUrl, res) {
+  pool.query('DELETE FROM productimages WHERE imageUrl = ?', [imageUrl], (error, result) => {
+    if (error) {
+      res.status(500).send('Internal Server Error');
+    } else {
+      fs.unlink(replacedUrl, (err) => {
+        if (err) {
+          console.error('Error deleting image file:', err);
+          res.status(500).send('Internal Server Error');
+        } else {
+          res.status(200).send({ message: 'Image deleted successfully' });
+        }
+      });
+    }
+  });
+}
+
 
 
 app.use(express.json()); // Parse JSON request bodies
@@ -851,19 +836,10 @@ app.delete('/deleteProd/:id', bearer, (req, res, next) => {
       }
 
       if (result.length > 0 && result[0].role === 69) {
-        pool.query(
-          'DELETE FROM prods WHERE prodId = ?',
-          [prodId],
-          (error, result) => {
-            if (error) {
-              console.error('Error deleting product:', error);
-              res.status(500).send('Internal Server Error');
-            } else {
-              res.status(200).send({ message: 'Product deleted successfully' });
-            }
-          }
-        );
+        // Admin can delete any product
+        deleteProduct(prodId, res);
       } else {
+        // Check if the user has permission to delete the product
         pool.query('SELECT prodId FROM prods WHERE user = ? AND prodId = ?', [loggedInUser, prodId], (error, result) => {
           if (error) {
             console.error(error);
@@ -873,18 +849,7 @@ app.delete('/deleteProd/:id', bearer, (req, res, next) => {
 
           if (result.length > 0) {
             // User can delete only their own products
-            pool.query(
-              'DELETE FROM prods WHERE prodId = ?',
-              [prodId],
-              (error, result) => {
-                if (error) {
-                  console.error('Error deleting product:', error);
-                  res.status(500).send('Internal Server Error');
-                } else {
-                  res.status(200).send({ message: 'Product deleted successfully' });
-                }
-              }
-            );
+            deleteProduct(prodId, res);
           } else {
             // User doesn't have permission to delete this product
             res.status(403).send({ error: 'Unauthorized - Insufficient privileges' });
@@ -894,6 +859,48 @@ app.delete('/deleteProd/:id', bearer, (req, res, next) => {
     });
   });
 });
+
+function deleteProduct(prodId, res) {
+  pool.query('DELETE FROM prods WHERE prodId = ?', [prodId], (error, result) => {
+    if (error) {
+      console.error('Error deleting product:', error);
+      res.status(500).send('Internal Server Error');
+    } else {
+      // Delete associated images from productimages table and server file system
+      deleteProductImages(prodId, res);
+    }
+  });
+}
+
+function deleteProductImages(prodId, res) {
+  pool.query('SELECT imageUrl FROM productimages WHERE prodId = ?', [prodId], (error, results) => {
+    if (error) {
+      console.error('Error retrieving product images:', error);
+      res.status(500).send('Internal Server Error');
+    } else {
+      results.forEach((image) => {
+        // const replacedUrl = image.imageUrl.replace('/image', '/uploads');
+        const imagePath = path.join('D:', 'productapi', 'uploads',prodId);
+
+        fs.unlink(imagePath, (err) => {
+          if (err) {
+            console.error('Error deleting image file:', err);
+          } else {
+            console.log(`Deleted image file: ${imagePath}`);
+          }
+        });
+      });
+
+      pool.query('DELETE FROM productimages WHERE prodId = ?', [prodId], (deleteError, deleteResults) => {
+        if (deleteError) {
+          res.status(500).send('Internal Server Error');
+        } else {
+          res.status(200).send(`Deleted ${deleteResults.affectedRows} images for prodId: ${prodId}`);
+        }
+      });
+    }
+  });
+}
 
 
 app.get('/getProds/:id', bearer, checkUserRole, (req, res) => {
