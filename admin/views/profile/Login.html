@@ -1,20 +1,35 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Login</title>
 </head>
+<link rel="stylesheet" href="/profile.css">
+
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<body>
-    <form id= "loginForm" action="/login" method="post">
-        <label for="username">Username:</label>
-        <input type="text" id="userName" name="userName">
-        <br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password">
-        <br>
-        <p id="error"></p>
-        <input type="submit" id = "Login" value="Login">
-    </form>
+
+<body class="login">
+    <div class="loginContainer">
+        <form id="loginForm" action="/login" method="post">
+            <div class="loginFormContent">
+                <div class="iconContainer">
+                    <img id='icon' src="adminIcon" alt="Admin Icon">
+                    <br>
+                    <span>Login to continue...</span>
+                </div>
+                <br>
+
+                <input type="text" id="userName" name="userName" placeholder="Enter your user name" required>
+                <br>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                <br>
+                <p id="error"></p>
+                <input type="submit" id="loginButton" value="Login">
+            </div>
+        </form>
+    </div>
+
     <script type="text/javascript" src="/scr.js">  </script>
 </body>
+
 </html>

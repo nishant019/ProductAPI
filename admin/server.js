@@ -19,7 +19,7 @@ const requireLogin = (req, res, next) => {
     res.redirect('/login');
   }
 }
-
+//profile
 app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, '/views/profile/Login.html'));
 });
@@ -41,7 +41,7 @@ app.get('/changePassword', requireLogin, (req, res) => {
   res.sendFile(path.join(__dirname, '/views/profile/changePassword.html'));
 
 });
-
+//user management
 app.get('/userManagement/addUser', requireLogin, (req, res) => {
 
   res.sendFile(path.join(__dirname, '/views/userManagement/addUser.html'));
@@ -58,12 +58,13 @@ app.get('/userManagement/getUsers', requireLogin, (req, res) => {
   res.sendFile(path.join(__dirname, '/views/userManagement/getUsers.html'));
 
 })
-
+//menu
 app.get('/menu', requireLogin, (req, res) => {
 
   res.sendFile(path.join(__dirname, '/views/navs/menu.html'));
 
 })
+//product management
 
 app.get('/productManagement/getProds', requireLogin, (req, res) => {
 
@@ -92,6 +93,7 @@ app.get('/productManagement/getProdDetail', requireLogin, (req, res) => {
 
 });
 
+//scripts
 app.get('/pagination.js', (req, res) => {
   res.sendFile(path.join(__dirname, '/scripts/pagination.js'));
 
@@ -105,12 +107,32 @@ app.get('/loggedin.js', (req, res) => {
   res.sendFile(path.join(__dirname, '/scripts/loggedin.js'));
 
 });
+app.get('/profile.js', (req, res) => {
+  res.sendFile(path.join(__dirname, '/scripts/profile.js'));
+
+});
+app.get('/userMgmt.js', (req, res) => {
+  res.sendFile(path.join(__dirname, '/scripts/userMgmt.js'));
+
+});
+app.get('/prodMgmt.js', (req, res) => {
+  res.sendFile(path.join(__dirname, '/scripts/prodMgmt.js'));
+
+});
 app.get('/menu.js', (req, res) => {
   res.sendFile(path.join(__dirname, '/scripts/menu.js'));
 
 });
 app.get('/pagination.css', (req, res) => {
   res.sendFile(path.join(__dirname, '/styles/pagination.css'));
+
+});
+app.get('/adminIcon', (req, res) => {
+  res.sendFile(path.join(__dirname, '/styles/icons/admin.png'));
+
+});
+app.get('/profile.css', (req, res) => {
+  res.sendFile(path.join(__dirname, '/styles/profile.css'));
 
 });
 

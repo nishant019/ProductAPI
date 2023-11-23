@@ -18,6 +18,8 @@
 </style>
 
 <body>
+  <div id="menu"></div>
+
   <h1>Product Details</h1>
 
   <div id="productInfo">
@@ -27,10 +29,11 @@
   <div id="productImage">
     <!-- Product image will be displayed here -->
   </div>
-  <button id="uploadImage" href="">Upload Image</button>
+  <button id="uploadImage" href="">Manage Image</button>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script type="text/javascript" src="/loggedin.js">  </script>
-  <!-- <script type="text/javascript" src="/menu.js">  </script> -->
+  <script type="text/javascript" src="/loggedIn.js"></script>
+  <script type="text/javascript" src="/prodMgmt.js">  </script>
+  <script type="text/javascript" src="/menu.js">  </script>
   <script>
     const url = new URL(window.location.href)
     const prodId = url.searchParams.get('prodId')

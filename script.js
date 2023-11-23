@@ -353,6 +353,8 @@ app.get('/image/:prodId/:imageName', (req, res) => {
   }
 });
 
+
+
 app.get('/prodImage/:prodId', (req, res) => {
   const { prodId, imageName } = req.params;
   pool.query('SELECT imageUrl FROM productimages WHERE prodId = ?', [prodId], (error, result) => {
