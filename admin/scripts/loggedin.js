@@ -526,12 +526,17 @@ function uploadImages(prodId) {
     headers: { ...headers, 'Content-Type': 'multipart/form-data' }
   })
     .then(response => {
-      console.log('Upload successful:', response.data);
       window.location.href = '/productManagement/getProdDetail?prodId=' + prodId
     })
     .catch(error => {
-      console.error('Error uploading image:', error);
-      // Handle error if needed
+      const errorMsg = document.getElementById('error')
+      const errorMessage = JSON.parse(JSON.stringify(error.response.data));
+      errorMsg.style.color = 'red';
+      errorMsg.innerHTML = errorMessage;
+      setTimeout(() => {
+        errorMsg.style.color = 'black';
+        errorMsg.innerHTML = '';
+      }, 3000);      // Handle error if needed
     });
 }
 
@@ -591,7 +596,7 @@ const displayProduct = async (productId) => {
 
 async function deleteImage(imagePath) {
   console.log(`${deleteImageUrl}${imagePath}`)
-  
+
   try {
     const response = await axios.delete(`${deleteImageUrl}${imagePath}`, {
       headers
@@ -599,7 +604,15 @@ async function deleteImage(imagePath) {
     window.location.reload()
     return response.data;
   } catch (error) {
-    console.error('Error deleting image:', error);
+
+    const errorMsg = document.getElementById('error')
+    const errorMessage = JSON.parse(JSON.stringify(error.response.data)).error;
+    errorMsg.style.color = 'red';
+    errorMsg.innerHTML = errorMessage;
+    setTimeout(() => {
+      errorMsg.style.color = 'black';
+      errorMsg.innerHTML = '';
+    }, 3000);      // Handle error if needed
     throw error; // Throw the error for handling in the calling code if needed
   }
 }
