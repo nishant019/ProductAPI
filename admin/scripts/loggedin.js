@@ -1,6 +1,6 @@
 const errorMsg = document.getElementById('error');
 const login = document.getElementById('loginForm');
-const profile = document.getElementById('profile');
+// const profile = document.getElementById('profile');
 const success = document.getElementById('success');
 const loggedInUser = localStorage.getItem("loggedInUser");
 const headers = {

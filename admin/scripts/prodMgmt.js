@@ -23,11 +23,10 @@ function getProducts(currentPage) {
             <td>${prod.createddate}</td>
             <td>${prod.updateddate}</td>
             <td>${prod.updatedBy}</td>
-            <td><button class="edit-button">Edit</button></td>
-            <td><button class="image-button" style="color:blue">Add Images</button></td>
+            <td><button id="edit" class="edit-button">Edit</button></td>
   
-            <td><button class="delete-button" style="color:red">Delete</button></td>
-            <td><button class="view-button" style="color:green">View Details</button></td>
+            <td><button id="delete" class="delete-button">Delete</button></td>
+            <td><button class="view-button">View Details</button></td>
             
           `;
 
@@ -69,21 +68,6 @@ function getProducts(currentPage) {
                     viewProdDetails(prodId);
                 });
             });
-            imageButton.forEach((button, index) => {
-                button.addEventListener("click", (e) => {
-                    e.preventDefault();
-                    const prodId = tableData.prods[index].prodId;
-                    const imgUrl = (document.location.origin)
-                    // console.log('imgurl',)
-                    const newUrl = new URL(imgUrl + '/productManagement/uploadImage')
-                    newUrl.searchParams.set('prodId', prodId);
-
-                    const modifiedUrlString = newUrl.toString();
-                    window.location.href = modifiedUrlString
-
-                });
-            });
-
             const url = `/productManagement/getProds?page=${currentPage}`;
             historyListState(currentPage, url, productInfoStates, "prodPageState");
         })
@@ -93,28 +77,9 @@ function getProducts(currentPage) {
 }
 
 //to update product event
-function openProdUpdatePage(prodId, prodData) {
-    const {
-        prodName,
-        prodLocation,
-        prodLocation1,
-        prodLocation2,
-        prodImage,
-        prodTitle,
-        prodDescription
-    } = prodData;
+function openProdUpdatePage(prodId) {
 
-    const queryParams = new URLSearchParams({
-        prodName,
-        prodLocation,
-        prodLocation1,
-        prodLocation2,
-        prodImage,
-        prodTitle,
-        prodDescription
-    });
-
-    window.location.href = `/productManagement/updateProds?prodId=${prodId}&${queryParams.toString()}`;
+    window.location.href = `/productManagement/updateProds?prodId=${prodId}`;
 }
 
 //request for update product
@@ -136,7 +101,8 @@ function updateProds(data) {
             success.innerHTML = '';
         }, 3000);
         // Redirect to the product management page
-        window.location.href = new URL(document.referrer).origin + "/productManagement/getProds";
+        window.location.href = '/productManagement/getProdDetail?prodId=' + prodId
+        // window.location.href = new URL(document.referrer).origin + "/productManagement/getProds";
     }).catch((error) => {
         const errorMessage = JSON.parse(JSON.stringify(error.response.data)).error;
         errorMsg.style.color = 'red';
@@ -208,7 +174,7 @@ function addProduct(data) {
             success.style.color = 'black';
             success.innerHTML = '';
         }, 3000);
-        window.location.href = '/productManagement/uploadImage?prodId=' + response.data.prodId
+        window.location.href = '/productManagement/getProdDetail?prodId=' + response.data.prodId
     }).catch((error) => {
         const errorMessage = JSON.parse(JSON.stringify(error)).error;
         errorMsg.style.color = 'red';
@@ -228,6 +194,7 @@ function viewProdDetails(prodId) {
 const getProduct = async (productId) => {
     try {
         const response = await axios.get(`${getProdsUrl}/${productId}`, { headers });
+        console.log(response.data.prods[0])
         return response.data.prods[0];
     } catch (error) {
         console.error('Error fetching product:', error);
@@ -252,7 +219,6 @@ function uploadImages(prodId) {
             window.location.href = '/productManagement/getProdDetail?prodId=' + prodId
         })
         .catch(error => {
-            const errorMsg = document.getElementById('error')
             const errorMessage = JSON.parse(JSON.stringify(error.response.data));
             errorMsg.style.color = 'red';
             errorMsg.innerHTML = errorMessage;
@@ -263,13 +229,6 @@ function uploadImages(prodId) {
         });
 }
 
-//upload button event [url rediection]
-function uploadImageButton(prodId) {
-    document.getElementById("uploadImage").addEventListener('click', (e) => {
-        e.preventDefault()
-        window.location.href = window.location.origin + "/productManagement/uploadImage?prodId=" + prodId
-    })
-}
 
 const getProductImage = async (productId) => {
     try {
@@ -280,6 +239,25 @@ const getProductImage = async (productId) => {
         throw error;
     }
 };
+function newDate(msString) {
+    let ms = parseInt(msString, 10);
+    let date = new Date(ms);
+
+    // Format date in 'yyyymmdd' format
+    let year = date.getFullYear();
+    let month = String(date.getMonth() + 1).padStart(2, '0');
+    let day = String(date.getDate()).padStart(2, '0');
+    let formattedDate = `${year}-${month}-${day}`;
+
+    // Format time in 24-hour format
+    let hours = String(date.getHours()).padStart(2, '0');
+    let minutes = String(date.getMinutes()).padStart(2, '0');
+    let seconds = String(date.getSeconds()).padStart(2, '0');
+    let milliseconds = String(date.getMilliseconds()).padStart(3, '0'); // Ensure three digits for milliseconds
+    let formattedTime = `${hours}:${minutes}:${seconds}.${milliseconds}`;
+
+    return `${formattedDate}, ${formattedTime}`;
+}
 
 //displays product on html page
 const displayProduct = async (productId) => {
@@ -294,23 +272,47 @@ const displayProduct = async (productId) => {
         <p>Location1: ${productData.prodLocation1}</p>
         <p>Location2: ${productData.prodLocation2}</p>
         <p>Description: ${productData.prodDescription}</p>
+        <p>Created By: ${productData.user}</p>
+        <p>Created Date: ${newDate(productData.createddate)}</p>
+        <p>Updated By: ${productData.updatedBy}</p>
+        <p>Updated Date: ${newDate(productData.updateddate)}</p>
       `;
+        const imageUrls = await getProductImage(prodId);
 
         // Fetch and display product images
-        const imageUrls = await getProductImage(productId);
-        console.log('Product Image Data:', imageUrls);
-
-        // Display the images (if available)
         const imageContainer = document.getElementById('productImage');
-        imageContainer.innerHTML = ''; // Clear existing content
+        imageContainer.innerHTML = '';
 
+        const imageWrapper = document.createElement('div');
+        imageWrapper.setAttribute('class', 'image-wrapper');
         imageUrls.forEach(imageUrl => {
+            const pathname = new URL(imageUrl).pathname;
+            const imgDiv = document.createElement('div');
+            imgDiv.setAttribute('id', 'imgDiv')
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = '🗑 Delete';
+            deleteButton.setAttribute("id", "deleteimage")
+            deleteButton.addEventListener('click', () => {
+                const confirmation = confirm('Are you sure you want to delete this image?');
+                if (confirmation) {
+                    deleteImage(encodeURIComponent(pathname));
+                } else {
+                    console.log('Deletion cancelled by user');
+                }
+            });
+
+
             const imgElement = document.createElement('img');
             imgElement.setAttribute('id', 'productImages');
             imgElement.src = imageUrl;
             imgElement.alt = 'Product Image';
-            imageContainer.appendChild(imgElement);
-        });
+
+            imageContainer.appendChild(imageWrapper);
+            imageWrapper.appendChild(imgDiv)
+            imgDiv.appendChild(imgElement);
+            imgDiv.appendChild(deleteButton);
+
+        })
     } catch (err) {
         console.error('Error:', err);
     }

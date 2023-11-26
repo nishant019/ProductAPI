@@ -2,85 +2,94 @@
 <html>
 
 <head>
-    <title>Menu</title>
+  <title>Menu</title>
 </head>
 <style>
-    .menu {
-  display: flex; /* Use flexbox to create a horizontal layout */
-}
+  body {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+
+  }
+
+  .menu {
+    display: flex;
+    /* Use flexbox to create a horizontal layout */
+  }
 
 
-    /* Style the dropdown button */
-.dropdown-button {
-  background-color: #3498db;
-  color: white;
-  padding: 10px;
-  margin-right: 10px;
-  border: none;
-  cursor: pointer;
-}
-
-/* Style the dropdown content (hidden by default) */
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #f9f9f9;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
-}
-
-/* Style the links inside the dropdown */
-.dropdown-content a {
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-}
-
-/* Change color on hover */
-.dropdown-content a:hover {
-  background-color: #f1f1f1;
-}
-a{
+  /* Style the dropdown button */
+  .dropdown-button {
+    background-color: #3498db;
+    color: white;
+    padding: 10px;
+    margin-right: 10px;
+    border: none;
     cursor: pointer;
+  }
 
-}
-/* Show the dropdown content when the button is clicked */
-.dropdown:hover .dropdown-content {
-  display: block;
-}
+  /* Style the dropdown content (hidden by default) */
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+  }
 
+  /* Style the links inside the dropdown */
+  .dropdown-content a {
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+  }
+
+  /* Change color on hover */
+  .dropdown-content a:hover {
+    background-color: #f1f1f1;
+  }
+
+  a {
+    cursor: pointer;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+
+  }
+
+  /* Show the dropdown content when the button is clicked */
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
 </style>
-<body>
-    <div class="menu">
-    <div class="dropdown">
-        <button class="dropdown-button">Profile Setting</button>
-        <div class="dropdown-content">
-          <a href="/changePassword">Change Password</a>
-          <a href="/profile">Profile</a>
-          <a id="logout">Log Out</a>
-        </div>
-      </div>
-      
-      <div class="dropdown">
-        <button class="dropdown-button">User Management</button>
-        <div class="dropdown-content">
-          <a href="/userManagement/addUser">+ Add User</a>
-          <a href="/userManagement/getUsers">List Users</a>
-        </div>
-      </div>
 
-      <div class="dropdown">
-        <button class="dropdown-button">Product Management</button>
-        <div class="dropdown-content">
-          <a href="/productManagement/addProds">+ Add Products</a>
-          <a href="/productManagement/getProds">List Products</a>
-        </div>
+<body>
+  <div class="menu">
+    <div class="dropdown">
+      <button class="dropdown-button">Profile Setting</button>
+      <div class="dropdown-content">
+        <a href="/changePassword">Change Password</a>
+        <a href="/profile">Profile</a>
+        <a id="logout">Log Out</a>
       </div>
     </div>
-    <br>
-    <br>
-    
+
+    <div class="dropdown">
+      <button class="dropdown-button">User Management</button>
+      <div class="dropdown-content">
+        <a href="/userManagement/addUser">+ Add User</a>
+        <a href="/userManagement/getUsers">List Users</a>
+      </div>
+    </div>
+
+    <div class="dropdown">
+      <button class="dropdown-button">Product Management</button>
+      <div class="dropdown-content">
+        <a href="/productManagement/addProds">+ Add Products</a>
+        <a href="/productManagement/getProds">List Products</a>
+      </div>
+    </div>
+  </div>
+  <br>
+
+
 </body>
 
 </html>

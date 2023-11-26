@@ -82,11 +82,7 @@ app.get('/productManagement/updateProds', requireLogin, (req, res) => {
 
 });
 
-app.get('/productManagement/uploadImage', requireLogin, (req, res) => {
 
-  res.sendFile(path.join(__dirname, '/views/productManagement/addImages.html'));
-
-});
 app.get('/productManagement/getProdDetail', requireLogin, (req, res) => {
 
   res.sendFile(path.join(__dirname, '/views/productManagement/getProdDetail.html'));
@@ -133,6 +129,10 @@ app.get('/adminIcon', (req, res) => {
 });
 app.get('/profile.css', (req, res) => {
   res.sendFile(path.join(__dirname, '/styles/profile.css'));
+
+});
+app.get('/mainStyle.css', (req, res) => {
+  res.sendFile(path.join(__dirname, '/styles/mainStyle.css'));
 
 });
 

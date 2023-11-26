@@ -5,6 +5,7 @@
   <title>Users List</title>
 </head>
 <link rel="stylesheet" href="/pagination.css">
+<link rel="stylesheet" href="/mainStyle.css">
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <style>
@@ -13,37 +14,36 @@
 
 <body>
   <div id="menu"></div>
-  <table id="userTable" border="1">
-    <thead>
-      <tr>
-        <th>SN</th>
-        <th>User Name</th>
-        <th>Email</th>
-        <th>Full Name</th>
-        <th>User ID</th>
-        <th>Status</th>
-        <th>Role</th>
-        <th>Created Date</th>
-        <th>Created By</th>
-        <th>Updated Date</th>
-        <th>Updated By</th>
-      </tr>
+  <div id="tableBody">
+    <table id="userTable" border="1">
+      <thead>
+        <tr>
+          <th>SN</th>
+          <th>User Name</th>
+          <th>Email</th>
+          <th>Full Name</th>
+          <th>User ID</th>
+          <th>Status</th>
+          <th>Role</th>
+          <th>Created Date</th>
+          <th>Created By</th>
+          <th>Updated Date</th>
+          <th>Updated By</th>
+        </tr>
 
 
-    </thead>
+      </thead>
 
-    <tbody>
-      <!-- Data will be inserted here dynamically -->
-    </tbody>
-  </table>
+      <tbody>
+        <!-- Data will be inserted here dynamically -->
+      </tbody>
+    </table>
+  </div>
   <table style="border:1px">
     <td>Total Users: <a id="userCount"></a></td>&nbsp;
     <td>Total Pages: <a id="pageCount"></a></td>&nbsp;
 
     <td>Page Number: <a id="pageNumber"></a></td>&nbsp;
-    <td>
-      <div id="loadingIndicator" style="display: none;">Loading...</div>
-    </td>
 
   </table>
   <div id="page">
@@ -71,7 +71,7 @@
   document.getElementById("previousPage").addEventListener("click", () => handlePreviousPageClick(getUsers));
   document.getElementById("nextPage").addEventListener("click", () => handleNextPageClick(getUsers));
   document.getElementById("pagination-container").addEventListener("click", (e) => handlePageChange(e, getUsers));
-  
+
   window.addEventListener("popstate", (event) => {
     initPage(getUsers, 'userPageLoaded', '[{"page":1}]')
     history.back()

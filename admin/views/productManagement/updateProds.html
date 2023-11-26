@@ -5,41 +5,132 @@
     <title>Update Product</title>
 </head>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<link rel="stylesheet" href="/mainStyle.css">
 
 <body>
     <div id="menu"></div>
 
     <p id="success"></p>
 
-    <form id="updateProds" method="post">
-        <label for="prodName">Product Name:</label>
-        <input type="text" id="prodName" name="prodName">
-        <br>
-        <label for="prodLocation">Location:</label>
-        <input type="text" id="prodLocation" name="prodLocation">
-        <br>
-        <label for="prodLocation1">Location 1:</label>
-        <input type="text" id="prodLocation1" name="prodLocation1">
-        <br>
-        <label for="prodLocation2">Location 2:</label>
-        <input type="text" id="prodLocation2" name="prodLocation2">
-        <br>
-        <label for="prodImage">Image URL:</label>
-        <input type="text" id="prodImage" name="prodImage">
-        <br>
-        <label for="prodTitle">Title:</label>
-        <input type="text" id="prodTitle" name="prodTitle">
-        <br>
-        <label for="prodDescription">Description:</label>
-        <textarea id="prodDescription" name="prodDescription"></textarea>
-        <br>
-        <p id="error"></p>
-        <input type="submit" id="updateProductButton" value="Update Product">
-    </form>
-    <button id="uploadImage" href="">Manage Image</button>
+    <div class="form-main">
+        <h1 class="pageTitle">Update Product</h1>
+        <p id="success"></p>
+
+        <div class="form-container">
+            <div class="form-column">
+                <form id="updateProduct" method="post">
+
+                    <div class="form-group">
+                        <label for="prodName">Product Name:</label>
+                        <input type="text" id="prodName" name="prodName">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prodTitle">Title:</label>
+                        <input type="text" id="prodTitle" name="prodTitle">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prodSubTitle">Sub Title :</label>
+                        <input type="text" id="prodSubTitle" name="prodSubTitle">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prodSubDesc">Short Description:</label>
+                        <textarea id="prodsubDesc" name="prodsubDesc"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prodDescription">Description:</label>
+                        <textarea id="prodDescription" name="prodDescription"></textarea>
+                    </div>
+
+                </form>
+            </div>
+            <div class="form-column">
+                <form id="updateProduct" method="post">
+                    <div class="form-group">
+                        <label for="category">Product category:</label>
+                        <select id="category">
+                            <option value="" selected>select</option>
+                            <option value="0">Cat 1</option>
+                            <option value="1">Cat 2</option>
+                            <option value="1">Cat 3 </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="subCategroy">Product Sub Categroy:</label>
+                        <select id="subCategroy">
+                            <option value="" selected>select</option>
+                            <option value="0">Sub Cat 1</option>
+                            <option value="1">Sub Cat 2</option>
+                            <option value="1">Sub Cat 3 </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prodType">Product Type:</label>
+                        <select id="prodType">
+                            <option value="" selected>select</option>
+                            <option value="0">Type 1</option>
+                            <option value="1">Type 2</option>
+                            <option value="1">Type 3 </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prodCostQuantity">Cost per Quantity & Quantity Type</label>
+                        <div class="cost-quantity-container">
+                            <span>NPR&nbsp;</span>
+                            <input type="number" id="prodCost" name="prodCost" placeholder="Cost">
+                            <span>per&nbsp;</span>
+                            <input type="number" id="prodQuantity" name="prodQuantity" placeholder="Quantity">
+                            <span>-&nbsp;</span>
+                            <select id="quantityType">
+                                <option value="" selected>type</option>
+                                <option value="0">Packs</option>
+                                <option value="1">Kg</option>
+                                <option value="1">Number</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="prodStatus">ProductStatus:</label>
+                        <select id="prodStatus">
+                            <option value="" selected>select</option>
+                            <option value="1">Active</option>
+                            <option value="0">Blocked</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="form-column">
+                <form id="updateProduct" method="post">
+                    <div class="form-group">
+                        <label for="prodLocation">Location:</label>
+                        <input type="text" id="prodLocation" name="prodLocation">
+                    </div>
+                    <div class="form-group">
+                        <label for="prodLocation1">Location 1:</label>
+                        <input type="text" id="prodLocation1" name="prodLocation1">
+                    </div>
+                    <div class="form-group">
+                        <label for="prodLocation2">Location 2:</label>
+                        <input type="text" id="prodLocation2" name="prodLocation2">
+                    </div>
+
+                </form>
+            </div>
+            <input type="submit" id="updateProductButton" value="Update Product">
+
+        </div>
+    </div>
 
 
-    <script type="text/javascript" src="/loggedIn.js"></script>
+
+
+
     <script type="text/javascript" src="/loggedIn.js"></script>
     <script type="text/javascript" src="/prodMgmt.js">  </script>
     <script type="text/javascript" src="/menu.js">  </script>
@@ -53,20 +144,19 @@
         const prodImage = document.getElementById('prodImage');
         const prodTitle = document.getElementById('prodTitle');
         const prodDescription = document.getElementById('prodDescription');
-
-        // Extracting URL parameters and populating form fields
-        const loco = new URL(window.location.href);
+        
         document.addEventListener("DOMContentLoaded", function () {
-            prodName.value = loco.searchParams.get("prodName");
-            prodLocation.value = loco.searchParams.get("prodLocation");
-            prodLocation1.value = loco.searchParams.get("prodLocation1");
-            prodLocation2.value = loco.searchParams.get("prodLocation2");
-            prodImage.value = loco.searchParams.get("prodImage");
-            prodTitle.value = loco.searchParams.get("prodTitle");
-            prodDescription.value = loco.searchParams.get("prodDescription");
-        });
-
-        // Add event listener for updating product
+        const loco = new URL(window.location.href);
+        const productData = getProduct(loco.searchParams.get("prodId"));
+        productData.then(res => {
+                prodName.value = res.prodName
+                prodLocation.value = res.prodLocation;
+                prodLocation1.value = res.prodLocation1;
+                prodLocation2.value = res.prodLocation2;
+                prodTitle.value = res.prodTitle;
+                prodDescription.value = res.prodDescription
+            });
+        })
         document.getElementById('updateProductButton').addEventListener('click', function (e) {
             e.preventDefault();
             const data = {
@@ -74,14 +164,15 @@
                 "prodLocation": prodLocation.value,
                 "prodLocation1": prodLocation1.value,
                 "prodLocation2": prodLocation2.value,
-                "prodImage": prodImage.value,
                 "prodTitle": prodTitle.value,
                 "prodDescription": prodDescription.value
             };
+
             updateProds(data);
         });
 
-        uploadImageButton(loco.searchParams.get("prodId"))
+        // Add event listener for updating product
+
     </script>
 </body>
 

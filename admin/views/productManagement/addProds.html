@@ -5,39 +5,123 @@
     <title>Add Product</title>
 </head>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<link rel="stylesheet" href="/mainStyle.css">
 
 <body>
     <div id="menu"></div>
+    <div class="form-main">
+        <h1 class="pageTitle">Add New Product</h1>
+        <p id="success"></p>
 
-    <p id="success"></p>
+        <div class="form-container">
+            <div class="form-column">
+                <form id="addProduct" method="post">
 
-    <form id="addProduct" method="post">
-        <label for="prodName">Product Name:</label>
-        <input type="text" id="prodName" name="prodName">
-        <br>
-        <label for="prodLocation">Location:</label>
-        <input type="text" id="prodLocation" name="prodLocation">
-        <br>
-        <label for="prodLocation1">Location 1:</label>
-        <input type="text" id="prodLocation1" name="prodLocation1">
-        <br>
-        <label for="prodLocation2">Location 2:</label>
-        <input type="text" id="prodLocation2" name="prodLocation2">
-        <!-- <br>
-        <form id="uploadForm" enctype="multipart/form-data">
-            <input type="file" id="fileInput" name="prodImages" accept="image/*" multiple>
-            <button type="button" onclick="uploadImages()" >Upload</button>
-        </form> -->
-        <br>
-        <label for="prodTitle">Title:</label>
-        <input type="text" id="prodTitle" name="prodTitle">
-        <br>
-        <label for="prodDescription">Description:</label>
-        <textarea id="prodDescription" name="prodDescription"></textarea>
-        <br>
-        <p id="error"></p>
-        <input type="submit" id="addProductButton" value="Add Product">
-    </form>
+                    <div class="form-group">
+                        <label for="prodName">Product Name:</label>
+                        <input type="text" id="prodName" name="prodName">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prodTitle">Title:</label>
+                        <input type="text" id="prodTitle" name="prodTitle">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prodSubTitle">Sub Title :</label>
+                        <input type="text" id="prodSubTitle" name="prodSubTitle">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prodSubDesc">Short Description:</label>
+                        <textarea id="prodsubDesc" name="prodsubDesc"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prodDescription">Description:</label>
+                        <textarea id="prodDescription" name="prodDescription"></textarea>
+                    </div>
+
+                </form>
+            </div>
+            <div class="form-column">
+                <form id="addProduct" method="post">
+                    <div class="form-group">
+                        <label for="category">Product category:</label>
+                        <select id="category">
+                            <option value="" selected>select</option>
+                            <option value="0">Cat 1</option>
+                            <option value="1">Cat 2</option>
+                            <option value="1">Cat 3 </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="subCategroy">Product Sub Categroy:</label>
+                        <select id="subCategroy">
+                            <option value="" selected>select</option>
+                            <option value="0">Sub Cat 1</option>
+                            <option value="1">Sub Cat 2</option>
+                            <option value="1">Sub Cat 3 </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prodType">Product Type:</label>
+                        <select id="prodType">
+                            <option value="" selected>select</option>
+                            <option value="0">Type 1</option>
+                            <option value="1">Type 2</option>
+                            <option value="1">Type 3 </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prodCostQuantity">Cost per Quantity & Quantity Type</label>
+                        <div class="cost-quantity-container">
+                            <span>NPR&nbsp;</span>
+                            <input type="number" id="prodCost" name="prodCost" placeholder="Cost">
+                            <span>per&nbsp;</span>
+                            <input type="number" id="prodQuantity" name="prodQuantity" placeholder="Quantity">
+                            <span>-&nbsp;</span>
+                            <select id="quantityType">
+                                <option value="" selected>type</option>
+                                <option value="0">Packs</option>
+                                <option value="1">Kg</option>
+                                <option value="1">Number</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="prodStatus">ProductStatus:</label>
+                        <select id="prodStatus">
+                            <option value="" selected>select</option>
+                            <option value="1">Active</option>
+                            <option value="0">Blocked</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="form-column">
+                <form id="addProduct" method="post">
+                    <div class="form-group">
+                        <label for="prodLocation">Location:</label>
+                        <input type="text" id="prodLocation" name="prodLocation">
+                    </div>
+                    <div class="form-group">
+                        <label for="prodLocation1">Location 1:</label>
+                        <input type="text" id="prodLocation1" name="prodLocation1">
+                    </div>
+                    <div class="form-group">
+                        <label for="prodLocation2">Location 2:</label>
+                        <input type="text" id="prodLocation2" name="prodLocation2">
+                    </div>
+                </form>
+            </div>
+            <input type="submit" id="addProductButton" value="Add Product">
+
+        </div>
+    </div>
 
     <script type="text/javascript" src="/loggedIn.js"></script>
     <script type="text/javascript" src="/prodMgmt.js">  </script>
@@ -66,7 +150,7 @@
             };
 
             addProduct(data);
-        
+
         });
 
     </script>

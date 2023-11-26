@@ -4,12 +4,23 @@
 <head>
     <title>Profile</title>
 </head>
+<link rel="stylesheet" href="/profile.css">
+
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 <body>
     <div id="menu"></div>
     <button id="edit">Edit User</button>
-
+    <div id="profileContainer">
+        <h1>User Profile</h1>
+        <div id="profile">
+            <p><strong>User ID:</strong> <span id="userId"></span></p>
+            <p><strong>Username:</strong> <span id="userName"></span></p>
+            <p><strong>Email:</strong> <span id="email"></span></p>
+            <p><strong>Role:</strong> <span id="role"></span></p>
+            <p><strong>Full Name:</strong> <span id="fullName"></span></p>
+        </div>
+    </div>
     <p id="profile"></p>
     <p id="error"></p>
 
@@ -21,13 +32,7 @@
     document.addEventListener("DOMContentLoaded", function () {
         getUserDetails();
     });
-    // document.addEventListener("DOMContentLoaded", function () {
-    //     // Load the menu
-    //     menubar();
-    //     // Add the logout event listener
 
-    // });
-    
 </script>
 
 </html>

@@ -6,30 +6,33 @@
   <title>Product Details</title>
 </head>
 <style>
-  #productImages {
-    max-width: 100%;
-    /* Ensures images don't exceed their container */
-    height: auto;
-    /* Maintains aspect ratio */
-    width: 20%;
-    /* Custom size for images within the container */
-    margin-right: 10px;
-  }
+
 </style>
+<link rel="stylesheet" href="/mainStyle.css">
 
 <body>
   <div id="menu"></div>
 
   <h1>Product Details</h1>
+  <button type="button" id='back'>Update Product</button><br>
 
   <div id="productInfo">
-    <!-- Product information will be displayed here -->
   </div>
-
+  <form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" id="fileInput" name="prodImages" multiple>
+    <button type="button" id='imgUpload'>Upload</button>
+</form>
+<button type="button" id='done'>Done</button><br>
+<h2>Images</h2>
   <div id="productImage">
-    <!-- Product image will be displayed here -->
+  </div><br>
+
+
+
+  <p id="error"></p>
+  <br>
+  <div id="productImage">
   </div>
-  <button id="uploadImage" href="">Manage Image</button>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script type="text/javascript" src="/loggedIn.js"></script>
   <script type="text/javascript" src="/prodMgmt.js">  </script>
@@ -38,7 +41,20 @@
     const url = new URL(window.location.href)
     const prodId = url.searchParams.get('prodId')
     window.onload = displayProduct(prodId);
-    uploadImageButton(prodId)
+
+
+    const loco = new URL(window.location.href);
+    // const prodId = loco.searchParams.get("prodId");
+    document.getElementById('imgUpload').addEventListener('click', () => {
+      uploadImages(prodId)
+    })
+    document.getElementById('back').addEventListener('click', () => {
+      window.location.href = '/productManagement/updateProds?prodId='+prodId
+    })
+    document.getElementById('done').addEventListener('click', () => {
+      window.location.href = '/productManagement/getProds'
+    })
+
   </script>
 </body>
 

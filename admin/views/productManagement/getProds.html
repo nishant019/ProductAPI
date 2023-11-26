@@ -12,8 +12,11 @@
 </style>
 
 <body>
-  
+  <link rel="stylesheet" href="/mainStyle.css">
+
   <div id="menu"></div>
+
+  <div id="tableBody">
   <table id="userTable" border="1">
     <thead>
       <tr>
@@ -38,14 +41,12 @@
       <!-- Data will be inserted here dynamically -->
     </tbody>
   </table>
+</div>
   <table style="border:1px">
     <td>Total Users: <a id="userCount"></a></td>&nbsp;
     <td>Total Pages: <a id="pageCount"></a></td>&nbsp;
 
     <td>Page Number: <a id="pageNumber"></a></td>&nbsp;
-    <td>
-      <div id="loadingIndicator" style="display: none;">Loading...</div>
-    </td>
 
   </table>
   <div id="page">

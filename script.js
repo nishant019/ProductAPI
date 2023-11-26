@@ -320,23 +320,30 @@ app.post('/uploadImage/:prodId', bearer, upload.array('prodImage', 5), (req, res
 
     const imageTable = uploadedImages.map(file => {
       const imageUrl = `/image/${prodId}/${file.filename}`; // Adjust the URL/path as needed
-
+      createddate = Date.now();
       return {
         prodId,
         imageUrl,
-        createddate: new Date(),
+        createddate,
         createdby: loggedInUser,
       };
     });
-
-    pool.query('INSERT INTO productImages (prodId, imageUrl, createddate, createdby) VALUES ?', [imageTable.map(e => Object.values(e))], (error, result) => {
+    pool.query('UPDATE prods set updateddate = ? , updatedby = ? where prodId=?', [Date.now(), loggedInUser, prodId], (error, result) => {
       if (error) {
-        console.error('Error uploading image:', error);
         res.status(500).send('Internal Server Error');
       } else {
-        res.status(200).send({ message: 'Image uploaded successfully', imageTable });
+        pool.query('INSERT INTO productImages (prodId, imageUrl, createddate, createdby) VALUES ?', [imageTable.map(e => Object.values(e))], (error, result) => {
+          if (error) {
+            console.error('Error uploading image:', error);
+            res.status(500).send('Internal Server Error');
+          } else {
+            res.status(200).send({ message: 'Image uploaded successfully', imageTable });
+          }
+        });
       }
     });
+
+
   });
 });
 
@@ -365,14 +372,8 @@ app.get('/prodImage/:prodId', (req, res) => {
       res.status(200).send({ result });
 
     }
-
   })
-
-
 })
-
-
-
 
 app.delete('/deleteImage/:imageUrl', bearer, (req, res, next) => {
   const encodedImgURl = req.params.imageUrl;
@@ -389,7 +390,7 @@ app.delete('/deleteImage/:imageUrl', bearer, (req, res, next) => {
       }
 
       if (result.length > 0 && result[0].role === 69) {
-        deleteImage(imageUrl, imagePath, res);
+        deleteImage(imageUrl, imagePath, res, loggedInUser);
       } else {
         pool.query('SELECT p.user FROM productimages pi JOIN prods p ON pi.prodId = p.prodId WHERE pi.imageUrl = ?', [imageUrl], (error, result) => {
           if (error) {
@@ -398,7 +399,7 @@ app.delete('/deleteImage/:imageUrl', bearer, (req, res, next) => {
           }
           console.log(result)
           if (result.length > 0 && result[0].user === loggedInUser) {
-            deleteImage(imageUrl, imagePath, res);
+            deleteImage(imageUrl, imagePath, res, loggedInUser);
           } else {
             return res.status(403).send({ error: 'Unauthorized - Insufficient privileges' });
           }
@@ -408,22 +409,32 @@ app.delete('/deleteImage/:imageUrl', bearer, (req, res, next) => {
   });
 });
 
-function deleteImage(imageUrl, replacedUrl, res) {
-  pool.query('DELETE FROM productimages WHERE imageUrl = ?', [imageUrl], (error, result) => {
-    if (error) {
-      console.error('Error deleting image from database:', error);
+function deleteImage(imageUrl, replacedUrl, res, loggedInUser) {
+  pool.query('SELECT prodId FROM productimages WHERE imageUrl = ?', [imageUrl], (err, response) => {
+    if (err) {
       return res.status(500).send('Internal Server Error');
-    }
+    } else {
 
-    fs.unlink(replacedUrl, (err) => {
-      if (err) {
-        console.error('Error deleting image file:', err);
-        return res.status(500).send('Internal Server Error');
-      }
-      
-      return res.status(200).send({ message: 'Image deleted successfully' });
-    });
-  });
+      pool.query('DELETE FROM productimages WHERE imageUrl = ?', [imageUrl], (error, result) => {
+        if (error) {
+          console.error('Error deleting image from database:', error);
+          return res.status(500).send('Internal Server Error');
+        }
+
+        fs.unlink(replacedUrl, (err) => {
+          if (err) {
+            console.error('Error deleting image file:', err);
+            return res.status(500).send('Internal Server Error');
+          }
+          pool.query('UPDATE prods set updateddate = ? , updatedby = ? where prodId=?', [Date.now(), loggedInUser, response[0].prodId], (error, result) => {
+
+          })
+          return res.status(200).send({ message: 'Image deleted successfully' });
+        });
+      });
+    }
+  })
+
 }
 
 
@@ -885,7 +896,8 @@ function deleteProduct(prodId, res) {
       console.error('Error deleting product:', error);
       res.status(500).send('Internal Server Error');
     } else {
-      // Delete associated images from productimages table and server file system
+      pool.query('UPDATE prods WHERE prodId = ?', [prodId], (error, result) => { })
+
       deleteProductImages(prodId, res);
     }
   });
@@ -898,8 +910,9 @@ function deleteProductImages(prodId, res) {
       res.status(500).send('Internal Server Error');
     } else {
       results.forEach((image) => {
-        // const replacedUrl = image.imageUrl.replace('/image', '/uploads');
-        const imagePath = path.join('D:', 'productapi', 'uploads',prodId);
+        const urlParts = image.imageUrl.split('/');
+
+        const imagePath = path.join('D:', 'productapi', 'uploads', prodId,urlParts[3]);
 
         fs.unlink(imagePath, (err) => {
           if (err) {
