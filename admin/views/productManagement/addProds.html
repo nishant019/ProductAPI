@@ -46,6 +46,17 @@
             </div>
             <div class="form-column">
                 <form id="addProduct" method="post">
+                    
+                    <div class="form-group">
+                        <label for="prodType">Product Type:</label>
+                        <select id="prodType">
+                            <option value="" selected>select</option>
+                            <option value="0">Type 1</option>
+                            <option value="1">Type 2</option>
+                            <option value="1">Type 3 </option>
+                        </select>
+                    </div>
+                    
                     <div class="form-group">
                         <label for="category">Product category:</label>
                         <select id="category">
@@ -67,22 +78,12 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="prodType">Product Type:</label>
-                        <select id="prodType">
-                            <option value="" selected>select</option>
-                            <option value="0">Type 1</option>
-                            <option value="1">Type 2</option>
-                            <option value="1">Type 3 </option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
                         <label for="prodCostQuantity">Cost per Quantity & Quantity Type</label>
                         <div class="cost-quantity-container">
                             <span>NPR&nbsp;</span>
-                            <input type="number" id="prodCost" name="prodCost" placeholder="Cost">
+                            <input type="number" id="prodCost" min="0" name="prodCost" placeholder="Cost">
                             <span>per&nbsp;</span>
-                            <input type="number" id="prodQuantity" name="prodQuantity" placeholder="Quantity">
+                            <input type="number" id="prodQuantity" min="0" name="prodQuantity" placeholder="Quantity">
                             <span>-&nbsp;</span>
                             <select id="quantityType">
                                 <option value="" selected>type</option>

@@ -912,7 +912,7 @@ function deleteProductImages(prodId, res) {
       results.forEach((image) => {
         const urlParts = image.imageUrl.split('/');
 
-        const imagePath = path.join('D:', 'productapi', 'uploads', prodId,urlParts[3]);
+        const imagePath = path.join('D:', 'productapi', 'uploads', prodId, urlParts[3]);
 
         fs.unlink(imagePath, (err) => {
           if (err) {
@@ -1078,6 +1078,124 @@ app.get('/getAdminUsers/:id', bearer, checkUserRole, (req, res) => {
   });
 });
 
+app.post('/addProductType', bearer, superPrivilege, (req, res) => {
+  const user = req.headers.loggedinuser
+  let prodTypeId
+  const { prodTypeName, status } = req.body;
+  checkTokenExpiry(req, res, () => {
+    pool.query('SELECT * from adminuser where userId = ?', [user], (error, result) => {
+      if (error) {
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
+      const createdby = result[0].userId
+      let createddate
+      createddate = Date.now()
+      pool.query('SELECT MAX(prodTypeId) as last FROM producttype', (e, r) => {
+        if (r[0].last === null) {
+          prodTypeId = 10000
+
+        } else {
+          prodTypeId = r[0].last++ + 1;
+
+        }
+        const productType = { prodTypeId, prodTypeName, status, createdby, createddate };
+
+        pool.query('INSERT INTO producttype SET ?', productType, (error, result) => {
+          if (error) {
+            res.status(500).json({ e: 'Internal Server Error', error });
+          } else {
+            res.status(201).json({ message: 'Product type created successfully' });
+          }
+        })
+      });
+    })
+  })
+
+});
+
+app.get('/getProductType/:id', bearer, superPrivilege, (req, res) => {
+  const prodTypeId = req.params.id
+  checkTokenExpiry(req, res, () => {
+    if (prodTypeId === ':id') {
+      pool.query('SELECT * FROM producttype', (error, result) => {
+        res.status(200).json({ users: result })
+        if (error) {
+          res.status(500).json({ error: 'Internal Server Error' });
+          return;
+        }
+      })
+    } else {
+      pool.query('SELECT * FROM producttype WHERE prodTypeId=?', [prodTypeId], (error, result) => {
+        res.status(200).json({ users: result })
+        if (error) {
+          res.status(500).json({ error: 'Internal Server Error' });
+          return;
+        }
+      })
+    }
+  })
+});
+
+
+app.delete('/deleteProductType/:id', bearer, superPrivilege, (req, res) => {
+  const prodTypeId = req.params.id;
+
+  checkTokenExpiry(req, res, () => {
+    pool.query('SELECT id FROM producttype WHERE prodTypeId = ?', [prodTypeId], (error, result) => {
+      if (error) {
+        res.status(500).json({ error: 'Internal Server Error' })
+        return;
+      } else {
+        if (result.length > 0) {
+          pool.query('DELETE FROM producttype WHERE prodTypeId = ?', [prodTypeId], (error, result) => {
+            if (error) {
+              console.error('Error deleting product type:', error);
+              res.status(500).send('Internal Server Error');
+            } else {
+              res.status(200).send('Product type deleted successfully');
+
+            }
+          });
+        } else {
+          res.status(404).send({ error: 'Product type not found' });
+        }
+      }
+    })
+  })
+});
+
+app.put('/updateProductType/:id', bearer, superPrivilege, (req, res, next) => {
+  const prodTypeId = req.params.id;
+  const loggedInUser = req.headers.loggedinuser
+  const { prodTypeName, status } = req.body;
+  checkTokenExpiry(req, res, () => {
+    const date = Date.now()
+    pool.query('SELECT prodTypeId FROM producttype WHERE prodTypeId = ?', [prodTypeId], (error, result) => {
+      if (error) {
+        res.status(500).json({ error: 'Internal Server Error' })
+        return;
+      }
+      if (result.length > 0) {
+        pool.query(
+          'UPDATE producttype SET prodTypeName = ?, status = ?,updatedby=?,updateddate=? WHERE prodTypeId = ?',
+          [prodTypeName, status, loggedInUser, date, prodTypeId],
+          (error, result) => {
+            if (error) {
+              console.error('Error updating product type:', error);
+              res.status(500).send('Internal Server Error');
+            } else {
+              res.status(200).send({ message: 'product type updated successfully' });
+            }
+          }
+        );
+      } else {
+        res.status(404).send({ error: 'Product Type not found' });
+      }
+    })
+
+
+  })
+})
 
 
 app.listen(3000, () => {

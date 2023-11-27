@@ -68,26 +68,6 @@ function createPagination(totalPages, activePage) {
 
 
 
-// function historyManagement(historyStates) {
-
-//     // historyStates.pop()
-//     if (historyStates.length > 0) {
-//         index = (historyStates[historyStates.length - 1].page)
-//         historyStates.pop()
-//     } 
-//     else {
-//         history.back()
-//         index = 1
-//         history.back()
-//     }
-//     // history.back()
-//     // index = 1
-
-
-
-// }
-
-
 function historyListState(pageNo, url, historyStates, pageState) {
     var pageTitle = "Page " + pageNo;
     const state = { "page": pageNo };
@@ -100,12 +80,14 @@ function historyListState(pageNo, url, historyStates, pageState) {
 function initPage(executionFunction, pageLoaded, pageState) {
     let sta = [];
     let hasPageBeenLoaded = localStorage.getItem(pageLoaded);
+
     if (!hasPageBeenLoaded) {
         localStorage.setItem(pageLoaded, 'true');
         index = 1;
     } else {
         sta = JSON.parse(localStorage.getItem(pageState));
         if (sta) {
+
             index = sta[sta.length - 1].page;
         } else {
             index = 1

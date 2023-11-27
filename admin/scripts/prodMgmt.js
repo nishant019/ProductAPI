@@ -24,13 +24,10 @@ function getProducts(currentPage) {
             <td>${prod.updateddate}</td>
             <td>${prod.updatedBy}</td>
             <td><button id="edit" class="edit-button">Edit</button></td>
-  
             <td><button id="delete" class="delete-button">Delete</button></td>
             <td><button class="view-button">View Details</button></td>
             
           `;
-
-
                 tbody.appendChild(row);
 
             });
@@ -44,12 +41,14 @@ function getProducts(currentPage) {
             const editButtons = document.querySelectorAll(".edit-button");
             const deleteButtons = document.querySelectorAll(".delete-button");
             const detailsButton = document.querySelectorAll(".view-button");
-            const imageButton = document.querySelectorAll(".image-button");
+
+
 
             deleteButtons.forEach((button, index) => {
                 button.addEventListener("click", (e) => {
                     e.preventDefault();
-                    const prodId = tableData.prods[index].prodId;
+                    let prodId = tableData.prods[index].prodId;
+
                     deleteProductTable(prodId);
                 });
             });
@@ -69,6 +68,7 @@ function getProducts(currentPage) {
                 });
             });
             const url = `/productManagement/getProds?page=${currentPage}`;
+
             historyListState(currentPage, url, productInfoStates, "prodPageState");
         })
         .catch((error) => {
@@ -120,6 +120,7 @@ function deleteProductTable(prodId) {
         deleteProduct(prodId);
         window.location.reload();
         window.alert("Product is deleted!");
+
     } else {
         window.location.href = '/productManagement/getProds';
     }
@@ -139,6 +140,7 @@ function deleteProduct(prodId) {
             success.style.color = 'black';
             success.innerHTML = '';
             window.location.href = '/productManagement/getProds';
+            
         }, 3000);
     }).catch((error) => {
         const errorMessage = JSON.parse(JSON.stringify(error.response.data)).error;
