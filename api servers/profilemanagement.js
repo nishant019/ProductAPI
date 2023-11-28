@@ -132,6 +132,22 @@ app.put('/manageUserInfo/:id', bearer, (req, res, next) => {
 
 })
 
+app.get('/getUserDetails', bearer, (req, res) => {
+    const userName = req.headers.loggedinuser;
+    checkTokenExpiry(req, res, () => {
+        pool.query('SELECT userId,userName,email,role,fullName FROM adminuser WHERE userId = ?', [userName], (error, result) => {
+            if (error) {
+                console.error('Error Listing Admin Users', error);
+                res.status(500).json({ error: 'Internal Server Error' })
+            } else {
+                res.status(200).json({ users: result })
+            }
+        })
+    })
+
+
+});
+
 app.put('/changePassword', bearer, (req, res, next) => {
     const { oldPassword, password, confirmPassword } = req.body;
     const loggedInUser = req.headers.loggedinuser

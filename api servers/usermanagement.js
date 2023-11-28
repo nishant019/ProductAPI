@@ -92,22 +92,6 @@ app.get('/getAdminUsers/:id', bearer, checkUserRole, (req, res) => {
     });
 });
 
-app.get('/getUserDetails', bearer, (req, res) => {
-    const userName = req.headers.loggedinuser;
-    checkTokenExpiry(req, res, () => {
-        pool.query('SELECT userId,userName,email,role,fullName FROM adminuser WHERE userId = ?', [userName], (error, result) => {
-            if (error) {
-                console.error('Error Listing Admin Users', error);
-                res.status(500).json({ error: 'Internal Server Error' })
-            } else {
-                res.status(200).json({ users: result })
-            }
-        })
-    })
-
-
-});
-
 app.delete('/deleteUser/:id', bearer, superPrivilege, (req, res) => {
     const userId = req.params.id;
 
