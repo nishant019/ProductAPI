@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Add Category</title>
+</head>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<link rel="stylesheet" href="/mainStyle.css">
+
+<body>
+    <div id="menu"></div>
+    <div class="form-main">
+        <h1 class="pageTitle">Add New Category</h1>
+
+        <div class="form-container">
+            <div class="form-column">
+                <form id="addCategoryForm" method="post">
+
+                    <div class="form-group">
+                        <label for="categoryName">Categroy Name:</label>
+                        <input type="text" id="categoryName" name="categoryName">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="categoryStatus">Categroy Status:</label>
+                        <select id="categoryStatus">
+                            <option value="" selected>select</option>
+                            <option value="0">Blocked</option>
+                            <option value="1">Active</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="productTypeSelect">Product Type Select:</label>
+                        <select id="productTypeSelect">
+                            <option value="" selected>select</option>
+
+                        </select>
+                    </div>
+
+
+                </form>
+                <p id="error"></p>
+                <p id="success"></p>
+
+                <input type="submit" id="addCategory" value="Add Category" />
+            </div>
+
+
+        </div>
+    </div>
+
+    <script type="text/javascript" src="/loggedIn.js"></script>
+    <script type="text/javascript" src="/categoryMgmt.js">  </script>
+    <script type="text/javascript" src="/menu.js">  </script>
+
+    <script>
+
+        document.getElementById('addCategory').addEventListener('click', function (e) {
+            e.preventDefault();
+            const categoryName = document.getElementById('categoryName').value;
+            const prodTypeId = document.getElementById('productTypeSelect').value;
+            const status = document.getElementById('categoryStatus').value;
+
+
+            const data = {
+                categoryName,prodTypeId, status
+            };
+            console.log(data)
+            addCategory(data);
+
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            getProductType()
+        })
+    </script>
+</body>
+
+</html>

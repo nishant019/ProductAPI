@@ -33,7 +33,7 @@ app.post('/addProductType', bearer, superPrivilege, (req, res) => {
 
                 pool.query('INSERT INTO producttype SET ?', productType, (error, result) => {
                     if (error) {
-                        res.status(500).json({ e: 'Internal Server Error', error });
+                        res.status(500).json({ e: 'Internal Server Error' });
                     } else {
                         res.status(201).json({ message: 'Product type created successfully' });
                     }

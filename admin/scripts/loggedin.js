@@ -34,4 +34,13 @@ const deleteImageUrl = `http://localhost:3000/deleteImage/`
 const getProdUrl = 'http://localhost:3000/getProds/'
 const getImageUrl = 'http://localhost:3000/prodImage/'
 
+const addProductTypeUrl = 'http://localhost:3000/addProductType'
+const addCategoryUrl = 'http://localhost:3000/addCategory'
+const getCategoryUrl = 'http://localhost:3000/getCategory/'
 
+
+const getProductTypeUrl = 'http://localhost:3000/getProductType/'
+
+const getSubCategoryUrl = 'http://localhost:3000/getSubCategory/'
+
+const addSubCategoryUrl = 'http://localhost:3000/addSubCategory'

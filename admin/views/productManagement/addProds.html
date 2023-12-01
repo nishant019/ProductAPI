@@ -46,34 +46,26 @@
             </div>
             <div class="form-column">
                 <form id="addProduct" method="post">
-                    
+
                     <div class="form-group">
-                        <label for="prodType">Product Type:</label>
-                        <select id="prodType">
+                        <label for="productTypeSelect">Product Type:</label>
+                        <select id="productTypeSelect">
                             <option value="" selected>select</option>
-                            <option value="0">Type 1</option>
-                            <option value="1">Type 2</option>
-                            <option value="1">Type 3 </option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="category">Product category:</label>
-                        <select id="category">
-                            <option value="" selected>select</option>
-                            <option value="0">Cat 1</option>
-                            <option value="1">Cat 2</option>
-                            <option value="1">Cat 3 </option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="subCategroy">Product Sub Categroy:</label>
-                        <select id="subCategroy">
+                        <label for="categorySelect">Product category:</label>
+                        <select id="categorySelect">
                             <option value="" selected>select</option>
-                            <option value="0">Sub Cat 1</option>
-                            <option value="1">Sub Cat 2</option>
-                            <option value="1">Sub Cat 3 </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="subCategorySelect">Product Sub Category:</label>
+                        <select id="subCategorySelect">
+                            <option value="" selected>select</option>
+
                         </select>
                     </div>
 
@@ -126,9 +118,14 @@
 
     <script type="text/javascript" src="/loggedIn.js"></script>
     <script type="text/javascript" src="/prodMgmt.js">  </script>
+    <script type="text/javascript" src="/categoryMgmt.js">  </script>
+
     <script type="text/javascript" src="/menu.js">  </script>
 
     <script>
+        getProductType()
+
+        getCategoriesDropdown()
 
         document.getElementById('addProductButton').addEventListener('click', function (e) {
             e.preventDefault();
@@ -137,18 +134,38 @@
             const prodLocation = document.getElementById('prodLocation').value;
             const prodLocation1 = document.getElementById('prodLocation1').value;
             const prodLocation2 = document.getElementById('prodLocation2').value;
-            // const prodImage = document.getElementById('prodImage').value;
             const prodTitle = document.getElementById('prodTitle').value;
+            const prodSubTitle = document.getElementById('prodSubTitle').value;
+            const prodShortDescription = document.getElementById('prodsubDesc').value;
             const prodDescription = document.getElementById('prodDescription').value;
+
+
+            const prodType = document.getElementById('productTypeSelect').value;
+            const prodCategory = document.getElementById('categorySelect').value;
+            const prodSubCategory = document.getElementById('subCategorySelect').value;
+            const cost = document.getElementById('prodCost').value;
+            const quantity = document.getElementById('prodQuantity').value;
+            const quantityType = document.getElementById('quantityType').value;
+            const status = document.getElementById('prodStatus').value;
 
             const data = {
                 "prodName": prodName,
                 "prodLocation": prodLocation,
                 "prodLocation1": prodLocation1,
                 "prodLocation2": prodLocation2,
+                "prodSubTitle": prodSubTitle,
                 "prodTitle": prodTitle,
-                "prodDescription": prodDescription
+                "prodShortDescription": prodShortDescription,
+                "prodDescription": prodDescription,
+                "prodType": prodType,
+                "prodCategory": prodCategory,
+                "prodSubCategory": prodSubCategory,
+                "cost": cost,
+                "quantity": quantity,
+                "quantityType": quantityType,
+                "status": status
             };
+
 
             addProduct(data);
 

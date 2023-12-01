@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Add Sub Category</title>
+</head>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<link rel="stylesheet" href="/mainStyle.css">
+
+<body>
+    <div id="menu"></div>
+    <div class="form-main">
+        <h1 class="pageTitle">Add New Sub Category</h1>
+
+        <div class="form-container">
+            <div class="form-column">
+                <form id="addSubCategoryForm" method="post">
+
+                    <div class="form-group">
+                        <label for="subCategoryName">Sub Category Name:</label>
+                        <input type="text" id="subCategoryName" name="subCategoryName">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="subCategoryStatus">Sub Category Status:</label>
+                        <select id="subCategoryStatus">
+                            <option value="" selected>select</option>
+                            <option value="0">Blocked</option>
+                            <option value="1">Active</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="categorySelect">Category Select:</label>
+                        <select id="categorySelect">
+                            <option value="" selected>select</option>
+
+                        </select>
+                    </div>
+
+
+                </form>
+                <p id="error"></p>
+                <p id="success"></p>
+
+                <input type="submit" id="addSubCategory" value="Add Sub Category" />
+            </div>
+
+
+        </div>
+    </div>
+
+    <script type="text/javascript" src="/loggedIn.js"></script>
+    <script type="text/javascript" src="/categoryMgmt.js">  </script>
+    <script type="text/javascript" src="/menu.js">  </script>
+
+    <script>
+
+        document.getElementById('addSubCategory').addEventListener('click', function (e) {
+            e.preventDefault();
+            const subCategoryName = document.getElementById('subCategoryName').value;
+            const categoryId = document.getElementById('categorySelect').value;
+            const status = document.getElementById('subCategoryStatus').value;
+
+
+            const data = {
+                subCategoryName,categoryId, status
+            };
+            addSubCategory(data);
+
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            getCategory()
+        })
+    </script>
+</body>
+
+</html>

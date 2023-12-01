@@ -50,36 +50,28 @@
             <div class="form-column">
                 <form id="updateProduct" method="post">
 
+
                     <div class="form-group">
-                        <label for="prodType">Product Type:</label>
-                        <select id="prodType">
+                        <label for="productTypeSelect">Product Type:</label>
+                        <select id="productTypeSelect">
                             <option value="" selected>select</option>
-                            <option value="0">Type 1</option>
-                            <option value="1">Type 2</option>
-                            <option value="1">Type 3 </option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="category">Product category:</label>
-                        <select id="category">
+                        <label for="categorySelect">Product category:</label>
+                        <select id="categorySelect">
                             <option value="" selected>select</option>
-                            <option value="0">Cat 1</option>
-                            <option value="1">Cat 2</option>
-                            <option value="1">Cat 3 </option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="subCategroy">Product Sub Categroy:</label>
-                        <select id="subCategroy">
+                        <label for="subCategorySelect">Product Sub Category:</label>
+                        <select id="subCategorySelect">
                             <option value="" selected>select</option>
-                            <option value="0">Sub Cat 1</option>
-                            <option value="1">Sub Cat 2</option>
-                            <option value="1">Sub Cat 3 </option>
+
                         </select>
                     </div>
-
                     <div class="form-group">
                         <label for="prodCostQuantity">Cost per Quantity & Quantity Type</label>
                         <div class="cost-quantity-container">
@@ -90,9 +82,9 @@
                             <span>-&nbsp;</span>
                             <select id="quantityType">
                                 <option value="" selected>type</option>
-                                <option value="0">Packs</option>
-                                <option value="1">Kg</option>
-                                <option value="1">Number</option>
+                                <option value="Packs">Packs</option>
+                                <option value="Kg">Kg</option>
+                                <option value="Number">Number</option>
                             </select>
                         </div>
                     </div>
@@ -134,46 +126,76 @@
 
     <script type="text/javascript" src="/loggedIn.js"></script>
     <script type="text/javascript" src="/prodMgmt.js">  </script>
-    <script type="text/javascript" src="/menu.js">  </script>
+    <script type="text/javascript" src="/categoryMgmt.js">  </script>
 
+    <script type="text/javascript" src="/menu.js">  </script>
     <script>
-        // Accessing form elements
-        const prodName = document.getElementById('prodName');
-        const prodLocation = document.getElementById('prodLocation');
-        const prodLocation1 = document.getElementById('prodLocation1');
-        const prodLocation2 = document.getElementById('prodLocation2');
-        const prodImage = document.getElementById('prodImage');
-        const prodTitle = document.getElementById('prodTitle');
-        const prodDescription = document.getElementById('prodDescription');
-        
+        getCategoriesDropdown()
+
         document.addEventListener("DOMContentLoaded", function () {
-        const loco = new URL(window.location.href);
-        const productData = getProduct(loco.searchParams.get("prodId"));
-        productData.then(res => {
-                prodName.value = res.prodName
+            const prodName = document.getElementById('prodName');
+            const prodLocation = document.getElementById('prodLocation');
+            const prodLocation1 = document.getElementById('prodLocation1');
+            const prodLocation2 = document.getElementById('prodLocation2');
+            const prodTitle = document.getElementById('prodTitle');
+            const prodSubTitle = document.getElementById('prodSubTitle');
+            const prodShortDescription = document.getElementById('prodsubDesc');
+            const prodDescription = document.getElementById('prodDescription');
+            const prodType = document.getElementById('productTypeSelect');
+            const prodCategory = document.getElementById('categorySelect');
+            const prodSubCategory = document.getElementById('subCategorySelect');
+            const cost = document.getElementById('prodCost');
+            const quantity = document.getElementById('prodQuantity');
+            const quantityType = document.getElementById('quantityType');
+            const status = document.getElementById('prodStatus');
+
+            const loco = new URL(window.location.href);
+            const productData = getProduct(loco.searchParams.get("prodId"));
+
+
+
+            productData.then(res => {
+                prodName.value = res.prodName;
                 prodLocation.value = res.prodLocation;
                 prodLocation1.value = res.prodLocation1;
                 prodLocation2.value = res.prodLocation2;
                 prodTitle.value = res.prodTitle;
-                prodDescription.value = res.prodDescription
+                prodSubTitle.value = res.prodSubTitle;
+                prodShortDescription.value = res.prodShortDescription;
+                prodDescription.value = res.prodDescription;
+                prodCost.value = res.cost;
+                prodQuantity.value = res.quantity;
+                quantityType.value = res.quantityType;
+                prodStatus.value = res.status;
+                getProductTypeAndCategories(res,prodType,prodCategory,prodSubCategory) 
+
+            }).catch(error => {
+                console.error("Error fetching product data:", error);
             });
-        })
-        document.getElementById('updateProductButton').addEventListener('click', function (e) {
-            e.preventDefault();
-            const data = {
-                "prodName": prodName.value,
-                "prodLocation": prodLocation.value,
-                "prodLocation1": prodLocation1.value,
-                "prodLocation2": prodLocation2.value,
-                "prodTitle": prodTitle.value,
-                "prodDescription": prodDescription.value
-            };
 
-            updateProds(data);
+            document.getElementById('updateProductButton').addEventListener('click', function (e) {
+                e.preventDefault();
+                const data = {
+                    "prodName": prodName.value,
+                    "prodLocation": prodLocation.value,
+                    "prodLocation1": prodLocation1.value,
+                    "prodLocation2": prodLocation2.value,
+                    "prodSubTitle": prodSubTitle.value,
+                    "prodTitle": prodTitle.value,
+                    "prodShortDescription": prodShortDescription.value,
+                    "prodDescription": prodDescription.value,
+                    "prodType": prodType.value,
+                    "prodCategory": prodCategory.value,
+                    "prodSubCategory": prodSubCategory.value,
+                    "cost": cost.value,
+                    "quantity": quantity.value,
+                    "quantityType": quantityType.value,
+                    "status": status.value
+                };
+
+                updateProds(data);
+            });
         });
-
-        // Add event listener for updating product
-
     </script>
 </body>
 

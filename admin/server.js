@@ -89,9 +89,31 @@ app.get('/productManagement/getProdDetail', requireLogin, (req, res) => {
 
 });
 
+app.get('/productManagement/addProdType', requireLogin, (req, res) => {
+
+  res.sendFile(path.join(__dirname, '/views/categoryManagement/productType/addProdType.html'));
+
+});
+
+app.get('/productManagement/addCategory', requireLogin, (req, res) => {
+
+  res.sendFile(path.join(__dirname, '/views/categoryManagement/category/addCategory.html'));
+
+});
+app.get('/productManagement/addSubCategory', requireLogin, (req, res) => {
+
+  res.sendFile(path.join(__dirname, '/views/categoryManagement/subCategory/addSubCategory.html'));
+
+});
+
 //scripts
 app.get('/pagination.js', (req, res) => {
   res.sendFile(path.join(__dirname, '/scripts/pagination.js'));
+
+});
+
+app.get('/categoryMgmt.js', (req, res) => {
+  res.sendFile(path.join(__dirname, '/scripts/categoryMgmt.js'));
 
 });
 

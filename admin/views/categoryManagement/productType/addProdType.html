@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Add Product Type</title>
+</head>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<link rel="stylesheet" href="/mainStyle.css">
+
+<body>
+    <div id="menu"></div>
+    <div class="form-main">
+        <h1 class="pageTitle">Add New Product Type</h1>
+
+        <div class="form-container">
+            <div class="form-column">
+                <form id="addProductTypeForm" method="post">
+
+                    <div class="form-group">
+                        <label for="prodTypeName">Product Type Name:</label>
+                        <input type="text" id="prodTypeName" name="prodTypeName">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prodStatus">Product Type Status:</label>
+                        <select id="prodStatus">
+                            <option value="" selected>select</option>
+                            <option value="0">Blocked</option>
+                            <option value="1">Active</option>
+                        </select>
+                    </div>
+
+
+                </form>
+                <p id="error"></p>
+                <p id="success"></p>
+
+                <input type="submit" id="addProductType" value="Add Product Type"/>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <script type="text/javascript" src="/loggedIn.js"></script>
+    <script type="text/javascript" src="/categoryMgmt.js">  </script>
+    <script type="text/javascript" src="/menu.js">  </script>
+
+    <script>
+
+        document.getElementById('addProductType').addEventListener('click', function (e) {
+            e.preventDefault();
+
+            const prodTypeName = document.getElementById('prodTypeName').value;
+            const status = document.getElementById('prodStatus').value;
+
+
+            const data = {
+                prodTypeName, status
+            };
+            console.log(data)
+
+            addProductType(data);
+
+        });
+
+    </script>
+</body>
+
+</html>

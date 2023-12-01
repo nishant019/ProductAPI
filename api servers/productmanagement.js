@@ -57,7 +57,7 @@ app.use(express.json());
 
 app.post('/addProds', bearer, (req, res) => {
     const user = req.headers.loggedinuser
-    const { prodName, prodLocation, prodLocation1, prodLocation2, prodImage, prodTitle, prodDescription } = req.body;
+    const { prodName, prodLocation, prodLocation1, prodLocation2, status, prodTitle, prodSubTitle, prodShortDescription, prodDescription, prodType, prodCategory, prodSubCategory, cost, quantity, quantityType } = req.body;
     checkTokenExpiry(req, res, () => {
         pool.query('SELECT * from adminuser where userId = ?', [user], (error, result) => {
             if (error) {
@@ -77,7 +77,7 @@ app.post('/addProds', bearer, (req, res) => {
                     prodId = r[0].last++ + 1;
 
                 }
-                const productTable = { prodId, prodName, prodLocation, prodLocation1, prodLocation2, prodImage, prodTitle, prodDescription, user, createddate, updateddate };
+                const productTable = { prodId, prodName, prodLocation, prodLocation1, prodLocation2, status, prodTitle, prodSubTitle, prodShortDescription, prodDescription, prodType, prodCategory, prodSubCategory, cost, quantity, quantityType, user, createddate, updateddate };
 
                 pool.query('INSERT INTO prods SET ?', productTable, (error, result) => {
                     if (error) {
@@ -94,29 +94,14 @@ app.post('/addProds', bearer, (req, res) => {
 app.put('/updateProds/:id', bearer, (req, res, next) => {
     const prodId = req.params.id;
     const loggedInUser = req.headers.loggedinuser;
-    const {
-        prodName,
-        prodLocation,
-        prodLocation1,
-        prodLocation2,
-        prodImage,
-        prodTitle,
-        prodDescription,
-    } = req.body;
+    const { prodName, prodLocation, prodLocation1, prodLocation2, status, prodTitle, prodSubTitle, prodShortDescription, prodDescription, prodType, prodCategory, prodSubCategory, cost, quantity, quantityType } = req.body;
     const updatedBy = loggedInUser;
     const updateddate = Date.now();
-    const productTable = {
-        prodId,
-        prodName,
-        prodLocation,
-        prodLocation1,
-        prodLocation2,
-        prodImage,
-        prodTitle,
-        prodDescription,
-        updateddate,
-        updatedBy,
-    };
+
+
+    const productTable = { prodId, prodName, prodLocation, prodLocation1, prodLocation2, status, prodTitle, prodSubTitle, prodShortDescription, prodDescription, prodType, prodCategory, prodSubCategory, cost, quantity, quantityType, updateddate,
+        updatedBy };
+
 
     checkTokenExpiry(req, res, () => {
         pool.query('SELECT role FROM adminuser WHERE userId = ?', [loggedInUser], (error, result) => {
@@ -207,31 +192,112 @@ app.delete('/deleteProd/:id', bearer, (req, res, next) => {
     });
 });
 
+// app.get('/getProds/:id', bearer, checkUserRole, (req, res) => {
+//     const prodId = req.params.id;
+//     const userId = req.headers.loggedinuser;
+//     const page = parseInt(req.query.page) || 1;
+//     const offset = (page - 1) * itemsPerPage;
+//     let sql, dataCountSql, queryParams;
+
+//     checkTokenExpiry(req, res, () => {
+        
+//         if (prodId === ':id') {
+            
+//             sql = req.isAdmin === 1 ? 'SELECT * FROM prods LIMIT ? OFFSET ?' : 'SELECT * FROM prods WHERE user = ? LIMIT ? OFFSET ?';
+//             dataCountSql = req.isAdmin === 1 ? 'SELECT COUNT(*) as total FROM prods' : 'SELECT COUNT(*) as total FROM prods WHERE user = ?';
+//             queryParams = req.isAdmin === 1 ? [itemsPerPage, offset] : [userId, itemsPerPage, offset];
+//         } else {
+//             sql = req.isAdmin === 1 ? 'SELECT * FROM prods WHERE prodId = ? LIMIT ? OFFSET ?' : 'SELECT * FROM prods WHERE user = ? AND prodId = ? LIMIT ? OFFSET ?';
+//             dataCountSql = req.isAdmin === 1 ? 'SELECT COUNT(*) as total FROM prods WHERE prodId = ?' : 'SELECT COUNT(*) as total FROM prods WHERE user = ? AND prodId = ?';
+//             queryParams = req.isAdmin === 1 ? [prodId, itemsPerPage, offset] : [userId, prodId, itemsPerPage, offset];
+//         }
+
+//         pool.query(sql, queryParams, (error, results) => {
+//             if (error) {
+//                 res.status(500).json({ error: 'Internal Server Error' });
+//             } else {
+//                 const countParams = queryParams.filter(param => typeof param === 'string');
+
+//                 pool.query(dataCountSql, countParams, (error, totalCountResult) => {
+//                     if (error) {
+//                         console.error('Error fetching total count:', error);
+//                         res.status(500).json({ error: 'Internal Server Error' });
+//                     } else {
+//                         const totalData = totalCountResult[0].total;
+//                         const totalPages = Math.ceil(totalData / itemsPerPage);
+
+//                         res.json({
+//                             prods: results,
+//                             totalData,
+//                             totalPages,
+//                             currentPage: page,
+//                         });
+//                     }
+//                 });
+//             }
+//         });
+//     });
+// });
+
 app.get('/getProds/:id', bearer, checkUserRole, (req, res) => {
     const prodId = req.params.id;
     const userId = req.headers.loggedinuser;
     const page = parseInt(req.query.page) || 1;
+    const itemsPerPage = 10; // Define your items per page
     const offset = (page - 1) * itemsPerPage;
-    let sql, dataCountSql, queryParams;
+    let sql, queryParams;
 
     checkTokenExpiry(req, res, () => {
+        let joinQuery = '';
+        let selectFields = 'p.*, pt.prodTypeName, c.categoryName, sc.subCategoryName, au.userName as createdByUser, au2.userName as updatedByUser'; // Selecting required fields
+
         if (prodId === ':id') {
-            sql = req.isAdmin === 1 ? 'SELECT * FROM prods LIMIT ? OFFSET ?' : 'SELECT * FROM prods WHERE user = ? LIMIT ? OFFSET ?';
-            dataCountSql = req.isAdmin === 1 ? 'SELECT COUNT(*) as total FROM prods' : 'SELECT COUNT(*) as total FROM prods WHERE user = ?';
+            sql = req.isAdmin === 1 ?
+                `SELECT ${selectFields} FROM prods p
+                LEFT JOIN producttype pt ON p.prodType = pt.prodTypeId
+                LEFT JOIN category c ON p.prodCategory = c.categoryId
+                LEFT JOIN subcategory sc ON p.prodSubCategory = sc.subCategoryId
+                LEFT JOIN adminUser au ON p.user = au.userId
+                LEFT JOIN adminUser au2 ON p.updatedBy = au2.userId
+                LIMIT ? OFFSET ?` :
+                `SELECT ${selectFields} FROM prods p
+                LEFT JOIN producttype pt ON p.prodType = pt.prodTypeId
+                LEFT JOIN category c ON p.prodCategory = c.categoryId
+                LEFT JOIN subcategory sc ON p.prodSubCategory = sc.subCategoryId
+                LEFT JOIN adminUser au ON p.user = au.userId
+                LEFT JOIN adminUser au2 ON p.updatedBy = au2.userId
+                WHERE p.user = ? LIMIT ? OFFSET ?`;
+            dataCountSql = req.isAdmin === 1 ? 'SELECT COUNT(*) as total FROM prods WHERE prodId = ?' : 'SELECT COUNT(*) as total FROM prods WHERE user = ? AND prodId = ?';
+
             queryParams = req.isAdmin === 1 ? [itemsPerPage, offset] : [userId, itemsPerPage, offset];
         } else {
-            sql = req.isAdmin === 1 ? 'SELECT * FROM prods WHERE prodId = ? LIMIT ? OFFSET ?' : 'SELECT * FROM prods WHERE user = ? AND prodId = ? LIMIT ? OFFSET ?';
+            sql = req.isAdmin === 1 ?
+                `SELECT ${selectFields} FROM prods p
+                LEFT JOIN producttype pt ON p.prodType = pt.prodTypeId
+                LEFT JOIN category c ON p.prodCategory = c.categoryId
+                LEFT JOIN subcategory sc ON p.prodSubCategory = sc.subCategoryId
+                LEFT JOIN adminUser au ON p.user = au.userId
+                LEFT JOIN adminUser au2 ON p.updatedBy = au2.userId
+                WHERE p.prodId = ? LIMIT ? OFFSET ?` :
+                `SELECT ${selectFields} FROM prods p
+                LEFT JOIN producttype pt ON p.prodType = pt.prodTypeId
+                LEFT JOIN category c ON p.prodCategory = c.categoryId
+                LEFT JOIN subcategory sc ON p.prodSubCategory = sc.subCategoryId
+                LEFT JOIN adminUser au ON p.user = au.userId
+                LEFT JOIN adminUser au2 ON p.updatedBy = au2.userId
+                WHERE p.user = ? AND p.prodId = ? LIMIT ? OFFSET ?`;
             dataCountSql = req.isAdmin === 1 ? 'SELECT COUNT(*) as total FROM prods WHERE prodId = ?' : 'SELECT COUNT(*) as total FROM prods WHERE user = ? AND prodId = ?';
+
             queryParams = req.isAdmin === 1 ? [prodId, itemsPerPage, offset] : [userId, prodId, itemsPerPage, offset];
         }
 
         pool.query(sql, queryParams, (error, results) => {
             if (error) {
+                console.error('Error fetching products:', error);
                 res.status(500).json({ error: 'Internal Server Error' });
             } else {
-                const countParams = queryParams.filter(param => typeof param === 'string');
 
-                pool.query(dataCountSql, countParams, (error, totalCountResult) => {
+                pool.query(dataCountSql, queryParams, (error, totalCountResult) => {
                     if (error) {
                         console.error('Error fetching total count:', error);
                         res.status(500).json({ error: 'Internal Server Error' });
@@ -251,4 +317,7 @@ app.get('/getProds/:id', bearer, checkUserRole, (req, res) => {
         });
     });
 });
+
+
+
 module.exports = app;

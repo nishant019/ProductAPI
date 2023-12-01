@@ -12,17 +12,23 @@ function getProducts(currentPage) {
                 const page = (currentPage === 1) ? index : index + (currentPage - 1) * 10;
                 row.innerHTML = `
             <td>${page + 1}</td>
-            <td>${prod.prodId}</td>
-            <td>${prod.prodName}</td>
-            <td>${prod.prodLocation}</td>
-            <td>${prod.prodLocation1}</td>
-            <td>${prod.prodLocation2}</td>
-            <td>${prod.prodTitle}</td>
-            <td>${prod.prodDescription}</td>
-            <td>${prod.user}</td>
-            <td>${prod.createddate}</td>
-            <td>${prod.updateddate}</td>
-            <td>${prod.updatedBy}</td>
+            <td>${prod.prodId || ''}</td>
+            <td>${prod.prodName || ''}</td>
+            <td>${prod.prodTypeName || ''} </td>
+            <td>${prod.categoryName || ''} </td>
+            <td>${prod.subCategoryName || ''}</td>
+            <td>${prod.prodLocation || ''}</td>
+            <td>${prod.prodLocation1 || ''}</td>
+            <td>${prod.prodLocation2 || ''}</td>
+            <td>${prod.prodSubTitle || ''}</td>
+            <td>${prod.prodTitle || ''}</td>
+            <td>${prod.prodShortDescription || ''}</td>
+            <td>${prod.prodDescription || ''}</td>
+            <td>${prod.createdByUser || ''}</td>
+            <td>${newDate(prod.createddate) || ''}</td>
+            <td>${prod.updatedByUser || ''}</td>
+            <td>${newDate(prod.updateddate) || ''}</td>
+
             <td><button id="edit" class="edit-button">Edit</button></td>
             <td><button id="delete" class="delete-button">Delete</button></td>
             <td><button class="view-button">View Details</button></td>
@@ -155,6 +161,7 @@ function deleteProduct(prodId) {
 
 //add product
 function addProduct(data) {
+
     axios({
         method: 'post',
         url: `${addProductUrl}`, // Replace with your product add URL
@@ -265,18 +272,28 @@ function newDate(msString) {
 const displayProduct = async (productId) => {
     try {
         const productData = await getProduct(productId);
-
+        console.log(productData.cost)
         document.getElementById('productInfo').innerHTML = `
         <h2>${productData.prodName}</h2>
+        
+        <p>Product Type: ${productData.prodTypeName} ||
+        Category: ${productData.categoryName} ||
+        Sub Category: ${productData.subCategoryName}</p>
+
+        <p>Sub Title: ${productData.prodSubTitle}</p>
         <p>Title: ${productData.prodTitle}</p>
-  
         <p>Location: ${productData.prodLocation}</p>
         <p>Location1: ${productData.prodLocation1}</p>
         <p>Location2: ${productData.prodLocation2}</p>
+        <p>Short Description: ${productData.prodShortDescription}</p>
         <p>Description: ${productData.prodDescription}</p>
-        <p>Created By: ${productData.user}</p>
+
+
+        <p>Cost per Quantity: NPR ${productData.cost} / ${productData.quantity}  ${productData.quantityType}</p>
+
+        <p>Created By: ${productData.createdByUser}</p>
         <p>Created Date: ${newDate(productData.createddate)}</p>
-        <p>Updated By: ${productData.updatedBy}</p>
+        <p>Updated By: ${productData.updatedByUser}</p>
         <p>Updated Date: ${newDate(productData.updateddate)}</p>
       `;
         const imageUrls = await getProductImage(prodId);
