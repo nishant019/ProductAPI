@@ -26,11 +26,17 @@ function addProductType(data) {
     })
 }
 
-function getProductType() {
+function getProductType(status) {
+    let query
+    if(status){
+        query = '?status=1'
+    }else{
+        query = ''
+    }
     return new Promise((resolve, reject) => {
         axios({
             method: "get",
-            url: `${getProductTypeUrl}${':id'}`,
+            url: `${getProductTypeUrl}${':id'}${query}`,
             headers: headers
         }).then((response) => {
             const data = response.data.data
@@ -78,14 +84,20 @@ function addCategory(data) {
     })
 }
 
-function getCategory(categoryType) {
+function getCategory(categoryType,status) {
+    let query
+    if(status){
+        query = '&status=1'
+    }else{
+        query = ''
+    }
     return new Promise((resolve, reject) => {
         if (!categoryType) {
             categoryType = '';
         }
         axios({
             method: "get",
-            url: `${getCategoryUrl}${':id'}${categoryType}`,
+            url: `${getCategoryUrl}${':id'}${categoryType}${query}`,
             headers: headers
         }).then((response) => {
             const data = response.data.data;
@@ -133,7 +145,13 @@ function addSubCategory(data) {
     })
 }
 
-function getSubCategory(categoryType) {
+function getSubCategory(categoryType,status) {
+    let query
+    if(status){
+        query = '&status=1'
+    }else{
+        query = ''
+    }
     return new Promise((resolve, reject) => {
         if (!categoryType) {
             categoryType = '';
@@ -141,7 +159,7 @@ function getSubCategory(categoryType) {
 
         axios({
             method: "get",
-            url: `${getSubCategoryUrl}${':id'}${categoryType}`,
+            url: `${getSubCategoryUrl}${':id'}${categoryType}${query}`,
             headers: headers
         }).then((response) => {
             const data = response.data.data;
@@ -168,15 +186,14 @@ function getCategoriesDropdown() {
         const productTypeSelect = document.getElementById('productTypeSelect');
         const categorySelect = document.getElementById('categorySelect');
         const subCategorySelect = document.getElementById('subCategorySelect');
-        // Function to fetch categories based on selected product type
         const fetchCategories = () => {
             const prodTypeQuery = "?prodTypeId=" + productTypeSelect.value;
 
-            getCategory(prodTypeQuery)
+            getCategory(prodTypeQuery,'1')
                 .then(() => {
                     // Categories fetched successfully, continue with subcategory fetch
                     const categoryQuery = "?categoryId=" + categorySelect.value;
-                    return getSubCategory(categoryQuery);
+                    return getSubCategory(categoryQuery,'1');
                 })
                 .catch(error => {
                     console.error("Error fetching categories:", error);
@@ -198,26 +215,24 @@ function getCategoriesDropdown() {
             // Clear existing subcategories on change
             subCategorySelect.innerHTML = '<option value="" selected>select</option>';
 
-            // Fetch and populate subcategories based on category selection
             const categoryQuery = "?categoryId=" + categorySelect.value;
-            getSubCategory(categoryQuery)
+            getSubCategory(categoryQuery,'1')
                 .catch(error => {
                     console.error("Error fetching subcategories:", error);
                 });
         });
 
-        // Initial fetch of categories based on default product type selection
         fetchCategories();
     });
 }
 
 function getProductTypeAndCategories(res,prodType,prodCategory,prodSubCategory) {
-    return getProductType()
+    return getProductType('1')
         .then(() => {
             prodType.value = res.prodType
             const productTypeQuery = "?prodTypeId=" + res.prodType;
 
-            getCategory(productTypeQuery).then(() => {
+            getCategory(productTypeQuery,'1').then(() => {
                 prodCategory.value = res.prodCategory;
 
             });
@@ -227,7 +242,7 @@ function getProductTypeAndCategories(res,prodType,prodCategory,prodSubCategory) 
             const categoryQuery = "?categoryId=" + res.prodCategory;
 
 
-            getSubCategory(categoryQuery).then(() => {
+            getSubCategory(categoryQuery,'1').then(() => {
                 prodSubCategory.value = res.prodSubCategory;
 
             });

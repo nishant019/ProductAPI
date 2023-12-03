@@ -192,63 +192,15 @@ app.delete('/deleteProd/:id', bearer, (req, res, next) => {
     });
 });
 
-// app.get('/getProds/:id', bearer, checkUserRole, (req, res) => {
-//     const prodId = req.params.id;
-//     const userId = req.headers.loggedinuser;
-//     const page = parseInt(req.query.page) || 1;
-//     const offset = (page - 1) * itemsPerPage;
-//     let sql, dataCountSql, queryParams;
-
-//     checkTokenExpiry(req, res, () => {
-        
-//         if (prodId === ':id') {
-            
-//             sql = req.isAdmin === 1 ? 'SELECT * FROM prods LIMIT ? OFFSET ?' : 'SELECT * FROM prods WHERE user = ? LIMIT ? OFFSET ?';
-//             dataCountSql = req.isAdmin === 1 ? 'SELECT COUNT(*) as total FROM prods' : 'SELECT COUNT(*) as total FROM prods WHERE user = ?';
-//             queryParams = req.isAdmin === 1 ? [itemsPerPage, offset] : [userId, itemsPerPage, offset];
-//         } else {
-//             sql = req.isAdmin === 1 ? 'SELECT * FROM prods WHERE prodId = ? LIMIT ? OFFSET ?' : 'SELECT * FROM prods WHERE user = ? AND prodId = ? LIMIT ? OFFSET ?';
-//             dataCountSql = req.isAdmin === 1 ? 'SELECT COUNT(*) as total FROM prods WHERE prodId = ?' : 'SELECT COUNT(*) as total FROM prods WHERE user = ? AND prodId = ?';
-//             queryParams = req.isAdmin === 1 ? [prodId, itemsPerPage, offset] : [userId, prodId, itemsPerPage, offset];
-//         }
-
-//         pool.query(sql, queryParams, (error, results) => {
-//             if (error) {
-//                 res.status(500).json({ error: 'Internal Server Error' });
-//             } else {
-//                 const countParams = queryParams.filter(param => typeof param === 'string');
-
-//                 pool.query(dataCountSql, countParams, (error, totalCountResult) => {
-//                     if (error) {
-//                         console.error('Error fetching total count:', error);
-//                         res.status(500).json({ error: 'Internal Server Error' });
-//                     } else {
-//                         const totalData = totalCountResult[0].total;
-//                         const totalPages = Math.ceil(totalData / itemsPerPage);
-
-//                         res.json({
-//                             prods: results,
-//                             totalData,
-//                             totalPages,
-//                             currentPage: page,
-//                         });
-//                     }
-//                 });
-//             }
-//         });
-//     });
-// });
 
 app.get('/getProds/:id', bearer, checkUserRole, (req, res) => {
     const prodId = req.params.id;
     const userId = req.headers.loggedinuser;
     const page = parseInt(req.query.page) || 1;
-    const itemsPerPage = 10; // Define your items per page
     const offset = (page - 1) * itemsPerPage;
     let sql, queryParams;
 
     checkTokenExpiry(req, res, () => {
-        let joinQuery = '';
         let selectFields = 'p.*, pt.prodTypeName, c.categoryName, sc.subCategoryName, au.userName as createdByUser, au2.userName as updatedByUser'; // Selecting required fields
 
         if (prodId === ':id') {

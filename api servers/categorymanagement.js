@@ -45,26 +45,32 @@ app.post('/addProductType', bearer, superPrivilege, (req, res) => {
 });
 
 app.get('/getProductType/:id', bearer, superPrivilege, (req, res) => {
-    const prodTypeId = req.params.id
+    const prodTypeId = req.params.id;
+    const status = req.query.status;
+    let query = 'SELECT * FROM producttype WHERE 1=1';
+    let queryParams = [];
+
+    if (prodTypeId !== ':id' && !isNaN(prodTypeId)) { 
+        query += ' AND prodTypeId = ?';
+        queryParams.push(parseInt(prodTypeId));
+    }
+
+    if (status) {
+        query += ' AND status = ?';
+        queryParams.push(status);
+    }
+
     checkTokenExpiry(req, res, () => {
-        if (prodTypeId === ':id') {
-            pool.query('SELECT * FROM producttype', (error, result) => {
-                res.status(200).json({ data: result })
-                if (error) {
-                    res.status(500).json({ error: 'Internal Server Error' });
-                    return;
-                }
-            })
-        } else {
-            pool.query('SELECT * FROM producttype WHERE prodTypeId=?', [prodTypeId], (error, result) => {
-                res.status(200).json({ data: result })
-                if (error) {
-                    res.status(500).json({ error: 'Internal Server Error' });
-                    return;
-                }
-            })
-        }
-    })
+        const finalQuery = (prodTypeId === ':id' && !status) ? ALL_PRODUCT_TYPES_QUERY : query;
+
+        pool.query(finalQuery, queryParams, (error, result) => {
+            if (error) {
+                res.status(500).json({ error: 'Internal Server Error' });
+                return;
+            }
+            res.status(200).json({ data: result });
+        });
+    });
 });
 
 app.delete('/deleteProductType/:id', bearer, superPrivilege, (req, res) => {
@@ -164,7 +170,8 @@ app.post('/addCategory', bearer, superPrivilege, (req, res) => {
 
 app.get('/getCategory/:id', bearer, superPrivilege, (req, res) => {
     const categoryId = req.params.id;
-    const prodTypeId = req.query.prodTypeId; // Extracting prodTypeId from query params
+    const prodTypeId = req.query.prodTypeId;
+    const status = req.query.status;
 
     checkTokenExpiry(req, res, () => {
         let query = 'SELECT c.*, pt.prodTypeName FROM category c LEFT JOIN producttype pt ON c.prodTypeId = pt.prodTypeId WHERE 1=1';
@@ -173,6 +180,11 @@ app.get('/getCategory/:id', bearer, superPrivilege, (req, res) => {
         if (prodTypeId !== undefined && prodTypeId !== null) {
             query += ' AND c.prodTypeId = ?';
             queryParams.push(prodTypeId);
+        }
+
+        if (status) {
+            query += ' AND c.status = ?';
+            queryParams.push(status);
         }
 
         if (categoryId !== ':id') {
@@ -189,6 +201,8 @@ app.get('/getCategory/:id', bearer, superPrivilege, (req, res) => {
         });
     });
 });
+
+
 
 app.delete('/deleteCategory/:id', bearer, superPrivilege, (req, res) => {
     const categoryId = req.params.id;
@@ -293,16 +307,21 @@ app.post('/addSubCategory', bearer, superPrivilege, (req, res) => {
 
 app.get('/getSubCategory/:id', bearer, superPrivilege, (req, res) => {
     const subCategoryId = req.params.id;
-    const categoryId = req.query.categoryId; // Extracting prodTypeId from query params
+    const categoryId = req.query.categoryId;
+    const status = req.query.status;
 
     checkTokenExpiry(req, res, () => {
-
-        let query = 'SELECT sc.*, pt.prodTypeName, c.categoryName FROM subcategory sc LEFT JOIN category c ON sc.categoryId = c.categoryId LEFT JOIN producttype pt ON pt.prodTypeId = c.prodTypeId    WHERE 1 = 1';
+        let query = 'SELECT sc.*, pt.prodTypeName, c.categoryName FROM subcategory sc LEFT JOIN category c ON sc.categoryId = c.categoryId LEFT JOIN producttype pt ON pt.prodTypeId = c.prodTypeId WHERE 1 = 1';
         const queryParams = [];
 
         if (categoryId !== undefined && categoryId !== null) {
             query += ' AND sc.categoryId = ?';
             queryParams.push(categoryId);
+        }
+
+        if (status) {
+            query += ' AND sc.status = ?';
+            queryParams.push(status);
         }
 
         if (subCategoryId !== ':id') {
@@ -319,6 +338,7 @@ app.get('/getSubCategory/:id', bearer, superPrivilege, (req, res) => {
         });
     });
 });
+
 
 app.delete('/deleteSubCategory/:id', bearer, superPrivilege, (req, res) => {
     const subCategoryId = req.params.id;
