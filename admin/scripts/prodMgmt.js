@@ -276,25 +276,25 @@ const displayProduct = async (productId) => {
         document.getElementById('productInfo').innerHTML = `
         <h2>${productData.prodName}</h2>
         
-        <p>Product Type: ${productData.prodTypeName} ||
-        Category: ${productData.categoryName} ||
-        Sub Category: ${productData.subCategoryName}</p>
+        <p>Product Type: ${productData.prodTypeName || ''} ||
+        Category: ${productData.categoryName || ''} ||
+        Sub Category: ${productData.subCategoryName || ''}</p>
 
-        <p>Sub Title: ${productData.prodSubTitle}</p>
-        <p>Title: ${productData.prodTitle}</p>
-        <p>Location: ${productData.prodLocation}</p>
-        <p>Location1: ${productData.prodLocation1}</p>
-        <p>Location2: ${productData.prodLocation2}</p>
-        <p>Short Description: ${productData.prodShortDescription}</p>
-        <p>Description: ${productData.prodDescription}</p>
+        <p>Sub Title: ${productData.prodSubTitle || ''}</p>
+        <p>Title: ${productData.prodTitle || ''}</p>
+        <p>Location: ${productData.prodLocation || ''}</p>
+        <p>Location1: ${productData.prodLocation1 || ''}</p>
+        <p>Location2: ${productData.prodLocation2 || ''}</p>
+        <p>Short Description: ${productData.prodShortDescription || ''}</p>
+        <p>Description: ${productData.prodDescription || ''}</p>
 
 
-        <p>Cost per Quantity: NPR ${productData.cost} / ${productData.quantity}  ${productData.quantityType}</p>
+        <p>Cost per Quantity: NPR ${productData.cost || ''} / ${productData.quantity || ''}  ${productData.quantityType || ''}</p>
 
-        <p>Created By: ${productData.createdByUser}</p>
-        <p>Created Date: ${newDate(productData.createddate)}</p>
-        <p>Updated By: ${productData.updatedByUser}</p>
-        <p>Updated Date: ${newDate(productData.updateddate)}</p>
+        <p>Created By: ${productData.createdByUser || ''}</p>
+        <p>Created Date: ${newDate(productData.createddate) || ''}</p>
+        <p>Updated By: ${productData.updatedByUser || ''}</p>
+        <p>Updated Date: ${newDate(productData.updateddate) || ''}</p>
       `;
         const imageUrls = await getProductImage(prodId);
 

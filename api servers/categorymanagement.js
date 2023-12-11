@@ -44,7 +44,7 @@ app.post('/addProductType', bearer, superPrivilege, (req, res) => {
 
 });
 
-app.get('/getProductType/:id', bearer, superPrivilege, (req, res) => {
+app.get('/getProductType/:id', bearer, (req, res) => {
     const prodTypeId = req.params.id;
     const status = req.query.status;
     let query = 'SELECT * FROM producttype WHERE 1=1';
@@ -168,7 +168,7 @@ app.post('/addCategory', bearer, superPrivilege, (req, res) => {
 
 });
 
-app.get('/getCategory/:id', bearer, superPrivilege, (req, res) => {
+app.get('/getCategory/:id', bearer, (req, res) => {
     const categoryId = req.params.id;
     const prodTypeId = req.query.prodTypeId;
     const status = req.query.status;
@@ -305,7 +305,7 @@ app.post('/addSubCategory', bearer, superPrivilege, (req, res) => {
     })
 });
 
-app.get('/getSubCategory/:id', bearer, superPrivilege, (req, res) => {
+app.get('/getSubCategory/:id', bearer, (req, res) => {
     const subCategoryId = req.params.id;
     const categoryId = req.query.categoryId;
     const status = req.query.status;

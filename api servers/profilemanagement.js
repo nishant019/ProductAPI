@@ -8,6 +8,7 @@ const app = functions.app
 const checkTokenExpiry = functions.checkTokenExpiry
 const bearer = functions.bearer
 const basicAuth = functions.basicAuth
+const adminValidations = functions.adminValidations
 
 const hashPassword = functions.hashPassword
 const comparePasswords = functions.comparePasswords

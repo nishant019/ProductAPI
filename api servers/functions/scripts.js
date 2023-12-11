@@ -10,7 +10,7 @@ const pool = mysql.createPool({
     host: '127.0.0.1',
     user: 'root',
     password: '',
-    database: 'my api db',
+    database: 'my_api_db',
 });
 app.use(cors());
 const itemsPerPage = 10;

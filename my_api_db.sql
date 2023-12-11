@@ -20,6 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `my api db`
 --
+CREATE DATABASE `my_api_db`;
+USE my_api_db;
 
 -- --------------------------------------------------------
 

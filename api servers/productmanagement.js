@@ -219,7 +219,7 @@ app.get('/getProds/:id', bearer, checkUserRole, (req, res) => {
                 LEFT JOIN adminUser au ON p.user = au.userId
                 LEFT JOIN adminUser au2 ON p.updatedBy = au2.userId
                 WHERE p.user = ? LIMIT ? OFFSET ?`;
-            dataCountSql = req.isAdmin === 1 ? 'SELECT COUNT(*) as total FROM prods WHERE prodId = ?' : 'SELECT COUNT(*) as total FROM prods WHERE user = ? AND prodId = ?';
+            dataCountSql = req.isAdmin === 1 ? 'SELECT COUNT(*) as total FROM prods' : 'SELECT COUNT(*) as total FROM prods WHERE user = ?';
 
             queryParams = req.isAdmin === 1 ? [itemsPerPage, offset] : [userId, itemsPerPage, offset];
         } else {
@@ -238,7 +238,7 @@ app.get('/getProds/:id', bearer, checkUserRole, (req, res) => {
                 LEFT JOIN adminUser au ON p.user = au.userId
                 LEFT JOIN adminUser au2 ON p.updatedBy = au2.userId
                 WHERE p.user = ? AND p.prodId = ? LIMIT ? OFFSET ?`;
-            dataCountSql = req.isAdmin === 1 ? 'SELECT COUNT(*) as total FROM prods WHERE prodId = ?' : 'SELECT COUNT(*) as total FROM prods WHERE user = ? AND prodId = ?';
+            dataCountSql = req.isAdmin === 1 ? 'SELECT COUNT(*) as total FROM prods' : 'SELECT COUNT(*) as total FROM prods WHERE user = ?';
 
             queryParams = req.isAdmin === 1 ? [prodId, itemsPerPage, offset] : [userId, prodId, itemsPerPage, offset];
         }
@@ -248,8 +248,9 @@ app.get('/getProds/:id', bearer, checkUserRole, (req, res) => {
                 console.error('Error fetching products:', error);
                 res.status(500).json({ error: 'Internal Server Error' });
             } else {
+                const countParams = queryParams.filter(param => typeof param === 'string');
 
-                pool.query(dataCountSql, queryParams, (error, totalCountResult) => {
+                pool.query(dataCountSql, countParams, (error, totalCountResult) => {
                     if (error) {
                         console.error('Error fetching total count:', error);
                         res.status(500).json({ error: 'Internal Server Error' });
