@@ -29,7 +29,7 @@ const basicAuth = (req, res, next) => {
     }
 
     res.setHeader('WWW-Authenticate', 'Basic');
-    res.status(401).send('Authentication required');
+    res.status(401).send(errM.AUTHENTICATION_FAILED);
 };
 
 const verifyToken = (token) => {
@@ -55,18 +55,18 @@ const bearer = (req, res, next) => {
             if (uname === req.headers.loggedinuser) {
                 return next()
             } else {
-                res.status(403).json({ error: 'Forbidden' })
+                res.status(403).json({ error: errM.FORBIDDEN })
             }
         })
         .catch((err) => {
-            return res.status(401).json({ error: 'Invalid token' });
+            return res.status(401).json({ error:errM.INVALID_TOKEN });
         });
 }
 
 const superPrivilege = (req, res, next) => {
     pool.query(`SELECT role FROM adminuser WHERE userId=?`, [req.headers.loggedinuser], (error, response) => {
         if (error) {
-            res.status(500).json({ error: 'Internal Server Error' });
+            res.status(500).json({ error: errM.INTERNAL_SERVER_ERROR });
             return;
         }
         if (response.length > 0) {
@@ -262,4 +262,31 @@ async function comparePasswords(password, hashedPassword) {
     }
 }
 
-module.exports = { itemsPerPage, app, pool, basicAuth, bearer, adminValidations, superPrivilege, passwordValidations, checkTokenExpiry, checkUserRole, hashPassword, comparePasswords };
+// errorMessages.js
+
+const errM = {
+    BAD_REQUEST: 'Bad request encountered.',
+    UNAUTHORIZED: 'Unauthorized access.',
+    INTERNAL_SERVER_ERROR : 'Internal server error.',
+    FORBIDDEN: 'Access forbidden.',
+    NOT_FOUND: 'Resource not found.',
+    METHOD_NOT_ALLOWED: 'Method not allowed for this resource.',
+    SERVER_ERROR: 'Internal server error.',
+    NOT_IMPLEMENTED: 'This feature is not implemented yet.',
+    SERVICE_UNAVAILABLE: 'Service temporarily unavailable.',
+    GATEWAY_TIMEOUT: 'Gateway timeout.',
+    TOO_MANY_REQUESTS: 'Too many requests. Please try again later.',
+    INVALID_INPUT: 'Invalid input data provided.',
+    DUPLICATE_ENTRY: 'Duplicate entry found.',
+    DATABASE_ERROR: 'Database operation failed.',
+    AUTHENTICATION_FAILED: 'Authentication failed.',
+    AUTHORIZATION_FAILED: 'Authorization failed.',
+    SESSION_EXPIRED: 'Session has expired.',
+    INVALID_TOKEN: 'Invalid or expired token.',
+    EMAIL_ALREADY_EXISTS: 'Email address already exists.',
+    INVALID_EMAIL_OR_PASSWORD: 'Invalid email or password.',
+    // ... add more error messages as needed
+};
+
+
+module.exports = { errM, itemsPerPage, app, pool, basicAuth, bearer, adminValidations, superPrivilege, passwordValidations, checkTokenExpiry, checkUserRole, hashPassword, comparePasswords };
