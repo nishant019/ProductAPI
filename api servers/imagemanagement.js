@@ -12,7 +12,7 @@ const path = require('path');
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         const prodId = req.params.prodId;
-        const uploadPath = `uploads/${prodId}`;
+        const uploadPath = `api servers/uploads/${prodId}`;
 
         fs.access(uploadPath, (err) => {
             if (err) {
@@ -33,9 +33,24 @@ const storage = multer.diskStorage({
         const ext = path.extname(file.originalname);
         cb(null, `${file.fieldname}-${Date.now()}${ext}`);
     }
-})
+});
 
-const upload = multer({ storage: storage });
+const fileFilter = (req, file, cb) => {
+    if (
+        file.mimetype === 'image/jpeg' ||
+        file.mimetype === 'image/png' ||
+        file.mimetype === 'image/gif'
+    ) {
+        cb(null, true);
+    } else {
+        cb('Only images are allowed!', false);
+    }
+};
+
+const upload = multer({ 
+    storage: storage,
+    fileFilter: fileFilter 
+});
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
@@ -75,7 +90,7 @@ app.post('/uploadImage/:prodId', bearer, upload.array('prodImage', 5), (req, res
     if (!uploadedImages || uploadedImages.length === 0) {
         return res.status(400).send('No files were uploaded.');
     }
-    
+
     pool.query('SELECT user FROM prods WHERE prodId = ?', [prodId], (error, result) => {
         if (error) {
             console.error('Error checking user privileges:', error);
@@ -114,16 +129,26 @@ app.post('/uploadImage/:prodId', bearer, upload.array('prodImage', 5), (req, res
     });
 });
 
+
 app.get('/image/:prodId/:imageName', (req, res) => {
     const { prodId, imageName } = req.params;
     const imagePath = path.join(__dirname, 'uploads', prodId, imageName);
 
-    if (fs.existsSync(imagePath)) {
-        res.sendFile(imagePath);
-    } else {
-        res.status(404).send('Image not found');
+    // Debug: Log the image path
+    
+    try {
+        if (fs.existsSync(imagePath)) {
+            // Set Content-Type based on file extension (example for JPEG)
+            res.sendFile(imagePath);
+        } else {
+            res.status(404).send('Image not found');
+        }
+    } catch (error) {
+        console.error('Error sending image:', error);
+        res.status(500).send('Internal Server Error');
     }
 });
+
 
 app.get('/prodImage/:prodId', (req, res) => {
     const { prodId, imageName } = req.params;

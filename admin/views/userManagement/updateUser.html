@@ -13,36 +13,42 @@
     <p id="success"></p>
 
     <form id="updateUser" method="post">
-        <label for="username">Username:</label>
-        <input type="text" id="userName" name="userName">
-        <br>
-        <input type="hidden" id="userId" name="userId" value="">
+        <div class="form-container">
+            <div class="form-column">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="userName" name="userName">
+                    <br>
+                    <input type="hidden" id="userId" name="userId" value="">
 
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email">
-        <br>
-        <label for="role">Role:</label>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email">
+                    <br>
+                    <label for="role">Role:</label>
 
-        <select id="userRole">
-            <option value="" selected>select</option>
+                    <select id="userRole">
+                        <option value="" selected>select</option>
 
-            <option value="1">Admin User</option>
-            <!-- <option value="69">Super User</option> -->
-        </select>
-        <br>
-        <label for="status">Status:</label>
+                        <option value="1">Admin User</option>
+                        <!-- <option value="69">Super User</option> -->
+                    </select>
+                    <br>
+                    <label for="status">Status:</label>
 
-        <select id="userStatus">
-            <option value="" selected>select</option>
-            <option value="1">Active</option>
-            <option value="0">Blocked</option>
-        </select>
-        <br>
-        <label for="fullName">Full Name:</label>
-        <input type="text" id="fullName" name="fullName">
-        <br>
-        <p id="error"></p>
-        <input type="submit" id="addUser" value="Update User">
+                    <select id="userStatus">
+                        <option value="" selected>select</option>
+                        <option value="1">Active</option>
+                        <option value="0">Blocked</option>
+                    </select>
+                    <br>
+                    <label for="fullName">Full Name:</label>
+                    <input type="text" id="fullName" name="fullName">
+                    <br>
+                    <p id="error"></p>
+                </div>
+                <input type="submit" id="addUser" value="Update User">
+            </div>
+        </div>
     </form>
     <script type="text/javascript" src="/loggedIn.js">  </script>
     <script type="text/javascript" src="/userMgmt.js">  </script>
