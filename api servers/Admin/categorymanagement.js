@@ -1,4 +1,4 @@
-const functions = require('./functions/scripts')
+const functions = require('../functions/scripts')
 const express = require('express')
 const pool = functions.pool
 const app = functions.app
@@ -49,7 +49,7 @@ app.get('/getProductType/:id', bearer, (req, res) => {
     const status = req.query.status;
     let query = 'SELECT * FROM producttype WHERE 1=1';
     let queryParams = [];
-
+    let ALL_PRODUCT_TYPES_QUERY ='SELECT * FROM producttype'
     if (prodTypeId !== ':id' && !isNaN(prodTypeId)) { 
         query += ' AND prodTypeId = ?';
         queryParams.push(parseInt(prodTypeId));

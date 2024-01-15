@@ -1,4 +1,4 @@
-const functions = require('./functions/scripts')
+const functions = require('../functions/scripts')
 const express = require('express')
 
 const jwt = require('jsonwebtoken');

@@ -284,8 +284,7 @@ const errM = {
     SESSION_EXPIRED: 'Session has expired.',
     INVALID_TOKEN: 'Invalid or expired token.',
     EMAIL_ALREADY_EXISTS: 'Email address already exists.',
-    INVALID_EMAIL_OR_PASSWORD: 'Invalid email or password.',
-    // ... add more error messages as needed
+    INVALID_EMAIL_OR_PASSWORD: 'Invalid email or password.'
 };
 
 
