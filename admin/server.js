@@ -89,6 +89,12 @@ app.get('/productManagement/getProdDetail', requireLogin, (req, res) => {
 
 });
 
+app.get('/customer/getProds', requireLogin, (req, res) => {
+
+  res.sendFile(path.join(__dirname, '/views/Customer Management/dashboard.html'));
+
+});
+
 app.get('/productManagement/addProdType', requireLogin, (req, res) => {
 
   res.sendFile(path.join(__dirname, '/views/categoryManagement/productType/addProdType.html'));

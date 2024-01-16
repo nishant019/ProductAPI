@@ -20,13 +20,11 @@
                         <label for="subCategoryName">Sub Category Name:</label>
                         <input type="text" id="subCategoryName" name="subCategoryName">
                     </div>
-
                     <div class="form-group">
-                        <label for="subCategoryStatus">Sub Category Status:</label>
-                        <select id="subCategoryStatus">
+                        <label for="productTypeSelect">Product Type Select:</label>
+                        <select id="productTypeSelect">
                             <option value="" selected>select</option>
-                            <option value="0">Blocked</option>
-                            <option value="1">Active</option>
+
                         </select>
                     </div>
                     <div class="form-group">
@@ -37,12 +35,23 @@
                         </select>
                     </div>
 
+                    <div class="form-group">
+                        <label for="subCategoryStatus">Sub Category Status:</label>
+                        <select id="subCategoryStatus">
+                            <option value="" selected>select</option>
+                            <option value="0">Blocked</option>
+                            <option value="1">Active</option>
+                        </select>
+                    </div>
+                    
+                    <input type="submit" id="addSubCategory" value="Add Sub Category" />
+
+
 
                 </form>
                 <p id="error"></p>
                 <p id="success"></p>
 
-                <input type="submit" id="addSubCategory" value="Add Sub Category" />
             </div>
 
 
@@ -55,22 +64,33 @@
 
     <script>
 
-        document.getElementById('addSubCategory').addEventListener('click', function (e) {
+        document.addEventListener('submit', function (e) {
             e.preventDefault();
+            const productTypeSelect = document.getElementById('productTypeSelect');
             const subCategoryName = document.getElementById('subCategoryName').value;
-            const categoryId = document.getElementById('categorySelect').value;
+            const categorySelect = document.getElementById('categorySelect');
             const status = document.getElementById('subCategoryStatus').value;
-
-
+            const categoryId = categorySelect.value
             const data = {
                 subCategoryName,categoryId, status
             };
             addSubCategory(data);
 
         });
+        // document.addEventListener('DOMContentLoaded', () => {
+            productTypeSelect.addEventListener('change',()=>{
+                const prodTypeQuery = "?prodTypeId=" + productTypeSelect.value;
+                categorySelect.innerHTML = '<option value="" selected>select</option>';
+                getCategory(prodTypeQuery,'1')
+
+            })
+        // })
 
         document.addEventListener('DOMContentLoaded', () => {
-            getCategory('','1')
+            getSubCategory('','1')
+        })
+        document.addEventListener('DOMContentLoaded', () => {
+            getProductType('1')
         })
     </script>
 </body>

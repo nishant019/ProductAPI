@@ -132,10 +132,8 @@ app.post('/uploadImage/:prodId', bearer, upload.array('prodImage', 5), (req, res
 
 app.get('/image/:prodId/:imageName', (req, res) => {
     const { prodId, imageName } = req.params;
-    const imagePath = path.join(__dirname, 'uploads', prodId, imageName);
+    const imagePath = path.join(__dirname, '..','uploads', prodId, imageName);
 
-    // Debug: Log the image path
-    
     try {
         if (fs.existsSync(imagePath)) {
             // Set Content-Type based on file extension (example for JPEG)
@@ -168,8 +166,7 @@ app.delete('/deleteImage/:imageUrl', bearer, (req, res, next) => {
     const imageUrl = decodeURIComponent(encodedImgURl);
     const loggedInUser = req.headers.loggedinuser;
     const replacedUrl = imageUrl.replace('/image', '/uploads');
-    const imagePath = path.join('D:', 'productapi', replacedUrl);
-
+    const imagePath = path.join('D:', 'productapi/api servers', replacedUrl);
     checkTokenExpiry(req, res, () => {
         pool.query('SELECT role FROM adminuser WHERE userId = ?', [loggedInUser], (error, result) => {
             if (error) {

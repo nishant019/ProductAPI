@@ -30,12 +30,12 @@
                         </select>
                     </div>
 
+                    <input type="submit" id="addProductType" value="Add Product Type"/>
 
                 </form>
                 <p id="error"></p>
                 <p id="success"></p>
 
-                <input type="submit" id="addProductType" value="Add Product Type"/>
             </div>
 
             
@@ -48,7 +48,7 @@
 
     <script>
 
-        document.getElementById('addProductType').addEventListener('click', function (e) {
+        document.addEventListener('submit', function (e) {
             e.preventDefault();
 
             const prodTypeName = document.getElementById('prodTypeName').value;

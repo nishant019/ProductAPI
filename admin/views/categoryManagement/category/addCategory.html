@@ -37,12 +37,12 @@
                         </select>
                     </div>
 
+                    <input type="submit" id="addCategory" value="Add Category" />
 
                 </form>
                 <p id="error"></p>
                 <p id="success"></p>
 
-                <input type="submit" id="addCategory" value="Add Category" />
             </div>
 
 
@@ -55,7 +55,7 @@
 
     <script>
 
-        document.getElementById('addCategory').addEventListener('click', function (e) {
+        document.addEventListener('submit', function (e) {
             e.preventDefault();
             const categoryName = document.getElementById('categoryName').value;
             const prodTypeId = document.getElementById('productTypeSelect').value;
