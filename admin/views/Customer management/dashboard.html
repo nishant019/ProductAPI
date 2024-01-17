@@ -23,6 +23,12 @@
             margin-left: 20px;
             display: none;
         }
+        .sub-category-list-item{
+            margin-left: 20px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+
+        }
 
         .sub-list-item {
             padding: 5px;
@@ -89,22 +95,32 @@
     function createCategoryItem(category) {
         const subListItem = document.createElement('div');
         subListItem.className = 'sub-list-item';
-        subListItem.textContent = `${category.categoryName}  ( ${category.totalProducts} )`;
-        const subList = subListItem.querySelector('.sub-category-list');
 
-        fetchSubCategory(category.categoryId, subList);
+        const subCategoryListItem = document.createElement('div');
+        subCategoryListItem.className = 'sub-category-list-item';
+
+        subListItem.textContent = `${category.categoryName}  ( ${category.totalProducts} )`;
+
+        const catgeoryList = document.createElement('div')
+        catgeoryList.className = 'category-list'
+        
+        subListItem.appendChild(catgeoryList)
+
+        fetchSubCategory(category.categoryId, subCategoryListItem);
+
         subListItem.addEventListener('click', async () => {
 
-                if (subList.style.display === 'block') {
-                    subList.style.display = 'none';
-                } else {
-                    subList.style.display = 'block';
-                }
+            if (subCategoryListItem.style.display === 'block') {
+                subCategoryListItem.style.display = 'none';
+            } else {
+                subCategoryListItem.style.display = 'block';
+            }
 
-                subListItem.appendChild(subList);
+            catgeoryList.appendChild(subCategoryListItem);
 
-      
+
         });
+
 
         return subListItem;
     }
@@ -114,13 +130,12 @@
             // Replace this URL with the actual URL for fetching sub-categories
             const response = await axios.get(`http://localhost:3000/listSubCategory/:id?categoryId=${categoryId}`);
             const subCategories = response.data.data;
-
-            // Clear existing content before appending new content
-            subList.innerHTML = '';
+            const subListItem = document.querySelector('.sub-list-item')
+            // subList.innerHTML = '';
 
             subCategories.forEach(subCategory => {
-                const subListItem = createSubListItem(subCategory);
-                subList.appendChild(subListItem);
+                const subListCategoryItem = createSubListItem(subCategory);
+                subList.appendChild(subListCategoryItem);
             });
         } catch (error) {
             console.error(error);
