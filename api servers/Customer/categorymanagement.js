@@ -63,10 +63,10 @@ app.get('/listCategory/:id', (req, res) => {
     COALESCE(SUM(p.totalProducts), 0) as totalProducts
         FROM 
             producttype pt
-        LEFT JOIN (
-            SELECT prodType, COUNT(*) as totalProducts FROM prods GROUP BY prodCategory
-        ) p ON pt.prodTypeId = p.prodType
         INNER JOIN category c ON c.prodTypeId = pt.prodTypeId
+        LEFT JOIN (
+            SELECT prodCategory, COUNT(*) as totalProducts FROM prods GROUP BY prodCategory
+        ) p ON c.categoryId = p.prodCategory
         WHERE 
     pt.status = 1`;
     const groupStatement = ' GROUP BY c.categoryName, pt.prodTypeId, pt.prodTypeName'
@@ -113,10 +113,11 @@ app.get('/listSubCategory/:id', (req, res) => {
         pt.prodTypeName,
     COALESCE(SUM(p.totalProducts), 0) as totalProducts
     FROM producttype pt
+    INNER JOIN subcategory sc ON pt.prodTypeId = sc.prodTypeId
+
     LEFT JOIN (
-        SELECT prodType, COUNT(*) as totalProducts FROM prods GROUP BY prodSubCategory
-    ) p ON pt.prodTypeId = p.prodType
-    INNER JOIN subCategory sc ON pt.prodTypeId = sc.prodTypeId
+        SELECT prodSubCategory, COUNT(*) as totalProducts FROM prods GROUP BY prodSubCategory
+    ) p ON sc.subCategoryId = p.prodSubCategory
     INNER JOIN category c ON c.categoryId = sc.categoryId
     WHERE 
     pt.status = 1`;

@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Types</title>
     <style>
+        #productTypes {
+            width: max-content;
+            height: max-content;
+        }
+
         .list-item {
             cursor: pointer;
             padding: 10px;
@@ -38,50 +43,38 @@
 </body>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-    // Function to create a list item
-    function createListItem(data) {
+    async function createListItem(data, listDiv) {
+        const subList = document.createElement('div');
+        subList.className = 'sub-list';
         const listItem = document.createElement('div');
+        const prodTypeContainer = document.createElement('div');
+        prodTypeContainer.className = 'prod-type'
         listItem.className = 'list-item';
-        listItem.textContent = `${data.prodTypeName} ( ${data.totalProducts} )`;
-        listItem.addEventListener('click', () => toggleSubList(data.prodTypeId, listItem));
+        prodTypeContainer.textContent = `${data.prodTypeName} ( ${data.totalProducts} )`;
+        listItem.appendChild(prodTypeContainer)
+        fetchCategory(data.prodTypeId, subList);
+        prodTypeContainer.addEventListener('click', () => {
+
+            listItem.appendChild(subList);
+            if (subList.style.display === 'block') {
+                subList.style.display = 'none';
+            } else {
+                subList.style.display = 'block';
+            }
+
+        });
+
+        listDiv.appendChild(listItem);
+
         return listItem;
     }
 
-    // Function to toggle the display of sub-list
-    async function toggleSubList(prodTypeId, listItem) {
-        const subList = listItem.querySelector('.sub-list');
-
-        // If sub-list doesn't exist, create it and append to the listItem
-        if (!subList) {
-            const newSubList = document.createElement('div');
-            newSubList.className = 'sub-list';
-            listItem.appendChild(newSubList);
-
-            // Fetch and populate sub-list
-            await fetchCategory(prodTypeId, newSubList);
-        } else {
-            // Toggle the display of existing sub-list
-            subList.style.display = subList.style.display === 'none' ? 'block' : 'none';
-
-            // If sub-list is being displayed for the first time, fetch and populate
-            if (subList.style.display === 'block' && subList.childElementCount === 0) {
-                await fetchCategory(prodTypeId, subList);
-            }
-        }
-
-        // Toggle the display of the categoryList
-        const categoryList = document.getElementById('categoryList');
-        categoryList.style.display = 'block';
-    }
-
-    // Function to fetch category data and populate the sub-list
     async function fetchCategory(prodTypeId, subList) {
         try {
             // Replace this URL with the actual URL for fetching sub-categories
             const response = await axios.get(`http://localhost:3000/listCategory/:id?prodTypeId=${prodTypeId}`);
             const categories = response.data.data;
 
-            // Clear existing content before appending new content
             subList.innerHTML = '';
 
             categories.forEach(category => {
@@ -93,16 +86,29 @@
         }
     }
 
-    // Function to create a sub-list item
     function createCategoryItem(category) {
         const subListItem = document.createElement('div');
         subListItem.className = 'sub-list-item';
         subListItem.textContent = `${category.categoryName}  ( ${category.totalProducts} )`;
-        subListItem.addEventListener('click', () => fetchSubCategory(category.categoryId, subListItem));
+        const subList = subListItem.querySelector('.sub-category-list');
+
+        fetchSubCategory(category.categoryId, subList);
+        subListItem.addEventListener('click', async () => {
+
+                if (subList.style.display === 'block') {
+                    subList.style.display = 'none';
+                } else {
+                    subList.style.display = 'block';
+                }
+
+                subListItem.appendChild(subList);
+
+      
+        });
+
         return subListItem;
     }
 
-    // Function to fetch sub-category data and populate the sub-list
     async function fetchSubCategory(categoryId, subList) {
         try {
             // Replace this URL with the actual URL for fetching sub-categories
@@ -121,27 +127,28 @@
         }
     }
 
-    // Function to create a sub-list item
     function createSubListItem(subCategory) {
         const subListItem = document.createElement('div');
-        subListItem.className = 'sub-list-item';
+        subListItem.className = 'sub-category-list-item';
         subListItem.textContent = `${subCategory.subCategoryName}  ( ${subCategory.totalProducts} )`;
         return subListItem;
     }
 
-    // Function to fetch product type data and populate the main list
     async function fetchProductType() {
         try {
             const response = await axios.get('http://localhost:3000/listProductType/:id');
             const productTypesContainer = document.getElementById('productTypes');
             const productTypes = response.data.data;
 
-            // Clear existing content before appending new content
             productTypesContainer.innerHTML = '';
 
             productTypes.forEach(productType => {
-                const listItem = createListItem(productType);
-                productTypesContainer.appendChild(listItem);
+                const listDiv = document.createElement('div');
+                listDiv.className = 'list-div';
+
+                createListItem(productType, listDiv);
+
+                productTypesContainer.appendChild(listDiv);
             });
         } catch (error) {
             console.error(error);
@@ -151,6 +158,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         fetchProductType();
     });
+
 </script>
 
 </html>
