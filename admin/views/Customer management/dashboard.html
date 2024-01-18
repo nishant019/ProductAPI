@@ -6,9 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Types</title>
     <style>
-        #productTypes{
-            width :20%
+        #mainBody {
+            /* border: 1px solid black; */
+            display: flex;
         }
+
+        #productTypes {
+            width: 25%;
+            display: block;
+        }
+
         body {
             margin: 20px;
         }
@@ -25,7 +32,8 @@
             cursor: pointer;
             margin-left: 20px;
             display: flex;
-            flex-direction: column; /* Updated style */
+            flex-direction: column;
+            /* Updated style */
             margin-bottom: 5px;
         }
 
@@ -37,7 +45,8 @@
 
         .sub-category-list {
             cursor: pointer;
-            margin-left: 20px; /* Adjusted margin */
+            margin-left: 20px;
+            /* Adjusted margin */
             background-color: #f8f8f8;
             border-radius: 3px;
             display: none;
@@ -46,19 +55,157 @@
 
         .sub-category-list-item {
             cursor: pointer;
-            margin-left: 20px; /* Adjusted margin */
+            margin-left: 20px;
+            /* Adjusted margin */
             background-color: #f8f8f8;
             border-radius: 3px;
             padding: 5px;
+        }
+
+        #products {
+            /* margin-left: 30px; */
+            border-radius: 3px;
+            border: 1px solid red;
+            height: fit-content;
+            width: 50%;
+
+        }
+
+        #listProducts {
+            margin: 10px;
+            border: 1px solid red;
+            height: max-content;
+        }
+
+        .product-div {
+            margin: 10px;
+            /* padding: auto; */
+            background-color: #f8f8f8;
+        }
+
+        .img-container {
+            width: 100px
+        }
+
+        .img {
+            width: 300px;
         }
     </style>
 </head>
 
 <body>
-    <div id="productTypes"></div>
+    <div id="mainBody">
+        <div id="productTypes"></div>
+        <div id="products">
+
+            <div id="listProducts"></div>
+        </div>
+    </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
+
+    // sub-category-list-item
+    async function listProducts(subCatId, subCategoryListItem) {
+        let subCategoryId = subCatId
+        const listProductsDiv = document.getElementById('listProducts')
+        listProductsDiv.innerHTML=''
+
+        if (subCategoryListItem) {
+            subCategoryListItem.addEventListener('click', () => {
+                url.searchParams.set("subCategoryId", subCatId);
+                // url.searchParams.delete('param2');
+                window.history.replaceState(null, null, url);
+            })
+        }
+        const apiUrl = new URL(`http://localhost:3000/listProducts/:id`)
+
+
+
+        const url = new URL(window.location.href);
+        let prodTypeId = url.searchParams.get('prodTypeId')
+        let categoryId = url.searchParams.get('categoryId')
+        // console.log(prodTypeId)
+
+        if (prodTypeId) {
+            prodTypeId = apiUrl.searchParams.set('prodTypeId', prodTypeId)
+        }
+        if (categoryId) {
+            categoryId = apiUrl.searchParams.set('categoryId', categoryId)
+
+        }
+        if (Number.isInteger(parseInt(subCategoryId))) {
+            subCategoryId = apiUrl.searchParams.set('subCategoryId', subCategoryId)
+        }
+
+
+        const listProducts = await axios.get(apiUrl);
+        const productsDiv = document.createElement('div')
+        productsDiv.className = 'products-div'
+
+
+
+
+        console.log('listProducts', listProducts)
+
+
+
+        listProducts.data.data.forEach(prods => {
+
+            const productDiv = document.createElement('div')
+            productDiv.className = 'product-div'
+
+            const imgElement = document.createElement('img')
+            imgElement.className = 'img'
+            const imgContainer = document.createElement('div')
+            imgContainer.className = 'img-container'
+            imgContainer.appendChild(imgElement)
+
+            const productTitle = document.createElement('h3')
+            productTitle.className = 'product-title'
+
+            const productSubTitle = document.createElement('h5')
+            productSubTitle.className = 'product-sub-title'
+
+            const productShortDescription = document.createElement('p')
+            productShortDescription.className = 'product-short-description-title'
+
+            const productCost = document.createElement('p')
+            productCost.className = 'product-cost'
+
+
+
+            productTitle.innerText = prods.prodName
+
+            productSubTitle.innerText = prods.prodSubTitle
+
+            productShortDescription.innerText = prods.prodShortDescription
+
+            productCost.innerText = `${prods.cost} per ${prods.quantity} - ${prods.quantityType}`
+
+            imgElement.src = 'http://localhost:3000' + prods.imageUrl
+            productDiv.appendChild(productTitle)
+            productDiv.appendChild(productSubTitle)
+            productDiv.appendChild(productShortDescription)
+
+            productDiv.appendChild(imgContainer)
+            productDiv.appendChild(productCost)
+            productsDiv.appendChild(productDiv)
+
+
+
+        })
+
+
+        listProductsDiv.appendChild(productsDiv)
+
+
+
+
+    }
+
+
+
     async function createProductTypeItem(productType, container) {
         const productTypeItem = createListItem(productType);
         const categoryList = document.createElement('div');
@@ -66,6 +213,10 @@
         productTypeItem.addEventListener('click', async () => {
             toggleDisplay(categoryList);
             if (categoryList.style.display === 'block') {
+                const url = new URL(window.location.href);
+                url.searchParams.set("prodTypeId", productType.prodTypeId);
+                // url.searchParams.delete('param2');
+                window.history.replaceState(null, null, url);
                 fetchAndDisplayCategories(productType.prodTypeId, categoryList);
             }
         });
@@ -133,6 +284,10 @@
         categoryName.addEventListener('click', () => {
             toggleDisplay(subCategoryList);
             if (subCategoryList.style.display === 'block') {
+                const url = new URL(window.location.href);
+                url.searchParams.set("categoryId", category.categoryId);
+                // url.searchParams.delete('param2');
+                window.history.replaceState(null, null, url);
                 fetchAndDisplaySubCategories(category.categoryId, subCategoryList);
             }
         });
@@ -143,7 +298,13 @@
     function createSubCategoryItem(subCategory) {
         const subCategoryItem = document.createElement('div');
         subCategoryItem.className = 'sub-category-list-item';
+
+
+
+
         subCategoryItem.textContent = `${subCategory.subCategoryName}  ( ${subCategory.totalProducts} )`;
+        listProducts(subCategory.subCategoryId, subCategoryItem)
+
         return subCategoryItem;
     }
 
@@ -174,6 +335,8 @@
     }
 
     document.addEventListener('DOMContentLoaded', fetchProductTypes);
+    document.addEventListener('DOMContentLoaded', listProducts);
+
 </script>
 
 </html>
