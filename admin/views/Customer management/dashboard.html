@@ -6,174 +6,174 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Types</title>
     <style>
-        #productTypes {
-            width: max-content;
-            height: max-content;
+        #productTypes{
+            width :20%
+        }
+        body {
+            margin: 20px;
         }
 
         .list-item {
             cursor: pointer;
             padding: 10px;
-            margin: 5px;
-            border: 1px solid #ccc;
+            margin-bottom: 5px;
+            background-color: #f0f0f0;
             border-radius: 5px;
         }
 
-        .sub-list {
+        .category-item {
+            cursor: pointer;
             margin-left: 20px;
-            display: none;
+            display: flex;
+            flex-direction: column; /* Updated style */
+            margin-bottom: 5px;
         }
-        .sub-category-list-item{
-            margin-left: 20px;
-            border: 1px solid #ddd;
+
+        .category-name {
+            margin-bottom: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .sub-category-list {
+            cursor: pointer;
+            margin-left: 20px; /* Adjusted margin */
+            background-color: #f8f8f8;
             border-radius: 3px;
-
-        }
-
-        .sub-list-item {
+            display: none;
             padding: 5px;
-            margin: 2px;
-            border: 1px solid #ddd;
-            border-radius: 3px;
         }
 
-        .category-list {
-            display: none;
+        .sub-category-list-item {
+            cursor: pointer;
+            margin-left: 20px; /* Adjusted margin */
+            background-color: #f8f8f8;
+            border-radius: 3px;
+            padding: 5px;
         }
     </style>
 </head>
 
 <body>
     <div id="productTypes"></div>
-    <div id="categoryList" class="category-list"></div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-    async function createListItem(data, listDiv) {
-        const subList = document.createElement('div');
-        subList.className = 'sub-list';
-        const listItem = document.createElement('div');
-        const prodTypeContainer = document.createElement('div');
-        prodTypeContainer.className = 'prod-type'
-        listItem.className = 'list-item';
-        prodTypeContainer.textContent = `${data.prodTypeName} ( ${data.totalProducts} )`;
-        listItem.appendChild(prodTypeContainer)
-        fetchCategory(data.prodTypeId, subList);
-        prodTypeContainer.addEventListener('click', () => {
+    async function createProductTypeItem(productType, container) {
+        const productTypeItem = createListItem(productType);
+        const categoryList = document.createElement('div');
 
-            listItem.appendChild(subList);
-            if (subList.style.display === 'block') {
-                subList.style.display = 'none';
-            } else {
-                subList.style.display = 'block';
+        productTypeItem.addEventListener('click', async () => {
+            toggleDisplay(categoryList);
+            if (categoryList.style.display === 'block') {
+                fetchAndDisplayCategories(productType.prodTypeId, categoryList);
             }
-
         });
 
-        listDiv.appendChild(listItem);
+        container.appendChild(productTypeItem);
+        container.appendChild(categoryList);
+    }
 
+    function createListItem(data) {
+        const listItem = document.createElement('div');
+        listItem.className = 'list-item';
+        listItem.textContent = `${data.prodTypeName} ( ${data.totalProducts} )`;
         return listItem;
     }
 
-    async function fetchCategory(prodTypeId, subList) {
+    async function fetchAndDisplayCategories(prodTypeId, categoryList) {
         try {
-            // Replace this URL with the actual URL for fetching sub-categories
-            const response = await axios.get(`http://localhost:3000/listCategory/:id?prodTypeId=${prodTypeId}`);
-            const categories = response.data.data;
-
-            subList.innerHTML = '';
-
-            categories.forEach(category => {
-                const subListItem = createCategoryItem(category);
-                subList.appendChild(subListItem);
-            });
+            const categories = await fetchData(`http://localhost:3000/listCategory/:id?prodTypeId=${prodTypeId}`);
+            renderCategories(categories, categoryList);
         } catch (error) {
             console.error(error);
         }
+    }
+
+    function renderCategories(categories, categoryList) {
+        categoryList.innerHTML = '';
+
+        categories.forEach(category => {
+            const categoryItem = createCategoryItem(category);
+            categoryList.appendChild(categoryItem);
+        });
+    }
+
+    async function fetchAndDisplaySubCategories(categoryId, subCategoryList) {
+        try {
+            const subCategories = await fetchData(`http://localhost:3000/listSubCategory/:id?categoryId=${categoryId}`);
+            renderSubCategories(subCategories, subCategoryList);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    function renderSubCategories(subCategories, subCategoryList) {
+        subCategoryList.innerHTML = '';
+
+        subCategories.forEach(subCategory => {
+            const subCategoryItem = createSubCategoryItem(subCategory);
+            subCategoryList.appendChild(subCategoryItem);
+        });
     }
 
     function createCategoryItem(category) {
-        const subListItem = document.createElement('div');
-        subListItem.className = 'sub-list-item';
+        const categoryItem = document.createElement('div');
+        categoryItem.className = 'category-item';
 
-        const subCategoryListItem = document.createElement('div');
-        subCategoryListItem.className = 'sub-category-list-item';
+        const categoryName = document.createElement('div');
+        categoryName.className = 'category-name';
+        categoryName.textContent = `${category.categoryName} ( ${category.totalProducts} )`;
+        categoryItem.appendChild(categoryName);
 
-        subListItem.textContent = `${category.categoryName}  ( ${category.totalProducts} )`;
+        const subCategoryList = document.createElement('div');
+        subCategoryList.className = 'sub-category-list'; // Updated class name
+        categoryItem.appendChild(subCategoryList);
 
-        const catgeoryList = document.createElement('div')
-        catgeoryList.className = 'category-list'
-        
-        subListItem.appendChild(catgeoryList)
-
-        fetchSubCategory(category.categoryId, subCategoryListItem);
-
-        subListItem.addEventListener('click', async () => {
-
-            if (subCategoryListItem.style.display === 'block') {
-                subCategoryListItem.style.display = 'none';
-            } else {
-                subCategoryListItem.style.display = 'block';
+        categoryName.addEventListener('click', () => {
+            toggleDisplay(subCategoryList);
+            if (subCategoryList.style.display === 'block') {
+                fetchAndDisplaySubCategories(category.categoryId, subCategoryList);
             }
-
-            catgeoryList.appendChild(subCategoryListItem);
-
-
         });
 
-
-        return subListItem;
+        return categoryItem;
     }
 
-    async function fetchSubCategory(categoryId, subList) {
+    function createSubCategoryItem(subCategory) {
+        const subCategoryItem = document.createElement('div');
+        subCategoryItem.className = 'sub-category-list-item';
+        subCategoryItem.textContent = `${subCategory.subCategoryName}  ( ${subCategory.totalProducts} )`;
+        return subCategoryItem;
+    }
+
+    async function fetchData(url) {
+        const response = await axios.get(url);
+        return response.data.data;
+    }
+
+    function toggleDisplay(element) {
+        element.style.display = element.style.display === 'block' ? 'none' : 'block';
+    }
+
+    async function fetchProductTypes() {
         try {
-            // Replace this URL with the actual URL for fetching sub-categories
-            const response = await axios.get(`http://localhost:3000/listSubCategory/:id?categoryId=${categoryId}`);
-            const subCategories = response.data.data;
-            const subListItem = document.querySelector('.sub-list-item')
-            // subList.innerHTML = '';
-
-            subCategories.forEach(subCategory => {
-                const subListCategoryItem = createSubListItem(subCategory);
-                subList.appendChild(subListCategoryItem);
-            });
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    function createSubListItem(subCategory) {
-        const subListItem = document.createElement('div');
-        subListItem.className = 'sub-category-list-item';
-        subListItem.textContent = `${subCategory.subCategoryName}  ( ${subCategory.totalProducts} )`;
-        return subListItem;
-    }
-
-    async function fetchProductType() {
-        try {
-            const response = await axios.get('http://localhost:3000/listProductType/:id');
+            const productTypes = await fetchData('http://localhost:3000/listProductType/:id');
             const productTypesContainer = document.getElementById('productTypes');
-            const productTypes = response.data.data;
 
             productTypesContainer.innerHTML = '';
 
             productTypes.forEach(productType => {
-                const listDiv = document.createElement('div');
-                listDiv.className = 'list-div';
-
-                createListItem(productType, listDiv);
-
-                productTypesContainer.appendChild(listDiv);
+                const productTypeDiv = document.createElement('div');
+                createProductTypeItem(productType, productTypeDiv);
+                productTypesContainer.appendChild(productTypeDiv);
             });
         } catch (error) {
             console.error(error);
         }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        fetchProductType();
-    });
-
+    document.addEventListener('DOMContentLoaded', fetchProductTypes);
 </script>
 
 </html>
