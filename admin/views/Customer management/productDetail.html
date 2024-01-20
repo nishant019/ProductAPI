@@ -47,7 +47,7 @@
 
         .list-item {
             cursor: pointer;
-            padding: 7px;
+            padding: 10px;
             margin-bottom: 5px;
             background-color: #f0f0f0;
             border-radius: 5px;
@@ -62,11 +62,11 @@
             margin-bottom: 5px;
         }
 
-        /* .category-name {
+        .category-name {
             margin-bottom: 5px;
             font-weight: bold;
             cursor: pointer;
-        } */
+        }
 
         .sub-category-list {
             cursor: pointer;
@@ -123,16 +123,13 @@
         <div id="productTypes"></div>
         <div id="products">
 
-            <div id="listProducts"></div>
         </div>
     </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 <script src="/Customer_Management/scripts.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', listProducts);
+
+<script>    listProducts()
 </script>
-
-
 </html>

@@ -89,11 +89,7 @@ app.get('/productManagement/getProdDetail', requireLogin, (req, res) => {
 
 });
 
-app.get('/customer/getProds', requireLogin, (req, res) => {
 
-  res.sendFile(path.join(__dirname, '/views/Customer Management/dashboard.html'));
-
-});
 
 app.get('/productManagement/addProdType', requireLogin, (req, res) => {
 
@@ -109,6 +105,19 @@ app.get('/productManagement/addCategory', requireLogin, (req, res) => {
 app.get('/productManagement/addSubCategory', requireLogin, (req, res) => {
 
   res.sendFile(path.join(__dirname, '/views/categoryManagement/subCategory/addSubCategory.html'));
+
+});
+
+
+app.get('/customer/getProds',  (req, res) => {
+
+  res.sendFile(path.join(__dirname, '/views/Customer Management/dashboard.html'));
+
+});
+
+app.get('/customer/product/detail',  (req, res) => {
+
+  res.sendFile(path.join(__dirname, '/views/Customer Management/productDetail.html'));
 
 });
 
@@ -131,37 +140,41 @@ app.get('/loggedin.js', (req, res) => {
   res.sendFile(path.join(__dirname, '/scripts/loggedin.js'));
 
 });
+
 app.get('/profile.js', (req, res) => {
   res.sendFile(path.join(__dirname, '/scripts/profile.js'));
-
 });
+
 app.get('/userMgmt.js', (req, res) => {
   res.sendFile(path.join(__dirname, '/scripts/userMgmt.js'));
-
 });
+
 app.get('/prodMgmt.js', (req, res) => {
   res.sendFile(path.join(__dirname, '/scripts/prodMgmt.js'));
-
 });
+
 app.get('/menu.js', (req, res) => {
   res.sendFile(path.join(__dirname, '/scripts/menu.js'));
-
 });
+
+app.get('/Customer_Management/scripts.js', (req, res) => {
+  res.sendFile(path.join(__dirname, '/scripts/Customer Management/scripts.js'));
+});
+
 app.get('/pagination.css', (req, res) => {
   res.sendFile(path.join(__dirname, '/styles/pagination.css'));
 
 });
 app.get('/adminIcon', (req, res) => {
   res.sendFile(path.join(__dirname, '/styles/icons/admin.png'));
-
 });
+
 app.get('/profile.css', (req, res) => {
   res.sendFile(path.join(__dirname, '/styles/profile.css'));
-
 });
+
 app.get('/mainStyle.css', (req, res) => {
   res.sendFile(path.join(__dirname, '/styles/mainStyle.css'));
-
 });
 
 
