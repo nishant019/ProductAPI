@@ -182,7 +182,7 @@ app.get('/listProducts/:id', (req, res) => {
 
     `
 
-    const groupStatement = ' GROUP BY sc.subCategoryName,c.categoryName, pt.prodTypeId, pt.prodTypeName'
+    const groupStatement = ' GROUP BY pt.prodTypeId, p.prodId'
 
     const queryParams = [];
     if (prodId !== ':id') {
@@ -203,7 +203,7 @@ app.get('/listProducts/:id', (req, res) => {
         ALL_PRODUCT_TYPES_QUERY += ' AND pt.prodTypeId = ?';
         queryParams.push(prodTypeId);
     }
-    pool.query(ALL_PRODUCT_TYPES_QUERY + groupStatement, queryParams, (error, result) => {
+    pool.query(ALL_PRODUCT_TYPES_QUERY+groupStatement , queryParams, (error, result) => {
         if (error) {
             console.log(error)
             res.status(500).json({ error: 'Internal Server Error' });

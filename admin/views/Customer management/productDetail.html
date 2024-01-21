@@ -4,132 +4,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Types</title>
+    <title>Product Detail</title>
     <style>
-        #mainBody {
-            /* border: 1px solid black; */
-            display: flex;
+        body {
+            margin: 20px;
+            font-family: 'Arial', sans-serif;
         }
 
-        #productTypes {
-            width: 25%;
+        #detailBody {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-start;
+        }
+
+        #productDetails {
+            width: 50%;
+            margin: 10px;
             display: block;
         }
 
-        body {
-            margin: 20px;
+        .product-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-bottom: 10px;
         }
 
-        .product-type{
-            margin: 5px;
-            padding: 10px;
-            border-radius: 10px;
+        .product-info {
             background-color: #f8f8f8;
-        }
-
-        .category{
-            /* display: none; */
-            margin: 5px;
-            padding: 7px;
-            border-radius: 10px;
-            margin-left: 10px;
-            background-color: #e3e0e0;
-
-        }
-        .sub-category{
-            /* display: none; */
-            margin: 5px;
-            padding: 7px;
-            border-radius: 10px;
-            background-color: #c5c3c3;
-            margin-left: 10px;
-        }
-
-        .list-item {
-            cursor: pointer;
             padding: 10px;
-            margin-bottom: 5px;
-            background-color: #f0f0f0;
             border-radius: 5px;
         }
 
-        .category-item {
-            cursor: pointer;
-            margin-left: 20px;
-            display: flex;
-            flex-direction: column;
-            /* Updated style */
-            margin-bottom: 5px;
+        .product-info h2 {
+            margin: 0;
+            font-size: 1.5em;
         }
 
-        .category-name {
-            margin-bottom: 5px;
-            font-weight: bold;
-            cursor: pointer;
+        .product-info p {
+            margin: 5px 0;
         }
 
-        .sub-category-list {
-            cursor: pointer;
-            margin-left: 20px;
-            /* Adjusted margin */
-            background-color: #f8f8f8;
-            border-radius: 3px;
-            display: none;
-            padding: 5px;
-        }
-
-        .sub-category-list-item {
-            cursor: pointer;
-            margin-left: 20px;
-            /* Adjusted margin */
-            background-color: #f8f8f8;
-            border-radius: 3px;
-            padding: 5px;
-        }
-
-        #products {
-            /* margin-left: 30px; */
-            border-radius: 3px;
-            border: 1px solid red;
-            height: fit-content;
-            width: 50%;
-
-        }
-
-        #listProducts {
+        #productLocations {
+            width: 30%;
             margin: 10px;
-            border: 1px solid red;
-            height: max-content;
         }
 
-        .product-div {
-            margin: 10px;
-            /* padding: auto; */
-            background-color: #f8f8f8;
+        .location-list {
+            list-style: none;
+            padding: 0;
         }
 
-        .img-container {
-            width: 100px
+        .location-item {
+            background-color: #f0f0f0;
+            margin: 5px 0;
+            padding: 8px;
+            border-radius: 5px;
         }
 
-        .img {
-            width: 300px;
+
+        #productCategory{
+            color: grey;
+            margin-left:5%;
         }
     </style>
 </head>
 
 <body>
-    <div id="mainBody">
-        <div id="productTypes"></div>
-        <div id="products">
+    <div id="productCategory"></div>
 
+    <div id="detailBody">
+        <div id="productDetails">
+            <div class="product-info" id="productInfo"></div>
+
+            <img class="product-image" id="productImage" src="" alt="Product Image">
+        </div>
+        <div id="productLocations">
+            <h2>Product Locations</h2>
+            <ul class="location-list" id="locationList"></ul>
         </div>
     </div>
 </body>
+
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
-<!-- <script src="/Customer_Management/scripts.js"></script> -->
+<script src="/Customer_Management/scripts.js"></script>
+<script>
 
-<script>    
+    document.addEventListener('DOMContentLoaded', () => {
+        getProductDetail();
+    });
 </script>
+
 </html>

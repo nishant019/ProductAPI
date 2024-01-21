@@ -12,22 +12,19 @@
         }
 
         #productTypes {
-            width: 25%;
+            width: 250px;
             display: block;
         }
 
-        body {
-            margin: 20px;
+        /* Media query for mobile view */
+        @media (max-width: 600px) {
+            #productTypes {
+                display: none;
+
+            }
         }
 
-        .product-type{
-            margin: 5px;
-            padding: 10px;
-            border-radius: 10px;
-            background-color: #f8f8f8;
-        }
-
-        .category{
+        .category {
             /* display: none; */
             margin: 5px;
             padding: 7px;
@@ -36,13 +33,102 @@
             background-color: #e3e0e0;
 
         }
-        .sub-category{
+        body {
+            font-family: 'Goudy Sans', 'Goudy Bookletter 1911', sans-serif;
+            background-color: #f9f7f7;
+            margin: 20px;
+        }
+
+        .product-type {
+            margin: 5px;
+            padding: 10px;
+            border-radius: 10px;
+            background-color: #ffffff;
+        }
+
+        .product-title {
+            font-size: large;
+            font-weight: 500;
+        }
+        .product-cost{
+            width: 100%;
+            height: auto;
+            font-size: 24px;
+            text-align: center;
+        }
+
+
+        .products-div {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            flex-direction: row-reverse;
+            align-items: stretch;
+        }
+        .product-content-div {
+
+            border-radius: 15px;
+            margin: 10px;
+            background-color: #f9f2f2;
+            display: inline-block;
+            align-items: center;
+            /* border: 1px solid red; */
+            width: fit-content;
+            height: fit-content;
+
+            padding: 20px;
+            transition: box-shadow 0.3s ease, opacity 0.3s ease;
+            box-shadow: 0px 8px 18px rgba(211, 44, 44, 0.2),0px -3px 12px rgba(211, 44, 44, 0.2);;
+        }
+
+        .product-div {
+            height: 600px;
+            width: 320px;
+        }
+
+        .product-content-div:hover {
+            box-shadow: 0px 8px 18px rgba(211, 44, 44, 0.2), 0px -8px 18px rgba(211, 44, 44, 0.2); /* Increase shadow on hover, include negative y-offset */
+            opacity: 0.9;
+        }
+
+
+
+        .product-sub-title{
+            font-size: 12px;
+            color: rgb(138, 138, 138);
+            
+        }
+
+        .sub-category {
             /* display: none; */
             margin: 5px;
             padding: 7px;
             border-radius: 10px;
             background-color: #c5c3c3;
             margin-left: 10px;
+        }
+        .book-button{
+            background-color: black;
+            padding: 10px 30px;
+            color: white;
+            border-radius: 10px ;
+            align-items: center;
+            margin: 0 auto;
+            display: block;
+            font-size: 18px;
+            box-shadow: 0px 8px 18px rgba(137, 137, 137, 0.2),0px -3px 12px rgba(137, 137, 137, 0.2);
+
+        }
+        .book-button:hover{
+            background-color: rgb(40, 40, 40);
+            box-shadow: 0px 12px 16px rgba(137, 137, 137, 0.2),0px -3px 12px rgba(137, 137, 137, 0.2);
+
+
+        }
+
+        .contact-info{
+            font-size: 12px;
+            text-align:right;
         }
 
         .list-item {
@@ -87,52 +173,62 @@
             padding: 5px;
         }
 
-        #products {
-            /* margin-left: 30px; */
-            border-radius: 3px;
-            border: 1px solid red;
-            height: fit-content;
-            width: 50%;
-
-        }
 
         #listProducts {
-            margin: 10px;
-            border: 1px solid red;
+            border-radius: 3px;
             height: max-content;
-        }
-
-        .product-div {
-            margin: 10px;
-            /* padding: auto; */
-            background-color: #f8f8f8;
+            width: 80%;
         }
 
         .img-container {
-            width: 100px
+            width: 100%;
+            height: 300px;
         }
 
-        .img {
-            width: 300px;
+
+
+        .img-container .img-href {
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            display: block;
+
+        }
+
+
+        .img-container .img-href .img {
+            border-radius: 12px;
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: 100%;
+            display: block;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%)
         }
     </style>
 </head>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap">
 
 <body>
     <div id="mainBody">
         <div id="productTypes"></div>
-        <div id="products">
 
-            <div id="listProducts"></div>
-        </div>
+        <div id="listProducts"></div>
+
     </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 <script src="/Customer_Management/scripts.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', listProducts);
-</script>
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchProductTypes()
+
+        listProducts()
+    })</script>
 
 
 </html>

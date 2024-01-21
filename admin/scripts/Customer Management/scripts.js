@@ -19,7 +19,7 @@ async function fetchProductTypes() {
             prodTypeName.innerText = `${productType.prodTypeName} (${productType.totalProducts})`;
             fetchCategories(productType, productTypeDiv, prodTypeName);
 
-            prodTypeName.addEventListener('click', async() => {
+            prodTypeName.addEventListener('click', async () => {
                 setSearchParams('categoryId');
                 setSearchParams('subCategoryId');
                 setSearchParams('prodTypeId', productType.prodTypeId)
@@ -53,7 +53,7 @@ async function fetchCategories(productType, productDiv, prodTypeName) {
 
             // Use handleClick with correct parameters
             handleClick(prodTypeName, categoryDiv);
-            categoryName.addEventListener('click', async(e) => {
+            categoryName.addEventListener('click', async (e) => {
                 setSearchParams('subCategoryId');
                 setSearchParams('prodTypeId', category.prodTypeId);
                 setSearchParams('categoryId', category.categoryId);
@@ -157,12 +157,19 @@ async function listProducts() {
 
     const listProducts = await axios.get(apiUrl);
 
-    const productsDiv = document.createElement('div');
-    productsDiv.className = 'products-div';
+    // Create a new container div for product content
+
 
     listProducts.data.data.forEach(prods => {
+        console.log(prods)
+        const productContentDiv = document.createElement('div');
+        productContentDiv.className = 'product-content-div';
+
         const productDiv = document.createElement('div')
         productDiv.className = 'product-div'
+
+        const contactInfo = document.createElement('p')
+        contactInfo.className = 'contact-info'
 
         const imgContainer = document.createElement('div')
         imgContainer.className = 'img-container'
@@ -171,10 +178,10 @@ async function listProducts() {
         imgElement.className = 'img'
         imgContainer.appendChild(imgElement)
 
-        const productTitle = document.createElement('h3')
+        const productTitle = document.createElement('p')
         productTitle.className = 'product-title'
 
-        const productSubTitle = document.createElement('h5')
+        const productSubTitle = document.createElement('p')
         productSubTitle.className = 'product-sub-title'
 
         const productShortDescription = document.createElement('p')
@@ -183,38 +190,90 @@ async function listProducts() {
         const productCost = document.createElement('p')
         productCost.className = 'product-cost'
 
-
-
         productTitle.innerText = prods.prodName
 
         productSubTitle.innerText = prods.prodSubTitle
 
         productShortDescription.innerText = prods.prodShortDescription
 
-        productCost.innerText = `${prods.cost} per ${prods.quantity} - ${prods.quantityType}`
+        contactInfo.innerText = '☏'+'+977 9860000000'
+
+        productCost.innerText = `रु॰ ${prods.cost.toLocaleString()} per ${prods.quantity} - ${prods.quantityType}`
 
         imgElement.src = 'http://localhost:3000' + prods.imageUrl
-        productDiv.appendChild(productTitle)
-        productDiv.appendChild(productSubTitle)
-        productDiv.appendChild(productShortDescription)
+
 
         const imgHref = document.createElement('a')
         imgHref.className = 'img-href'
         imgHref.appendChild(imgElement)
+
         imgContainer.appendChild(imgHref)
 
         productDiv.appendChild(imgContainer)
+        productDiv.appendChild(productTitle)
+        productDiv.appendChild(productSubTitle)
+        productDiv.appendChild(productShortDescription)
+        productDiv.appendChild(contactInfo)
 
         productDiv.appendChild(productCost)
-        productsDiv.appendChild(productDiv)
 
         const productDetailUrl = window.location.origin + '/customer/product/detail?prodId=' + prods.prodId
         imgHref.href = productDetailUrl
+
+        // Append each productDiv to the productContentDiv
+        productContentDiv.appendChild(productDiv);
+
+        // Append the productContentDiv to the listProductsDiv
+        listProductsDiv.appendChild(productContentDiv);
+
+        // Create a button outside the productContentDiv
+        const button = document.createElement('button')
+        button.className = 'book-button'
+        button.innerText = 'Add to list'
+        productContentDiv.appendChild(button);
     });
 
-    listProductsDiv.appendChild(productsDiv);
+
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    fetchProductTypes()
-})
+
+async function getProductDetail() {
+    const searchParams = new URL(document.location.href);
+    const prodId = searchParams.searchParams.get('prodId');
+    const apiUrl = new URL(`http://localhost:3000/listProducts/${prodId}`);
+
+    try {
+        const response = await axios.get(apiUrl);
+        console.log(response)
+        const product = response.data.data[0];
+
+        // Display product image
+        const productImage = document.getElementById('productImage');
+        const productCategory = document.getElementById('productCategory');
+        productCategory.innerHTML = `<p>${product.prodTypeName} > ${product.categoryName} > ${product.subCategoryName}</p>`
+        // Display product information
+        const productInfo = document.getElementById('productInfo');
+        productInfo.innerHTML = `
+
+            <h2>${product.prodName}</h2>
+
+            <p><strong>Cost:</strong> ${product.cost} per ${product.quantity} - ${product.quantityType}</p>
+            <p><strong>Description:</strong> ${product.prodDescription}</p>
+        `;
+
+        productImage.src = 'http://localhost:3000' + product.imageUrl;
+        productImage.alt = product.prodName;
+
+        // Display product locations
+        const locationList = document.getElementById('locationList');
+        locationList.innerHTML = `
+            <li class="location-item"><strong>Location 1:</strong> ${product.prodLocation1}</li>
+            <li class="location-item"><strong>Location 2:</strong> ${product.prodLocation2}</li>
+            <li class="location-item"><strong>Location 3:</strong> ${product.prodLocation}</li>
+        `;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+
