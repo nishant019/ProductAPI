@@ -5,214 +5,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Types</title>
-    <style>
-        #mainBody {
-            /* border: 1px solid black; */
-            display: flex;
-        }
-
-        #productTypes {
-            width: 250px;
-            display: block;
-        }
-
-        /* Media query for mobile view */
-        @media (max-width: 600px) {
-            #productTypes {
-                display: none;
-
-            }
-        }
-
-        .category {
-            /* display: none; */
-            margin: 5px;
-            padding: 7px;
-            border-radius: 10px;
-            margin-left: 10px;
-            background-color: #e3e0e0;
-
-        }
-        body {
-            font-family: 'Goudy Sans', 'Goudy Bookletter 1911', sans-serif;
-            background-color: #f9f7f7;
-            margin: 20px;
-        }
-
-        .product-type {
-            margin: 5px;
-            padding: 10px;
-            border-radius: 10px;
-            background-color: #ffffff;
-        }
-
-        .product-title {
-            font-size: large;
-            font-weight: 500;
-        }
-        .product-cost{
-            width: 100%;
-            height: auto;
-            font-size: 24px;
-            text-align: center;
-        }
-
-
-        .products-div {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: flex-end;
-            flex-direction: row-reverse;
-            align-items: stretch;
-        }
-        .product-content-div {
-
-            border-radius: 15px;
-            margin: 10px;
-            background-color: #f9f2f2;
-            display: inline-block;
-            align-items: center;
-            /* border: 1px solid red; */
-            width: fit-content;
-            height: fit-content;
-
-            padding: 20px;
-            transition: box-shadow 0.3s ease, opacity 0.3s ease;
-            box-shadow: 0px 8px 18px rgba(211, 44, 44, 0.2),0px -3px 12px rgba(211, 44, 44, 0.2);;
-        }
-
-        .product-div {
-            height: 600px;
-            width: 320px;
-        }
-
-        .product-content-div:hover {
-            box-shadow: 0px 8px 18px rgba(211, 44, 44, 0.2), 0px -8px 18px rgba(211, 44, 44, 0.2); /* Increase shadow on hover, include negative y-offset */
-            opacity: 0.9;
-        }
-
-
-
-        .product-sub-title{
-            font-size: 12px;
-            color: rgb(138, 138, 138);
-            
-        }
-
-        .sub-category {
-            /* display: none; */
-            margin: 5px;
-            padding: 7px;
-            border-radius: 10px;
-            background-color: #c5c3c3;
-            margin-left: 10px;
-        }
-        .book-button{
-            background-color: black;
-            padding: 10px 30px;
-            color: white;
-            border-radius: 10px ;
-            align-items: center;
-            margin: 0 auto;
-            display: block;
-            font-size: 18px;
-            box-shadow: 0px 8px 18px rgba(137, 137, 137, 0.2),0px -3px 12px rgba(137, 137, 137, 0.2);
-
-        }
-        .book-button:hover{
-            background-color: rgb(40, 40, 40);
-            box-shadow: 0px 12px 16px rgba(137, 137, 137, 0.2),0px -3px 12px rgba(137, 137, 137, 0.2);
-
-
-        }
-
-        .contact-info{
-            font-size: 12px;
-            text-align:right;
-        }
-
-        .list-item {
-            cursor: pointer;
-            padding: 7px;
-            margin-bottom: 5px;
-            background-color: #f0f0f0;
-            border-radius: 5px;
-        }
-
-        .category-item {
-            cursor: pointer;
-            margin-left: 20px;
-            display: flex;
-            flex-direction: column;
-            /* Updated style */
-            margin-bottom: 5px;
-        }
-
-        /* .category-name {
-            margin-bottom: 5px;
-            font-weight: bold;
-            cursor: pointer;
-        } */
-
-        .sub-category-list {
-            cursor: pointer;
-            margin-left: 20px;
-            /* Adjusted margin */
-            background-color: #f8f8f8;
-            border-radius: 3px;
-            display: none;
-            padding: 5px;
-        }
-
-        .sub-category-list-item {
-            cursor: pointer;
-            margin-left: 20px;
-            /* Adjusted margin */
-            background-color: #f8f8f8;
-            border-radius: 3px;
-            padding: 5px;
-        }
-
-
-        #listProducts {
-            border-radius: 3px;
-            height: max-content;
-            width: 80%;
-        }
-
-        .img-container {
-            width: 100%;
-            height: 300px;
-        }
-
-
-
-        .img-container .img-href {
-            height: 100%;
-            position: relative;
-            overflow: hidden;
-            display: block;
-
-        }
-
-
-        .img-container .img-href .img {
-            border-radius: 12px;
-            width: auto;
-            height: auto;
-            max-width: 100%;
-            max-height: 100%;
-            display: block;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%)
-        }
-    </style>
+<link rel="stylesheet" href="/customer/main.css"></links>
 </head>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap">
 
 <body>
+    <div class="top-nav">
+        <div class="logo">
+          <img src="/logo" alt="Logo">
+        </div>
+        <div class="search-bar">
+          <input type="text" placeholder="Search...">
+        </div>
+        <div class="login-signup">
+          <!-- Add your login/signup links here -->
+          <a href="#">Login</a>
+          <a href="#">Sign Up</a>
+        </div>
+      </div>
+    
+      <!-- Bottom Navigation (Mobile) -->
+      <div class="bottom-nav">
+        <a href="#">Login</a>
+        <a href="#">Sign Up</a>
+        <a href="#">Cart</a>
+      </div>
+
     <div id="mainBody">
         <div id="productTypes"></div>
 

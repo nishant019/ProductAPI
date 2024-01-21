@@ -1,0 +1,409 @@
+body {
+    font-family: 'Goudy Sans', 'Goudy Bookletter 1911', sans-serif;
+    background-color: #f9f7f7;
+    /* margin: 20px; */
+}
+
+#detailBody {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+}
+
+#productDetails {
+    width: 50%;
+    margin: 10px;
+    display: block;
+}
+
+.product-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.product-info {
+    background-color: #f8f8f8;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.product-info h2 {
+    margin: 0;
+    font-size: 1.5em;
+}
+
+.product-info p {
+    margin: 5px 0;
+}
+
+#productLocations {
+    width: 30%;
+    margin: 10px;
+}
+
+.location-list {
+    list-style: none;
+    padding: 0;
+}
+
+.location-item {
+    background-color: #f0f0f0;
+    margin: 5px 0;
+    padding: 8px;
+    border-radius: 5px;
+}
+
+
+#productCategory {
+    color: grey;
+    margin-left: 5%;
+}
+
+#mainBody {
+    /* border: 1px solid black; */
+    /* margin-top: 5%; */
+    display: flex;
+}
+
+#productTypes {
+    margin-top: 77px;
+    width: 250px;
+    display: block;
+}
+
+/* Media query for mobile view */
+@media (max-width: 600px) {
+    #productTypes {
+        display: none;
+
+    }
+}
+
+.category {
+    /* display: none; */
+    margin: 5px;
+    padding: 7px;
+    border-radius: 10px;
+    margin-left: 10px;
+    background-color: #e3e0e0;
+
+}
+
+
+.product-type {
+    margin: 5px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #ffffff;
+}
+
+.product-title {
+
+    font-size: large;
+    font-weight: 500;
+}
+
+.product-cost {
+    width: 100%;
+    height: auto;
+    font-size: 24px;
+    text-align: center;
+}
+
+
+.products-div {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    flex-direction: row-reverse;
+    align-items: stretch;
+}
+
+.product-content-div {
+
+    border-radius: 15px;
+    margin: 10px;
+    margin-top: 0;
+    background: linear-gradient(to right, #f1e3ff, #fbe5cf);
+    display: inline-block;
+    align-items: center;
+    /* border: 1px solid red; */
+    width: fit-content;
+    height: fit-content;
+
+    padding: 20px;
+    transition: box-shadow 0.3s ease, opacity 0.3s ease;
+    box-shadow: 0px 8px 18px rgba(211, 44, 44, 0.2), 0px -3px 12px rgba(211, 44, 44, 0.2);
+    ;
+}
+
+.product-div {
+    height: 600px;
+    width: 320px;
+}
+
+.product-content-div:hover {
+    box-shadow: 0px 8px 18px rgba(211, 44, 44, 0.2), 0px -8px 18px rgba(211, 44, 44, 0.2);
+    /* Increase shadow on hover, include negative y-offset */
+    opacity: 0.9;
+}
+
+
+
+.product-sub-title {
+    font-size: 12px;
+    color: rgb(138, 138, 138);
+
+}
+
+.sub-category {
+    /* display: none; */
+    margin: 5px;
+    padding: 7px;
+    border-radius: 10px;
+    background-color: #c5c3c3;
+    margin-left: 10px;
+}
+
+.book-button {
+    /* background-color: black; */
+    background: linear-gradient(to right, #9a9a9a, #747474);
+
+    padding: 10px 30px;
+    color: white;
+    border-radius: 3px;
+    align-items: center;
+    margin: 0 auto;
+    display: block;
+    width: 100%;
+    font-size: 18px;
+    box-shadow: 0px 12px 16px rgba(0, 0, 0, 0.2), 0px -3px 12px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+
+
+}
+
+.book-button:hover {
+    transform: scale(1.1);
+
+    opacity: 0.7;
+    box-shadow: 0px 12px 32px rgba(0, 0, 0, 0.2), 0px -3px 14px rgba(0, 0, 0, 0.2);
+
+
+}
+
+.bookmark-icon {
+    width: 50px;
+    position: absolute;
+    margin-top: -20px;
+    margin-left: -25px;
+    z-index: 2;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.bookmark-icon:hover {
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.3));
+    /* Apply drop shadow using the filter property */
+    background-color: transparent;
+    /* Set the background to transparent on hover */
+}
+
+
+.contact-info {
+    font-size: 12px;
+    text-align: right;
+}
+
+.list-item {
+    cursor: pointer;
+    padding: 7px;
+    margin-bottom: 5px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+}
+
+.category-item {
+    cursor: pointer;
+    margin-left: 20px;
+    display: flex;
+    flex-direction: column;
+    /* Updated style */
+    margin-bottom: 5px;
+}
+
+/* .category-name {
+    margin-bottom: 5px;
+    font-weight: bold;
+    cursor: pointer;
+} */
+
+.sub-category-list {
+    cursor: pointer;
+    margin-left: 20px;
+    /* Adjusted margin */
+    background-color: #f8f8f8;
+    border-radius: 3px;
+    display: none;
+    padding: 5px;
+}
+
+.sub-category-list-item {
+    cursor: pointer;
+    margin-left: 20px;
+    /* Adjusted margin */
+    background-color: #f8f8f8;
+    border-radius: 3px;
+    padding: 5px;
+}
+
+
+#listProducts {
+    margin-top: 77px;
+    border-radius: 3px;
+    height: max-content;
+    width: 80%;
+}
+
+.img-container {
+    width: 100%;
+    height: 300px;
+}
+
+
+
+.img-container .img-href {
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    display: block;
+
+}
+
+
+.img-container .img-href .img {
+    border-radius: 12px;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%)
+}
+
+
+
+
+/* Top Navigation */
+.top-nav {
+    background-color: #f9f7f7;
+    color: #000000;
+    padding: 10px;
+    /* margin: 10px; */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    z-index: 1000;
+    width: 99%;
+    top: 0;
+    left: 0;
+}
+
+.logo {
+    max-width: 100px;
+    /* Set your preferred logo width */
+}
+
+.search-bar input {
+    width: 300px;
+    /* Set the width as needed */
+    padding: 8px;
+    /* Adjust padding to your preference */
+    border: 1px solid #ccc;
+    /* Add a border for clarity */
+    border-radius: 4px;
+    /* Optional: Add border-radius for rounded corners */
+    outline: none;
+    /* Remove default outline */
+    box-sizing: border-box;
+    /* Include padding and border in the element's total width and height */
+}
+
+/* Optional: Add styles for focus state */
+.search-bar input:focus {
+    border-color: #007bff;
+    /* Change border color on focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    /* Add a subtle box shadow on focus */
+}
+
+/* Bottom Navigation (Mobile) */
+.bottom-nav {
+    background-color: #f9f7f7;
+    color: #000000;
+    padding: 10px;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: none;
+}
+
+.bottom-nav a {
+    color: #000000;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+.logo {
+    width: 50px;
+}
+
+.login-signup {
+    margin: 10px;
+    color: #000000;
+}
+
+
+/* Responsive Styles */
+@media only screen and (max-width: 600px) {
+
+
+    .bottom-nav {
+        z-index: 1000;
+        display: block;
+    }
+
+    .login-signup {
+        display: none;
+    }
+
+    .top-nav {
+        background-color: #f9f7f7;
+        color: #000000;
+
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-content: center;
+        position: fixed;
+        width: 100%;
+    }
+
+    .search-bar {
+        align-items: center;
+        display: block;
+    }
+
+
+}

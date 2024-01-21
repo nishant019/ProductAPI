@@ -45,7 +45,7 @@ async function fetchCategories(productType, productDiv, prodTypeName) {
         categories.forEach(category => {
             const categoryDiv = document.createElement('div');
             categoryDiv.className = 'category';
-            categoryDiv.style.display = 'none';
+            // categoryDiv.style.display = 'none';
 
             const categoryName = document.createElement('div');
             categoryName.className = 'category-name';
@@ -82,7 +82,7 @@ async function fetchSubCategories(productType, category, categoryDiv, categoryNa
         subCategories.forEach(subCategory => {
             const subCategoryDiv = document.createElement('div');
             subCategoryDiv.className = 'sub-category';
-            subCategoryDiv.style.display = 'none';
+            // subCategoryDiv.style.display = 'none';
 
             const subCategoryName = document.createElement('div');
             subCategoryName.className = 'sub-category-name';
@@ -135,6 +135,7 @@ function setSearchParams(name, value) {
 
 
 async function listProducts() {
+
     const listProductsDiv = document.getElementById('listProducts');
     listProductsDiv.innerHTML = '';
 
@@ -161,9 +162,10 @@ async function listProducts() {
 
 
     listProducts.data.data.forEach(prods => {
-        console.log(prods)
+
         const productContentDiv = document.createElement('div');
         productContentDiv.className = 'product-content-div';
+        toggleBookmark(productContentDiv)
 
         const productDiv = document.createElement('div')
         productDiv.className = 'product-div'
@@ -196,7 +198,7 @@ async function listProducts() {
 
         productShortDescription.innerText = prods.prodShortDescription
 
-        contactInfo.innerText = '☏'+'+977 9860000000'
+        contactInfo.innerText = '☏' + '+977 9860000000'
 
         productCost.innerText = `रु॰ ${prods.cost.toLocaleString()} per ${prods.quantity} - ${prods.quantityType}`
 
@@ -205,6 +207,8 @@ async function listProducts() {
 
         const imgHref = document.createElement('a')
         imgHref.className = 'img-href'
+
+
         imgHref.appendChild(imgElement)
 
         imgContainer.appendChild(imgHref)
@@ -275,5 +279,23 @@ async function getProductDetail() {
         console.error(error);
     }
 }
+
+function toggleBookmark(productDiv) {
+    const icon = document.createElement('img');
+    icon.className = 'bookmark-icon';
+    icon.src = '/bookmark';
+    productDiv.appendChild(icon);
+
+    icon.addEventListener('click', function() {
+        icon.classList.toggle('bookmarked');
+
+        if (icon.classList.contains('bookmarked')) {
+            icon.src = '/bookmarked';
+        } else {
+            icon.src = '/bookmark';
+        }
+    });
+}
+
 
 

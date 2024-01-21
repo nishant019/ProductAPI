@@ -168,6 +168,15 @@ app.get('/pagination.css', (req, res) => {
 app.get('/adminIcon', (req, res) => {
   res.sendFile(path.join(__dirname, '/styles/icons/admin.png'));
 });
+app.get('/bookmark', (req, res) => {
+  res.sendFile(path.join(__dirname, '/styles/icons/bookmark.svg'));
+});
+app.get('/bookmarked', (req, res) => {
+  res.sendFile(path.join(__dirname, '/styles/icons/bookmarked.svg'));
+});
+app.get('/logo', (req, res) => {
+  res.sendFile(path.join(__dirname, '/styles/icons/logo.svg'));
+});
 
 app.get('/profile.css', (req, res) => {
   res.sendFile(path.join(__dirname, '/styles/profile.css'));
@@ -175,6 +184,10 @@ app.get('/profile.css', (req, res) => {
 
 app.get('/mainStyle.css', (req, res) => {
   res.sendFile(path.join(__dirname, '/styles/mainStyle.css'));
+});
+
+app.get('/customer/main.css', (req, res) => {
+  res.sendFile(path.join(__dirname, '/styles/customer/main.css'));
 });
 
 
