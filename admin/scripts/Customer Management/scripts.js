@@ -19,15 +19,12 @@ async function fetchProductTypes() {
             prodTypeName.innerText = `${productType.prodTypeName} (${productType.totalProducts})`;
             fetchCategories(productType, productTypeDiv, prodTypeName);
 
-            const url = new URL(window.location.href)
-            url.searchParams.delete('catgoryId')
-            url.searchParams.delete('subCategoryId')
-            window.history.replaceState(null, null, url);
-
-            prodTypeName.addEventListener('click', () => {
+            prodTypeName.addEventListener('click', async() => {
                 setSearchParams('categoryId');
                 setSearchParams('subCategoryId');
                 setSearchParams('prodTypeId', productType.prodTypeId)
+                await listProducts();
+
 
             })
 
@@ -56,10 +53,12 @@ async function fetchCategories(productType, productDiv, prodTypeName) {
 
             // Use handleClick with correct parameters
             handleClick(prodTypeName, categoryDiv);
-            categoryName.addEventListener('click', (e) => {
+            categoryName.addEventListener('click', async(e) => {
                 setSearchParams('subCategoryId');
                 setSearchParams('prodTypeId', category.prodTypeId);
                 setSearchParams('categoryId', category.categoryId);
+                await listProducts();
+
             });
 
             fetchSubCategories(productType, category, categoryDiv, categoryName);
@@ -89,20 +88,13 @@ async function fetchSubCategories(productType, category, categoryDiv, categoryNa
             subCategoryName.className = 'sub-category-name';
             subCategoryName.innerText = `${subCategory.subCategoryName} (${subCategory.totalProducts})`;
             handleClick(categoryName, subCategoryDiv);
-            setSearchParams('subCategoryId', subCategory.subCategoryId)
 
             subCategoryDiv.addEventListener('click', async () => {
-                const existingParams = new URLSearchParams(window.location.search);
-                const newParams = new URLSearchParams();
 
-                // Add or update existing parameters
-                existingParams.forEach((value, key) => newParams.set(key, value));
-                newParams.set('prodTypeId', subCategory.prodTypeId);
-                newParams.set('categoryId', subCategory.categoryId);
-                newParams.set('subCategoryId', subCategory.subCategoryId);
+                setSearchParams('prodTypeId', subCategory.prodTypeId);
+                setSearchParams('categoryId', subCategory.categoryId);
+                setSearchParams('subCategoryId', subCategory.subCategoryId);
 
-                // Navigate to the "/getProds" page with preserved parameters
-                window.location.href = `/customer/getProds?${newParams.toString()}`;
                 await listProducts();
 
 
