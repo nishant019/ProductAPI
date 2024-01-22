@@ -327,7 +327,6 @@ body {
   
 
 #listProducts {
-    position: relative;
     margin-top: 77px;
     border-radius: 3px;
     /* width: 80%; */
@@ -371,7 +370,6 @@ body {
     background-color: #f9f7f7;
     color: #000000;
     padding: 10px;
-    /* margin: 10px; */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -383,6 +381,13 @@ body {
 }
 
 .logo {
+    margin-left: 10px;
+    max-width: 100px;
+    /* Set your preferred logo width */
+}
+.cart img{
+    width: 50px;
+    /* margin-left: 10px; */
     max-width: 100px;
     /* Set your preferred logo width */
 }
@@ -434,15 +439,22 @@ body {
 }
 
 .login-signup {
-    margin: 10px;
+    margin-right: 30px;
     color: #000000;
+}
+#mainProdDiv{
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: space-around;
 }
 
 
 /* Responsive Styles */
 @media only screen and (max-width: 600px) {
-
-
+    #listProducts {
+        width: fit-content;
+    }
     .bottom-nav {
         z-index: 1000;
         display: block;
@@ -455,21 +467,23 @@ body {
     .top-nav {
         background-color: #f9f7f7;
         color: #000000;
-
         display: flex;
-        justify-content: space-around;
-        align-items: center;
         flex-direction: row;
-        flex-wrap: nowrap;
-        align-content: center;
         position: fixed;
         width: 100%;
+        justify-content: flex-start;
     }
 
     .search-bar {
-        align-items: center;
-        display: block;
+        margin-left: 30px;
+        margin-right: 30px;
+        width: 100%; /* Adjust the width to fill the entire width */
     }
 
-
+    .search-bar input {
+        width: calc(100% - 16px); /* Adjust padding and border width */
+        padding: 8px;
+        float: none; /* Remove float */
+        margin-right: 8px; /* Add margin if needed */
+    }
 }

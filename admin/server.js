@@ -177,6 +177,9 @@ app.get('/bookmarked', (req, res) => {
 app.get('/logo', (req, res) => {
   res.sendFile(path.join(__dirname, '/styles/icons/logo.svg'));
 });
+app.get('/cart', (req, res) => {
+  res.sendFile(path.join(__dirname, '/styles/icons/cart.svg'));
+});
 
 app.get('/profile.css', (req, res) => {
   res.sendFile(path.join(__dirname, '/styles/profile.css'));
