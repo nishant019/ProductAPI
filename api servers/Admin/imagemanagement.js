@@ -166,7 +166,7 @@ app.delete('/deleteImage/:imageUrl', bearer, (req, res, next) => {
     const imageUrl = decodeURIComponent(encodedImgURl);
     const loggedInUser = req.headers.loggedinuser;
     const replacedUrl = imageUrl.replace('/image', '/uploads');
-    const imagePath = path.join('D:', 'productapi/api servers', replacedUrl);
+    const imagePath = path.join(__dirname, '..', replacedUrl);
     checkTokenExpiry(req, res, () => {
         pool.query('SELECT role FROM adminuser WHERE userId = ?', [loggedInUser], (error, result) => {
             if (error) {

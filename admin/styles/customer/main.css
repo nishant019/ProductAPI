@@ -1,6 +1,10 @@
+/* @import url('/font-awesome-4.6.3/css/font-awesome.min.css'); */
+
 body {
-    font-family: 'Goudy Sans', 'Goudy Bookletter 1911', sans-serif;
+    font-family: 'Noto Sans', sans-serif;
     background-color: #f9f7f7;
+    word-spacing: -1px; /* Experiment with different negative values based on your preference */
+
     /* margin: 20px; */
 }
 
@@ -18,7 +22,7 @@ body {
 
 .product-image {
     max-width: 100%;
-    height: auto;
+    height: 200px;
     border-radius: 5px;
     margin-bottom: 10px;
 }
@@ -61,6 +65,8 @@ body {
     margin-left: 5%;
 }
 
+
+
 #mainBody {
     /* border: 1px solid black; */
     /* margin-top: 5%; */
@@ -101,15 +107,42 @@ body {
 
 .product-title {
 
-    font-size: large;
+    font-size: small;
+    color: rgb(161, 160, 160);
     font-weight: 500;
+    /* height: 25px; */
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 5px;
 }
+
+.product-size-info {
+    display: block;
+    width: 100%;
+}
+
+
+.size-info {
+    font-size: 10px;
+    margin: 5px;
+    opacity: 0.6;
+    display: flex;
+    align-items: center;
+}
+
+  .size-info i {
+    margin-left: 5px; /* Adjust as needed */
+    margin-right: 15px; /* Adjust as needed */
+  }
 
 .product-cost {
     width: 100%;
     height: auto;
-    font-size: 24px;
-    text-align: center;
+    font-size: 12px;
+    text-align: left;
+    margin: 5px;
 }
 
 
@@ -122,26 +155,25 @@ body {
 }
 
 .product-content-div {
-
+    position: relative;
     border-radius: 15px;
     margin: 10px;
     margin-top: 0;
-    background: linear-gradient(to right, #f1e3ff, #fbe5cf);
+    background: linear-gradient(to right, #efefef, #ffffff);
     display: inline-block;
     align-items: center;
     /* border: 1px solid red; */
     width: fit-content;
     height: fit-content;
 
-    padding: 20px;
     transition: box-shadow 0.3s ease, opacity 0.3s ease;
-    box-shadow: 0px 8px 18px rgba(211, 44, 44, 0.2), 0px -3px 12px rgba(211, 44, 44, 0.2);
-    ;
+    box-shadow: 0px 8px 18px #efefef 0px -3px 12px #efefef;
+
 }
 
 .product-div {
-    height: 600px;
-    width: 320px;
+    height: 300px;
+    width: 300px;
 }
 
 .product-content-div:hover {
@@ -152,9 +184,11 @@ body {
 
 
 
-.product-sub-title {
-    font-size: 12px;
+.product-location {
+    font-size: 11px;
+    font-weight: 100;
     color: rgb(138, 138, 138);
+    margin: 5px;
 
 }
 
@@ -197,8 +231,7 @@ body {
 .bookmark-icon {
     width: 50px;
     position: absolute;
-    margin-top: -20px;
-    margin-left: -25px;
+    margin-left: -4px;
     z-index: 2;
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
     cursor: pointer;
@@ -259,18 +292,52 @@ body {
     border-radius: 3px;
     padding: 5px;
 }
+#prods {
+    position: relative;
+    width: 65%;
+    overflow-x: auto;
+    white-space: nowrap;
+    height: 458px;
+    left: 30px;
+  }
+  
+  #scrollButton {
+    position: sticky;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    z-index: 100;
+  }
+  
+  .scroll-btn {
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  .prev {
+    margin-right: 10px;
+  }
+  
 
+  
 
 #listProducts {
+    position: relative;
     margin-top: 77px;
     border-radius: 3px;
-    height: max-content;
-    width: 80%;
+    /* width: 80%; */
+    display: inline-flex;
+  
 }
 
+
 .img-container {
-    width: 100%;
-    height: 300px;
+    height: 169px;
 }
 
 
@@ -285,9 +352,8 @@ body {
 
 
 .img-container .img-href .img {
-    border-radius: 12px;
-    width: auto;
     height: auto;
+    width: 300px;
     max-width: 100%;
     max-height: 100%;
     display: block;

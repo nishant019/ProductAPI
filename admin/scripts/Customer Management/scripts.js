@@ -183,24 +183,31 @@ async function listProducts() {
         const productTitle = document.createElement('p')
         productTitle.className = 'product-title'
 
-        const productSubTitle = document.createElement('p')
-        productSubTitle.className = 'product-sub-title'
+        const productLocation = document.createElement('p')
+        productLocation.className = 'product-location'
 
-        const productShortDescription = document.createElement('p')
-        productShortDescription.className = 'product-short-description-title'
+        const productSizeInfo = document.createElement('div')
+        productSizeInfo.className = 'product-size-info'
 
         const productCost = document.createElement('p')
         productCost.className = 'product-cost'
 
         productTitle.innerText = prods.prodName
 
-        productSubTitle.innerText = prods.prodSubTitle
+        productLocation.innerText = `${prods.prodLocation} ${prods.prodLocation1}\n${prods.prodLocation2}`
 
-        productShortDescription.innerText = prods.prodShortDescription
+        productSizeInfo.innerHTML = `
+        <p class='size-info'>
+          <span>3 - 4</span><i class="fas fa-bed"></i>
+          <span>2 - 4</span><i class="fas fa-bath"></i>
+          <span>1500 sqft</span><i class="fas fa-expand"></i>
+        </p>
+      `;
+
 
         contactInfo.innerText = '☏' + '+977 9860000000'
 
-        productCost.innerText = `रु॰ ${prods.cost.toLocaleString()} per ${prods.quantity} - ${prods.quantityType}`
+        productCost.innerText = `रु॰ ${prods.cost.toLocaleString()}`
 
         imgElement.src = 'http://localhost:3000' + prods.imageUrl
 
@@ -214,12 +221,14 @@ async function listProducts() {
         imgContainer.appendChild(imgHref)
 
         productDiv.appendChild(imgContainer)
-        productDiv.appendChild(productTitle)
-        productDiv.appendChild(productSubTitle)
-        productDiv.appendChild(productShortDescription)
-        productDiv.appendChild(contactInfo)
-
         productDiv.appendChild(productCost)
+        productDiv.appendChild(productSizeInfo)
+
+
+        productDiv.appendChild(productTitle)
+        productDiv.appendChild(productLocation)
+        // productDiv.appendChild(contactInfo)
+
 
         const productDetailUrl = window.location.origin + '/customer/product/detail?prodId=' + prods.prodId
         imgHref.href = productDetailUrl
@@ -231,10 +240,10 @@ async function listProducts() {
         listProductsDiv.appendChild(productContentDiv);
 
         // Create a button outside the productContentDiv
-        const button = document.createElement('button')
-        button.className = 'book-button'
-        button.innerText = 'Add to list'
-        productContentDiv.appendChild(button);
+        // const button = document.createElement('button')
+        // button.className = 'book-button'
+        // button.innerText = 'Add to list'
+        // productContentDiv.appendChild(button);
     });
 
 
@@ -286,7 +295,7 @@ function toggleBookmark(productDiv) {
     icon.src = '/bookmark';
     productDiv.appendChild(icon);
 
-    icon.addEventListener('click', function() {
+    icon.addEventListener('click', function () {
         icon.classList.toggle('bookmarked');
 
         if (icon.classList.contains('bookmarked')) {
@@ -299,3 +308,21 @@ function toggleBookmark(productDiv) {
 
 
 
+//   const scrollContainer = document.querySelector('#listProducts');
+//   let currentIndex = 0;
+
+//   function scrollItems(direction) {
+//     const itemWidth = document.querySelector('.product-content-div').offsetWidth;
+//     const containerWidth = scrollContainer.offsetWidth;
+
+//     if (direction === 'next' && currentIndex < scrollContainer.children.length - 1) {
+//       currentIndex++;
+//     } else if (direction === 'prev' && currentIndex > 0) {
+//       currentIndex--;
+//     }
+
+//     const transformValue = -currentIndex * itemWidth + "px";
+//     scrollContainer.style.transform = `translateX(${transformValue})`;
+//   }
+
+  
