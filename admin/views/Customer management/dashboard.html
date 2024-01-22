@@ -2,51 +2,53 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Types</title>
-<link rel="stylesheet" href="/customer/main.css"></links>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Types</title>
+  <link rel="stylesheet" href="/customer/main.css">
+  </links>
 </head>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap">
 
 <body>
-    <div class="top-nav">
-        <div class="logo">
-          <img src="/logo" alt="Logo">
-        </div>
-        <div class="search-bar">
-          <input type="text" placeholder="Search...">
-        </div>
-        <div class="login-signup">
-          <!-- Add your login/signup links here -->
-          <a href="#">Login</a>
-          <a href="#">Sign Up</a>
-        </div>
-      </div>
-    
-      <!-- Bottom Navigation (Mobile) -->
-      <div class="bottom-nav">
-        <a href="#">Login</a>
-        <a href="#">Sign Up</a>
-        <a href="#">Cart</a>
-      </div>
-
-    <div id="mainBody">
-        <div id="productTypes"></div>
-
-        <div id="listProducts"></div>
-
+  <div class="top-nav">
+    <div class="logo">
+      <img src="/logo" alt="Logo">
     </div>
+    <div class="search-bar">
+      <input type="text" placeholder="Search...">
+    </div>
+    <div class="login-signup">
+      <!-- Add your login/signup links here -->
+      <a href="#">Login</a>
+      <a href="#">Sign Up</a>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation (Mobile) -->
+  <div class="bottom-nav">
+    <a href="#">Login</a>
+    <a href="#">Sign Up</a>
+    <a href="#">Cart</a>
+  </div>
+
+  <div id="mainBody">
+    <div id="productTypes"></div>
+    <div id="mainProdDiv">
+      <div id="listProducts"></div>
+    </div>
+
+  </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 <script src="/Customer_Management/scripts.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        fetchProductTypes()
+  document.addEventListener('DOMContentLoaded', () => {
+    fetchProductTypes()
 
-        listProducts()
-    })</script>
+    listProducts()
+  })</script>
 
 
 </html>

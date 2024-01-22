@@ -265,6 +265,11 @@ body {
     margin-top: 77px;
     border-radius: 3px;
     height: max-content;
+    display: flex;
+    justify-content: flex-start;
+    align-items: stretch;
+    flex-wrap: wrap;
+    width: 79%;
 }
 
 .img-container {
@@ -370,10 +375,19 @@ body {
     margin-right: 30px;
     color: #000000;
 }
+#mainProdDiv{
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: space-around;
+}
 
 
 /* Responsive Styles */
 @media only screen and (max-width: 600px) {
+    #listProducts {
+        width: fit-content;
+    }
     .bottom-nav {
         z-index: 1000;
         display: block;
