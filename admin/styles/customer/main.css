@@ -324,6 +324,12 @@ body {
     max-width: 100px;
     /* Set your preferred logo width */
 }
+.cart img{
+    width: 50px;
+    /* margin-left: 10px; */
+    max-width: 100px;
+    /* Set your preferred logo width */
+}
 
 .search-bar input {
     width: 300px;
