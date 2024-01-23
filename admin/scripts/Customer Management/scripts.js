@@ -23,6 +23,7 @@ async function fetchProductTypes() {
                 setSearchParams('categoryId');
                 setSearchParams('subCategoryId');
                 setSearchParams('prodTypeId', productType.prodTypeId)
+
                 await listProducts();
             })
 
@@ -134,6 +135,7 @@ function setSearchParams(name, value) {
 
 async function listProducts() {
 
+
     const listProductsDiv = document.getElementById('listProducts');
     listProductsDiv.innerHTML = '';
 
@@ -243,16 +245,9 @@ async function listProducts() {
 
 
     });
-    // const prods = document.getElementById('prods')
-    // const prev = document.createElement('button')
-    // prev.className = 'prev'
-    // prev.innerText = '<'
-    // prods.appendChild(prev);
 
-    // const next = document.createElement('button')
-    // next.className = 'next'
-    // next.innerText = '>'
-    // prods.appendChild(next);
+    scrollButtonHide();
+
 
 }
 
@@ -313,41 +308,49 @@ function toggleBookmark(productDiv) {
     });
 }
 
-
 let currentIndex = 0;
 
 function scrollItems(direction) {
-  const itemWidth = document.querySelector('.product-content-div').offsetWidth;
-  const listProductsContainer = document.querySelector('#listProducts');
-  const prodsContainer = document.querySelector('#prods');
+    const prodsContainer = document.querySelector('#prods');
+    const itemWidth = document.querySelector('.product-content-div').offsetWidth;
 
-  const containerWidth = listProductsContainer.offsetWidth;
-  const totalItemsWidth = listProductsContainer.scrollWidth;
-
-  // Calculate the maximum scroll position
-  const maxScrollPosition = totalItemsWidth - containerWidth;
-
-  // Calculate the scroll position corresponding to the current index
-  const targetScrollPosition = currentIndex * itemWidth;
-
-  // Update the currentIndex based on the scroll direction
-  if (direction === 'next' && currentIndex < listProductsContainer.children.length - 1) {
-    currentIndex++;
-  } else if (direction === 'prev' && currentIndex > 0) {
-    currentIndex--;
-  }
-
-  // Ensure currentIndex stays within bounds
-  currentIndex = Math.max(0, Math.min(currentIndex, listProductsContainer.children.length - 1));
-
-  // Set the scrollLeft property of the parent prods container, ensuring it doesn't exceed the maximum
-  prodsContainer.scrollLeft = Math.min(maxScrollPosition, targetScrollPosition);
-
-  // Calculate the new transform value based on the updated currentIndex
-  const transformValue = -currentIndex * itemWidth + "px";
-
-  // Apply the transform to listProductsContainer
-  listProductsContainer.style.transform = `translateX(${transformValue})`;
+    if (direction === 'next') {
+        prodsContainer.scrollLeft += itemWidth;
+    } else if (direction === 'prev') {
+        prodsContainer.scrollLeft -= itemWidth;
+    }
 }
+
+
+
+
+
+function scrollButtonHide() {
+    const listProds = document.querySelector('#listProducts');
+    const prodsContainer = document.querySelector('#prods');
+
+    // Check if listProds or prodsContainer is null
+    if (!listProds || !prodsContainer) {
+        return;
+    }
+
+    const containerWidth = prodsContainer.offsetWidth;
+    const totalItemsWidth = listProds.scrollWidth;
+
+    // Check if scrollbar is present by comparing scrollWidth and offsetWidth
+    const isScrollbarPresent = totalItemsWidth > containerWidth;
+
+    document.querySelector('.prev').style.display = prodsContainer.scrollLeft < 100 ? 'none' : 'inline';
+    document.querySelector('.next').style.display = isScrollbarPresent ? 'none' : 'inline';
+
+    // Adjusted logic for showing/hiding .next based on scroll position
+    document.querySelector('.next').style.display = prodsContainer.scrollLeft + containerWidth >= totalItemsWidth -100 ? 'none' : 'inline';
+
+}
+
+
+
+
+
 
 

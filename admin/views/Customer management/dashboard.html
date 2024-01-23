@@ -50,8 +50,9 @@
     <!-- <div id="mainProdBody"> -->
     <div id="prods">
       <div id="listProducts"></div>
-      <button id="posButton" class="prev" onclick="scrollItems('prev')"><</button>
-      <button id="posButton" class="next" onclick="scrollItems('next')">></button>
+      <button id="posButton" class="prev" onclick="scrollItems('prev')">
+        < </button>
+          <button id="posButton" class="next" onclick="scrollItems('next')">></button>
     </div>
     <!-- </div> -->
   </div>
@@ -60,11 +61,23 @@
 
 <script src="/Customer_Management/scripts.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    fetchProductTypes()
+  // document.addEventListener('DOMContentLoaded', () => {
+  //   fetchProductTypes();
+  //   listProducts()
+    document.querySelector('#prods').addEventListener('scroll', scrollButtonHide);
 
-    listProducts()
-  })</script>
+  // scrollButtonHide();
+
+  // });
+  // Your scrollButtonHide function
+document.addEventListener('DOMContentLoaded', () => {
+    fetchProductTypes();
+    listProducts();
+  });
+
+
+
+</script>
 
 
 </html>
