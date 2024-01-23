@@ -3,7 +3,8 @@
 body {
     font-family: 'Noto Sans', sans-serif;
     background-color: #f9f7f7;
-    word-spacing: -1px; /* Experiment with different negative values based on your preference */
+    word-spacing: -1px;
+    /* Experiment with different negative values based on your preference */
 
     /* margin: 20px; */
 }
@@ -70,7 +71,13 @@ body {
 #mainBody {
     /* border: 1px solid black; */
     /* margin-top: 5%; */
+    
     display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: center;
+    align-items: stretch;
 }
 
 #productTypes {
@@ -132,10 +139,12 @@ body {
     align-items: center;
 }
 
-  .size-info i {
-    margin-left: 5px; /* Adjust as needed */
-    margin-right: 15px; /* Adjust as needed */
-  }
+.size-info i {
+    margin-left: 5px;
+    /* Adjust as needed */
+    margin-right: 15px;
+    /* Adjust as needed */
+}
 
 .product-cost {
     width: 100%;
@@ -188,6 +197,12 @@ body {
     font-size: 11px;
     font-weight: 100;
     color: rgb(138, 138, 138);
+
+    /* height: 25px; */
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     margin: 5px;
 
 }
@@ -292,16 +307,10 @@ body {
     border-radius: 3px;
     padding: 5px;
 }
-#prods {
-    position: relative;
-    width: 65%;
-    overflow-x: auto;
-    white-space: nowrap;
-    height: 458px;
-    left: 30px;
-  }
-  
-  #scrollButton {
+
+
+
+#scrollButton {
     position: sticky;
     top: 50%;
     transform: translateY(-50%);
@@ -309,30 +318,33 @@ body {
     justify-content: space-between;
     width: 100%;
     z-index: 100;
-  }
-  
-  .scroll-btn {
+}
+
+.scroll-btn {
     background-color: #007BFF;
     color: #fff;
     border: none;
     padding: 10px;
     cursor: pointer;
-  }
-  
-  .prev {
-    margin-right: 10px;
-  }
-  
+}
 
-  
+
+/* .prev {
+    z-index: 100;
+} */
+
+
+
 
 #listProducts {
-    margin-top: 77px;
     border-radius: 3px;
     /* width: 80%; */
     display: inline-flex;
-  
+    /* margin-left: 25px;
+    margin-right: 25px; */
+
 }
+
 
 
 .img-container {
@@ -385,7 +397,8 @@ body {
     max-width: 100px;
     /* Set your preferred logo width */
 }
-.cart img{
+
+.cart img {
     width: 50px;
     /* margin-left: 10px; */
     max-width: 100px;
@@ -442,19 +455,84 @@ body {
     margin-right: 30px;
     color: #000000;
 }
-#mainProdDiv{
+
+#mainProdDiv {
     display: flex;
     flex-wrap: nowrap;
     flex-direction: row;
     justify-content: space-around;
 }
 
+#mainProdBody {
+    top: 100px;
+    overflow-x: auto;
+    height: 430px;
+}
+
+#prods {
+    top: 100px;
+    overflow-x: auto;
+    height: 430px;
+    position: relative;
+    height: max-content;
+
+
+    white-space: nowrap;
+
+}
+.prev{
+    margin-top: -138px;
+    float: left;
+    left: 0px;
+    z-index: 100;
+    position: sticky;
+
+}
+#posButton{
+    border-radius: 40px;
+    border: white;
+    background-color: white;
+    padding: 10px 14px;
+    box-shadow: 0.5px 0.1px #000000;
+    font-weight: 500;
+    opacity: .9;
+}
+/* .prev .next {
+    position: absolute;
+} */
+.next{
+    right:  5px;
+    z-index: 100;
+    position: sticky;
+
+
+}
+
+
+
+/* @media only screen and (max-width: 1300px) {
+    #prods{
+        width: 700px;
+    
+      }
+
+}
+
+@media only screen and (max-width: 1300px) {
+    #prods{
+        width: 700px;
+    
+      }
+
+} */
 
 /* Responsive Styles */
 @media only screen and (max-width: 600px) {
+
     #listProducts {
         width: fit-content;
     }
+
     .bottom-nav {
         z-index: 1000;
         display: block;
@@ -477,13 +555,17 @@ body {
     .search-bar {
         margin-left: 30px;
         margin-right: 30px;
-        width: 100%; /* Adjust the width to fill the entire width */
+        width: 100%;
+        /* Adjust the width to fill the entire width */
     }
 
     .search-bar input {
-        width: calc(100% - 16px); /* Adjust padding and border width */
+        width: calc(100% - 16px);
+        /* Adjust padding and border width */
         padding: 8px;
-        float: none; /* Remove float */
-        margin-right: 8px; /* Add margin if needed */
+        float: none;
+        /* Remove float */
+        margin-right: 8px;
+        /* Add margin if needed */
     }
 }

@@ -43,11 +43,17 @@
     <a href="#">Cart</a>
   </div>
 
-    <div id="mainBody">
-        <div id="productTypes"></div>
 
-        <div id="listProducts"></div>
+  <div id="mainBody">
+    <div id="productTypes"></div>
 
+    <!-- <div id="mainProdBody"> -->
+    <div id="prods">
+      <div id="listProducts"></div>
+      <button id="posButton" class="prev" onclick="scrollItems('prev')"><</button>
+      <button id="posButton" class="next" onclick="scrollItems('next')">></button>
+    </div>
+    <!-- </div> -->
   </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>

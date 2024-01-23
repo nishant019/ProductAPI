@@ -24,8 +24,6 @@ async function fetchProductTypes() {
                 setSearchParams('subCategoryId');
                 setSearchParams('prodTypeId', productType.prodTypeId)
                 await listProducts();
-
-
             })
 
             productTypeDiv.appendChild(prodTypeName);
@@ -158,14 +156,15 @@ async function listProducts() {
 
     const listProducts = await axios.get(apiUrl);
 
-    // Create a new container div for product content
-
 
     listProducts.data.data.forEach(prods => {
 
         const productContentDiv = document.createElement('div');
         productContentDiv.className = 'product-content-div';
         toggleBookmark(productContentDiv)
+
+        const contentDetail = document.createElement('div')
+        contentDetail.className = 'content-div'
 
         const productDiv = document.createElement('div')
         productDiv.className = 'product-div'
@@ -221,12 +220,15 @@ async function listProducts() {
         imgContainer.appendChild(imgHref)
 
         productDiv.appendChild(imgContainer)
-        productDiv.appendChild(productCost)
-        productDiv.appendChild(productSizeInfo)
+
+        contentDetail.appendChild(productCost)
+        contentDetail.appendChild(productSizeInfo)
 
 
-        productDiv.appendChild(productTitle)
-        productDiv.appendChild(productLocation)
+        contentDetail.appendChild(productTitle)
+        contentDetail.appendChild(productLocation)
+        productDiv.appendChild(contentDetail)
+
         // productDiv.appendChild(contactInfo)
 
 
@@ -239,13 +241,18 @@ async function listProducts() {
         // Append the productContentDiv to the listProductsDiv
         listProductsDiv.appendChild(productContentDiv);
 
-        // Create a button outside the productContentDiv
-        // const button = document.createElement('button')
-        // button.className = 'book-button'
-        // button.innerText = 'Add to list'
-        // productContentDiv.appendChild(button);
-    });
 
+    });
+    // const prods = document.getElementById('prods')
+    // const prev = document.createElement('button')
+    // prev.className = 'prev'
+    // prev.innerText = '<'
+    // prods.appendChild(prev);
+
+    // const next = document.createElement('button')
+    // next.className = 'next'
+    // next.innerText = '>'
+    // prods.appendChild(next);
 
 }
 
@@ -307,22 +314,40 @@ function toggleBookmark(productDiv) {
 }
 
 
+let currentIndex = 0;
 
-//   const scrollContainer = document.querySelector('#listProducts');
-//   let currentIndex = 0;
+function scrollItems(direction) {
+  const itemWidth = document.querySelector('.product-content-div').offsetWidth;
+  const listProductsContainer = document.querySelector('#listProducts');
+  const prodsContainer = document.querySelector('#prods');
 
-//   function scrollItems(direction) {
-//     const itemWidth = document.querySelector('.product-content-div').offsetWidth;
-//     const containerWidth = scrollContainer.offsetWidth;
+  const containerWidth = listProductsContainer.offsetWidth;
+  const totalItemsWidth = listProductsContainer.scrollWidth;
 
-//     if (direction === 'next' && currentIndex < scrollContainer.children.length - 1) {
-//       currentIndex++;
-//     } else if (direction === 'prev' && currentIndex > 0) {
-//       currentIndex--;
-//     }
+  // Calculate the maximum scroll position
+  const maxScrollPosition = totalItemsWidth - containerWidth;
 
-//     const transformValue = -currentIndex * itemWidth + "px";
-//     scrollContainer.style.transform = `translateX(${transformValue})`;
-//   }
+  // Calculate the scroll position corresponding to the current index
+  const targetScrollPosition = currentIndex * itemWidth;
 
-  
+  // Update the currentIndex based on the scroll direction
+  if (direction === 'next' && currentIndex < listProductsContainer.children.length - 1) {
+    currentIndex++;
+  } else if (direction === 'prev' && currentIndex > 0) {
+    currentIndex--;
+  }
+
+  // Ensure currentIndex stays within bounds
+  currentIndex = Math.max(0, Math.min(currentIndex, listProductsContainer.children.length - 1));
+
+  // Set the scrollLeft property of the parent prods container, ensuring it doesn't exceed the maximum
+  prodsContainer.scrollLeft = Math.min(maxScrollPosition, targetScrollPosition);
+
+  // Calculate the new transform value based on the updated currentIndex
+  const transformValue = -currentIndex * itemWidth + "px";
+
+  // Apply the transform to listProductsContainer
+  listProductsContainer.style.transform = `translateX(${transformValue})`;
+}
+
+
