@@ -13,22 +13,22 @@ body {
 ::-webkit-scrollbar {
     width: 5px;
     height: 5px;
-  }
-  
-  /* Track (the area on which the thumb moves) */
-  ::-webkit-scrollbar-track {
+}
+
+/* Track (the area on which the thumb moves) */
+::-webkit-scrollbar-track {
     background-color: #f1f1f1;
-  }
-  
-  /* Handle (the draggable part of the scrollbar) */
-  ::-webkit-scrollbar-thumb {
+}
+
+/* Handle (the draggable part of the scrollbar) */
+::-webkit-scrollbar-thumb {
     background-color: #dfdede;
-  }
-  
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
-    background-color:#888;
-  }
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background-color: #888;
+}
 
 #detailBody {
     display: flex;
@@ -92,7 +92,7 @@ body {
 #mainBody {
     /* border: 1px solid black; */
     /* margin-top: 5%; */
-    
+
     display: flex;
 
 }
@@ -197,7 +197,8 @@ body {
     height: fit-content;
     transition: box-shadow 0.3s ease, opacity 0.3s ease;
     /* box-shadow: 0px 8px 18px #efefef 0px -3px 12px #efefef; */
-    border: 1px #efefef solid;;
+    border: 1px #efefef solid;
+    ;
 
 }
 
@@ -227,7 +228,8 @@ body {
     margin: 5px;
 
 }
-p{
+
+p {
     color: rgb(120, 120, 120);
 
 }
@@ -402,9 +404,15 @@ p{
 
 
 
+.top-nav .cart {
+    display: flex;
+}
 
 /* Top Navigation */
 .top-nav {
+    
+    width: -webkit-fill-available;
+
     background-color: #f9f7f7;
     color: #000000;
     padding: 10px;
@@ -413,26 +421,78 @@ p{
     align-items: center;
     position: fixed;
     z-index: 1000;
-    width: 99%;
     top: 0;
     left: 0;
 }
 
+
+/* Initial styling, you can customize as needed */
+.login-signup {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+}
+
+.login-signup a {
+    display: block;
+    margin-bottom: 5px;
+    text-decoration: none;
+    color: #333;
+}
+
+#bottomLoginSignupDropdown {
+
+
+    display: none;
+
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    position: relative;
+    width: max-content;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+
+}
+
+#bottomLoginSignupDropdown a {
+    display: block;
+    margin-bottom: 5px;
+    text-decoration: none;
+    color: #333;
+}
+
+
+
 .logo {
-    margin-left: 10px;
+    /* margin-left: 10px; */
+    flex: 0 0 50px; /* flex-grow: 0, flex-shrink: 0, flex-basis: 200px */
+
     max-width: 100px;
+    margin-right:  20px;
     /* Set your preferred logo width */
+}
+
+.cart {
+    margin-right:  20px;
 }
 
 .cart img {
-    width: 50px;
-    /* margin-left: 10px; */
-    max-width: 100px;
-    /* Set your preferred logo width */
-}
+    margin-left: 10px;
+    width: 20px;
 
+}
+.search-bar{
+    width: 100%;
+}
 .search-bar input {
-    width: 300px;
+    max-width: 500px;
+    width: 100%;
     /* Set the width as needed */
     padding: 8px;
     /* Adjust padding to your preference */
@@ -473,9 +533,7 @@ p{
     margin: 0 10px;
 }
 
-.logo {
-    width: 50px;
-}
+
 
 .login-signup {
     margin-right: 30px;
@@ -505,7 +563,8 @@ p{
     white-space: nowrap;
 
 }
-.prev{
+
+.prev {
     margin-top: -138px;
     float: left;
     left: 0px;
@@ -513,7 +572,8 @@ p{
     position: sticky;
 
 }
-#posButton{
+
+#posButton {
     border-radius: 40px;
     border: white;
     background-color: white;
@@ -522,12 +582,13 @@ p{
     font-weight: 500;
     opacity: .9;
 }
+
 /* .prev .next {
     position: absolute;
 } */
-.next{
+.next {
     display: inline;
-    right:  5px;
+    right: 5px;
     z-index: 100;
     position: sticky;
 
@@ -571,23 +632,27 @@ p{
     .top-nav {
         background-color: #f9f7f7;
         color: #000000;
+        padding: 10px;
         display: flex;
-        flex-direction: row;
-        position: fixed;
-        width: 100%;
         justify-content: flex-start;
+        align-items: center;
+        position: fixed;
+        z-index: 1000;
+        width: -webkit-fill-available;
+        top: 0;
+        left: 0;
+    }
+    .top-nav .cart{
+        display: none;
+    }
+    .search-bar{
+        width: 100%;
     }
 
-    .search-bar {
-        margin-left: 30px;
-        margin-right: 30px;
-        width: 100%;
-        /* Adjust the width to fill the entire width */
-    }
 
     .search-bar input {
-        width: calc(100% - 16px);
-        /* Adjust padding and border width */
+        max-width: 500px;
+        width:100%;        /* Adjust padding and border width */
         padding: 8px;
         float: none;
         /* Remove float */

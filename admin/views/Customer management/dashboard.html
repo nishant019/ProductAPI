@@ -27,20 +27,28 @@
       <input type="text" placeholder="Search...">
     </div>
     <div class="cart">
-      <img src="/cart" alt="Logo">
-    </div>
-    <div class="login-signup">
-      <!-- Add your login/signup links here -->
-      <a href="#">Login</a>
-      <a href="#">Sign Up</a>
+      <img src="/cart" alt="Logo" />
+      <img id="menuIcon" src="/menuIcon" alt="Logo" onclick="toggleTopLoginSignup()">
+      <div id="topLoginSignupDropdown" class="login-signup">
+        <a href="#">Login</a>
+        <a href="#">Sign Up</a>
+      </div>
     </div>
   </div>
 
   <!-- Bottom Navigation (Mobile) -->
   <div class="bottom-nav">
-    <a href="#">Login</a>
-    <a href="#">Sign Up</a>
-    <a href="#">Cart</a>
+    <div id="bottomLoginSignupDropdown" class="login-signup">
+      <a href="#">Login</a>
+      <a href="#">Sign Up</a>
+    </div>
+    <div class="cart">
+      <img src="/cart" alt="Logo" />
+
+      <img id="menuIcon" src="/menuIcon" alt="Logo" onclick="toggleBottomLoginSignup()">
+
+    </div>
+
   </div>
 
 
@@ -56,21 +64,33 @@
     </div>
     <!-- </div> -->
   </div>
+
 </body>
+
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 <script src="/Customer_Management/scripts.js"></script>
 <script>
-  // document.addEventListener('DOMContentLoaded', () => {
-  //   fetchProductTypes();
-  //   listProducts()
-    document.querySelector('#prods').addEventListener('scroll', scrollButtonHide);
+
+
+
+  function toggleTopLoginSignup() {
+    const topLoginSignupDropdown = document.getElementById('topLoginSignupDropdown');
+    topLoginSignupDropdown.style.display = topLoginSignupDropdown.style.display === 'block' ? 'none' : 'block';
+  }
+
+  function toggleBottomLoginSignup() {
+    const bottomLoginSignupDropdown = document.getElementById('bottomLoginSignupDropdown');
+    bottomLoginSignupDropdown.style.display = bottomLoginSignupDropdown.style.display === 'block' ? 'none' : 'block';
+  }
+
+  document.querySelector('#prods').addEventListener('scroll', scrollButtonHide);
 
   // scrollButtonHide();
 
   // });
   // Your scrollButtonHide function
-document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', () => {
     fetchProductTypes();
     listProducts();
   });

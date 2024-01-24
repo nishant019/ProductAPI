@@ -181,6 +181,10 @@ app.get('/cart', (req, res) => {
   res.sendFile(path.join(__dirname, '/styles/icons/cart.svg'));
 });
 
+app.get('/menuIcon', (req, res) => {
+  res.sendFile(path.join(__dirname, '/styles/icons/menu.svg'));
+});
+
 app.get('/profile.css', (req, res) => {
   res.sendFile(path.join(__dirname, '/styles/profile.css'));
 });
