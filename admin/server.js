@@ -184,6 +184,9 @@ app.get('/cart', (req, res) => {
 app.get('/menuIcon', (req, res) => {
   res.sendFile(path.join(__dirname, '/styles/icons/menu.svg'));
 });
+app.get('/banner', (req, res) => {
+  res.sendFile(path.join(__dirname, '/styles/icons/banner.jpg'));
+});
 
 app.get('/profile.css', (req, res) => {
   res.sendFile(path.join(__dirname, '/styles/profile.css'));

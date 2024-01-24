@@ -12,7 +12,7 @@ async function fetchProductTypes() {
         productTypes.forEach(productType => {
             const productTypeDiv = document.createElement('div');
             productTypeDiv.className = 'product-type';
-            productTypeDiv.style.display = 'block';
+            // productTypeDiv.style.display = 'table';
 
             const prodTypeName = document.createElement('div');
             prodTypeName.className = 'prod-type-name';
@@ -40,11 +40,12 @@ async function fetchCategories(productType, productDiv, prodTypeName) {
         const url = new URL('http://localhost:3000/listCategory/:id');
         url.searchParams.set('prodTypeId', productType.prodTypeId);
         const categories = await fetchData(url);
-
+        const categoryDiv = document.createElement('div');
+        categoryDiv.className = 'category';
         categories.forEach(category => {
-            const categoryDiv = document.createElement('div');
-            categoryDiv.className = 'category';
-            // categoryDiv.style.display = 'none';
+
+            const categoryList = document.createElement('div');
+            categoryList.className = 'category-list';
 
             const categoryName = document.createElement('div');
             categoryName.className = 'category-name';
@@ -60,9 +61,10 @@ async function fetchCategories(productType, productDiv, prodTypeName) {
 
             });
 
-            fetchSubCategories(productType, category, categoryDiv, categoryName);
+            fetchSubCategories(productType, category, categoryList, categoryName);
+            categoryList.appendChild(categoryName);
 
-            categoryDiv.appendChild(categoryName);
+            categoryDiv.appendChild(categoryList);
             productDiv.appendChild(categoryDiv);
         });
     } catch (error) {
@@ -77,10 +79,11 @@ async function fetchSubCategories(productType, category, categoryDiv, categoryNa
         url.searchParams.set('prodTypeId', productType.prodTypeId);
         url.searchParams.set('categoryId', category.categoryId);
         const subCategories = await fetchData(url);
-
+        const subCategoryDiv = document.createElement('div');
+        subCategoryDiv.className = 'sub-category';
         subCategories.forEach(subCategory => {
-            const subCategoryDiv = document.createElement('div');
-            subCategoryDiv.className = 'sub-category';
+
+
             // subCategoryDiv.style.display = 'none';
 
             const subCategoryName = document.createElement('div');
@@ -111,7 +114,7 @@ async function fetchSubCategories(productType, category, categoryDiv, categoryNa
 function handleClick(triggerElement, targetElement) {
     triggerElement.addEventListener('click', (event) => {
         event.stopPropagation();
-        targetElement.style.display = (targetElement.style.display === 'none') ? 'block' : 'none';
+        targetElement.style.display = (targetElement.style.display === 'none') ? 'table-row' : 'none';
     });
 }
 
