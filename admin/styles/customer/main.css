@@ -291,13 +291,12 @@ p {
 #productTypes {
     /* position: absolute; */
     position: relative;
-
     /* overflow-x: auto; */
-
-    display: table;
+    display: inline-flex;
     margin-top: 5px;
-    width: -webkit-fill-available; /* Set to 'auto' to allow content to determine width */
-    white-space: nowrap; /* Prevent table cells from wrapping */
+    width: -webkit-fill-available;
+    white-space: nowrap;
+    flex-direction: column;
 }
 
 .product-type {

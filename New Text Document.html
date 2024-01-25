@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Navigation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        #productTypes-container {
+            width: 300px;
+            /* Set your desired width */
+            position: relative;
+        }
+
+        .product-type {
+            padding: 10px;
+            cursor: pointer;
+            border-right: 1px solid #ccc;
+            transition: background-color 0.3s;
+            position: absolute;
+        }
+
+        .product-type:hover {
+            background-color: #f0f0f0;
+        }
+
+        .prod-type-name {
+            margin-bottom: 5px;
+            cursor: pointer;
+        }
+
+        .category-list {
+            padding-left: 20px;
+            position: absolute;
+            top: 0;
+            left: 100%;
+            display: none;
+            width: 100%;
+            /* Adjust to fill the container width */
+        }
+
+        .product-type.clicked .category-list {
+            display: block;
+        }
+
+        .category-name {
+            padding: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .category-name:hover {
+            background-color: #e0e0e0;
+        }
+
+        .category-name.clicked {
+            background-color: #b3d9ff;
+        }
+
+        .sub-category-list {
+            /* padding-left: 20px; */
+            position: absolute;
+            top: 0;
+            left: 100%;
+            /* display: none; */
+            width: 100%;
+            display: -webkit-box;
+
+        }
+
+        .category-name.clicked .sub-category-list {
+            display: block;
+        }
+
+        .sub-category-name {
+            padding: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .sub-category-name:hover {
+            background-color: #d9f4ff;
+        }
+
+        .sub-category-name.clicked {
+            background-color: #99c2ff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="productTypes-container">
+        <div id="productTypes">
+            <div class="product-type" onclick="toggleSubNav(this)">
+                <div class="prod-type-name">Clothes (3)</div>
+                <div class="category-list" id="clothes">
+                    <div class="category-name" onclick="toggleSubNav(this)">Tshirt (3)</div>
+                    <div class="sub-category-list" id="tshirt">
+                        <div class="sub-category-name">BLUEBERRY (0)</div>
+                        <div class="sub-category-name">Full (0)</div>
+                        <div class="sub-category-name">Half (3)</div>
+                        <div class="sub-category-name">HTC (0)</div>
+                    </div>
+                </div>
+                <div class="category-list" id="shoes">
+                    <div class="category-name" onclick="toggleSubNav(this)">Sneakers (3)</div>
+                    <div class="sub-category-list" id="sneakers">
+                        <div class="sub-category-name">Nike (0)</div>
+                        <div class="sub-category-name">Adidas (0)</div>
+                        <div class="sub-category-name">Puma (3)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Repeat the above structure for other product types -->
+
+        </div>
+    </div>
+
+    <script>
+        function toggleSubNav(clickedElement) {
+            var elements = document.querySelectorAll('.clicked');
+            elements.forEach(el => el.classList.remove('clicked'));
+
+            // Add 'clicked' class to the clicked element
+            clickedElement.classList.add('clicked');
+        }
+    </script>
+
+</body>
+
+</html>
