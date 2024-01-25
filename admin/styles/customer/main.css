@@ -299,8 +299,9 @@ p {
     flex-direction: column;
 }
 
+
 .product-type {
-    display: table-cell;
+    /* display: table-cell; */
     border: 1px solid #e0e0e0;
     margin: 5px;
     padding: 10px;

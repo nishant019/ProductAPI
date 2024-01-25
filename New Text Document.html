@@ -13,17 +13,21 @@
         }
 
         #productTypes-container {
-            width: 300px;
-            /* Set your desired width */
-            position: relative;
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        #productTypes {
+            justify-content: space-between;
+            display: flex;
+
         }
 
         .product-type {
-            padding: 10px;
-            cursor: pointer;
-            border-right: 1px solid #ccc;
-            transition: background-color 0.3s;
-            position: absolute;
+            border: 1px solid black;
+            display: flex;
+            position: relative;
+            width: 50%;
         }
 
         .product-type:hover {
@@ -31,28 +35,34 @@
         }
 
         .prod-type-name {
-            margin-bottom: 5px;
             cursor: pointer;
+            box-sizing: border-box;
+            padding: 10px;
+            position: absolute;
+            background-color: #ddd;
+            /* width: 84%; */
+        }
+
+        .category {
+            overflow-x: auto;
+
         }
 
         .category-list {
-            padding-left: 20px;
-            position: absolute;
-            top: 0;
-            left: 100%;
-            display: none;
-            width: 100%;
-            /* Adjust to fill the container width */
-        }
-
-        .product-type.clicked .category-list {
-            display: block;
+            border: 1px solid black;
+            overflow-x: auto;
+            width: max-content;
         }
 
         .category-name {
-            padding: 5px;
             cursor: pointer;
             transition: background-color 0.3s;
+            box-sizing: border-box;
+            padding: 10px;
+            /* Increase padding for better readability */
+            background-color: #eee;
+            /* Add a background color for category names */
+            margin-top: 40px;
         }
 
         .category-name:hover {
@@ -64,24 +74,23 @@
         }
 
         .sub-category-list {
-            /* padding-left: 20px; */
-            position: absolute;
-            top: 0;
-            left: 100%;
-            /* display: none; */
-            width: 100%;
-            display: -webkit-box;
-
+            border: 1px solid black;
+            display: flex;
+            flex-wrap: nowrap;
         }
 
         .category-name.clicked .sub-category-list {
-            display: block;
+            display: flex;
+            flex-wrap: wrap;
+            /* Allow sub-category names to wrap onto the next line */
         }
 
         .sub-category-name {
-            padding: 5px;
             cursor: pointer;
             transition: background-color 0.3s;
+            box-sizing: border-box;
+            padding: 10px;
+            /* Increase padding for better readability */
         }
 
         .sub-category-name:hover {
@@ -98,30 +107,184 @@
 
     <div id="productTypes-container">
         <div id="productTypes">
-            <div class="product-type" onclick="toggleSubNav(this)">
-                <div class="prod-type-name">Clothes (3)</div>
-                <div class="category-list" id="clothes">
-                    <div class="category-name" onclick="toggleSubNav(this)">Tshirt (3)</div>
-                    <div class="sub-category-list" id="tshirt">
-                        <div class="sub-category-name">BLUEBERRY (0)</div>
-                        <div class="sub-category-name">Full (0)</div>
-                        <div class="sub-category-name">Half (3)</div>
-                        <div class="sub-category-name">HTC (0)</div>
+            <div class="product-type">
+                <div class="prod-type-name">Clothes (8)</div>
+                <div class="category">
+
+                    <div class="category-name">Tshirt (3)</div>
+
+                    <div class="category-list" id="clothes">
+
+                        <div class="sub-category-list" id="tshirt">
+                            <div class="sub-category-name">BLUEBERRY (0)</div>
+                            <div class="sub-category-name">Full (0)</div>
+                            <div class="sub-category-name">Half (3)</div>
+                            <div class="sub-category-name">HTC (0)</div>
+                            <div class="sub-category-name">Striped (2)</div>
+                            <div class="sub-category-name">Graphic (1)</div>
+                            <div class="sub-category-name">Plain (4)</div>
+                            <div class="sub-category-name">Long Sleeve (2)</div>
+                            <div class="sub-category-name">Short Sleeve (3)</div>
+                        </div>
                     </div>
                 </div>
-                <div class="category-list" id="shoes">
-                    <div class="category-name" onclick="toggleSubNav(this)">Sneakers (3)</div>
-                    <div class="sub-category-list" id="sneakers">
-                        <div class="sub-category-name">Nike (0)</div>
-                        <div class="sub-category-name">Adidas (0)</div>
-                        <div class="sub-category-name">Puma (3)</div>
+
+                <div class="category">
+
+                    <div class="category-name">Sneakers (3)</div>
+
+                    <div class="category-list" id="shoes">
+                        <div class="sub-category-list" id="sneakers">
+                            <div class="sub-category-name">Nike (0)</div>
+                            <div class="sub-category-name">Adidas (0)</div>
+                            <div class="sub-category-name">Puma (3)</div>
+                            <div class="sub-category-name">Running Shoes (2)</div>
+                            <div class="sub-category-name">Basketball Shoes (1)</div>
+                            <div class="sub-category-name">Casual Sneakers (3)</div>
+                            <div class="sub-category-name">High Tops (2)</div>
+                            <div class="sub-category-name">Low Tops (1)</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Product Type 2 -->
+            <div class="product-type">
+                <div class="prod-type-name">Electronics (5)</div>
+                <div class="category">
+
+                    <div class="category-name">Smartphones (3)</div>
+
+                    <div class="category-list" id="phones">
+                        <div class="sub-category-list" id="smartphones">
+                            <div class="sub-category-name">iPhone (0)</div>
+                            <div class="sub-category-name">Samsung (2)</div>
+                            <div class="sub-category-name">Google Pixel (1)</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="category">
+
+                    <div class="category-name">Laptops (2)</div>
+
+                    <div class="category-list" id="laptops">
+                        <div class="sub-category-list" id="laptops">
+                            <div class="sub-category-name">Dell (1)</div>
+                            <div class="sub-category-name">HP (1)</div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Repeat the above structure for other product types -->
+            <!-- Product Type 3 -->
+            <div class="product-type">
+                <div class="category-list" id="fiction">
 
+                    <div class="prod-type-name">Books (4)</div>
+                    <div class="category">
+                        <div class="category-name">Fiction (2)</div>
+                        <div class="sub-category-list" id="fiction-books">
+                            <div class="sub-category-name">Mystery (1)</div>
+                            <div class="sub-category-name">Science Fiction (1)</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="category">
+
+                    <div class="category-name">Non-Fiction (2)</div>
+                    <div class="category-list" id="non-fiction">
+                        <div class="sub-category-list" id="non-fiction-books">
+                            <div class="sub-category-name">Biography (1)</div>
+                            <div class="sub-category-name">Science (1)</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Product Type 4 -->
+            <div class="product-type">
+                <div class="prod-type-name">Toys (2)</div>
+                <div class="category">
+
+                    <div class="category-name">Action Figures (1)</div>
+
+                    <div class="category-list" id="action-figures">
+                        <div class="sub-category-list" id="action-figure-brands">
+                            <div class="sub-category-name">Superheroes (1)</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="category">
+
+                    <div class="category-name">Board Games (1)</div>
+                    <div class="category-list" id="board-games">
+                        <div class="sub-category-list" id="board-game-types">
+                            <div class="sub-category-name">Strategy (1)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Type 5 -->
+            <div class="product-type">
+                <div class="prod-type-name">Home Decor (5)</div>
+                <div class="category">
+                    <div class="category-name">Wall Art (5)</div>
+                    <div class="category-list" id="wall-art">
+                        <div class="sub-category-list" id="wall-art-types">
+                            <div class="sub-category-name">Paintings (2)</div>
+                            <div class="sub-category-name">Posters (1)</div>
+                            <div class="sub-category-name">Photography (1)</div>
+                            <div class="sub-category-name">Tapestries (1)</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="category">
+                    <div class="category-name">Decor Accents (5)</div>
+                    <div class="category-list" id="decor-accents">
+                        <div class="sub-category-list" id="accents">
+                            <div class="sub-category-name">Vases (2)</div>
+                            <div class="sub-category-name">Candles (1)</div>
+                            <div class="sub-category-name">Mirrors (1)</div>
+                            <div class="sub-category-name">Sculptures (1)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Type 6 -->
+            <div class="product-type">
+                <div class="prod-type-name">Fitness Equipment (5)</div>
+                <div class="category">
+
+                    <div class="category-name">Cardio (5)</div>
+                    <div class="category-list" id="cardio">
+                        <div class="sub-category-list" id="cardio-types">
+                            <div class="sub-category-name">Treadmills (1)</div>
+                            <div class="sub-category-name">Ellipticals (1)</div>
+                            <div class="sub-category-name">Stationary Bikes (1)</div>
+                            <div class="sub-category-name">Rowing Machines (1)</div>
+                            <div class="sub-category-name">Jump Ropes (1)</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="category">
+                    <div class="category-name">Strength Training (5)</div>
+                    <div class="category-list" id="strength-training">
+                        <div class="sub-category-list" id="strength-training-types">
+                            <div class="sub-category-name">Dumbbells (1)</div>
+                            <div class="sub-category-name">Kettlebells (1)</div>
+                            <div class="sub-category-name">Resistance Bands (1)</div>
+                            <div class="sub-category-name">Weight Benches (1)</div>
+                            <div class="sub-category-name">Medicine Balls (1)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+
     </div>
 
     <script>
