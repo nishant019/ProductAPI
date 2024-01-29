@@ -1,0 +1,240 @@
+/* @import url('/font-awesome-4.6.3/css/font-awesome.min.css'); */
+
+body {
+    font-family: 'Noto Sans', sans-serif;
+    background-color: #f9f7f7;
+    word-spacing: -1px;
+    /* Experiment with different negative values based on your preference */
+
+    /* margin: 20px; */
+}
+
+/* Width of the scrollbar */
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+/* Track (the area on which the thumb moves) */
+::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+}
+
+/* Handle (the draggable part of the scrollbar) */
+::-webkit-scrollbar-thumb {
+    background-color: #dfdede;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background-color: #888;
+}
+
+
+.product-title {
+
+    font-size: small;
+    color: rgb(60, 60, 60);
+
+
+    font-weight: 500;
+    /* height: 25px; */
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 5px;
+}
+
+.product-size-info {
+    display: block;
+    width: 100%;
+}
+
+
+.size-info {
+
+    font-size: 10px;
+    margin: 5px;
+    opacity: 0.8;
+    display: flex;
+    align-items: center;
+}
+
+.size-info i {
+    margin-left: 5px;
+    /* Adjust as needed */
+    margin-right: 15px;
+    /* Adjust as needed */
+}
+
+
+
+.product-cost {
+    color: rgb(10, 10, 10);
+
+    width: 100%;
+    height: auto;
+    font-size: 12px;
+    text-align: left;
+    margin: 5px;
+}
+
+
+.products-div {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    flex-direction: row-reverse;
+    align-items: stretch;
+}
+
+.product-content-div {
+    position: relative;
+    border-radius: 15px;
+    margin: 3px;
+    margin-top: 0;
+    background: inherit;
+    display: inline-block;
+    align-items: center;
+    /* border: 1px solid red; */
+    width: fit-content;
+    height: fit-content;
+    transition: box-shadow 0.3s ease, opacity 0.3s ease;
+    /* box-shadow: 0px 8px 18px #efefef 0px -3px 12px #efefef; */
+    border: 1px #efefef solid;
+    ;
+
+}
+
+.product-div {
+    height: 300px;
+    width: 300px;
+}
+
+#listProducts {
+    border-radius: 3px;
+    /* width: 80%; */
+    display: inline-flex;
+    /* margin-left: 25px;
+    margin-right: 25px; */
+
+}
+
+#prods {
+    flex: 1;
+    top: 10px;
+    overflow-x: auto;
+    height: 430px;
+    position: relative;
+    height: max-content;
+    white-space: nowrap;
+
+}
+
+.prev {
+    margin-top: -138px;
+    float: left;
+    left: 0px;
+    z-index: 100;
+    position: sticky;
+
+}
+
+#posButton {
+    border-radius: 40px;
+    border: white;
+    background-color: white;
+    padding: 10px 14px;
+    box-shadow: 0.5px 0.1px #000000;
+    font-weight: 500;
+    opacity: .9;
+}
+
+/* .prev .next {
+    position: absolute;
+} */
+.next {
+    display: inline;
+    right: 5px;
+    z-index: 100;
+    position: sticky;
+
+
+}
+
+.product-content-div:hover {
+    box-shadow: 0px 8px 18px rgba(196, 196, 196, 0.2), 0px -8px 18px rgba(196, 196, 196, 0.2);
+    /* Increase shadow on hover, include negative y-offset */
+    opacity: 0.9;
+}
+
+
+
+.product-location {
+    font-size: 11px;
+    font-weight: 100;
+    color: rgb(60, 60, 60);
+
+
+
+    /* height: 25px; */
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 5px;
+
+}
+
+#scrollButton {
+    position: sticky;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    z-index: 100;
+}
+
+.scroll-btn {
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.img-container {
+    height: 169px;
+}
+
+
+
+.img-container .img-href {
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    display: block;
+
+}
+
+
+.img-container .img-href .img {
+    height: auto;
+    width: 300px;
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%)
+}
+
+@media only screen and (max-width: 600px) {
+
+    #listProducts {
+        width: fit-content;
+    }
+}

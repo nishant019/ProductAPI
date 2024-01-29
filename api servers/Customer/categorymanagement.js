@@ -23,22 +23,34 @@ app.get('/listProductType/:id', (req, res) => {
             SELECT prodType, COUNT(*) as totalProducts FROM prods GROUP BY prodType
         ) p ON pt.prodTypeId = p.prodType
     WHERE 
-        pt.status = 1
+        pt.status = 1    
     `;
+    const allQuery = ` SELECT 
+        'all' as prodTypeId, 
+        'ALL' as prodTypeName, 
+        COALESCE(SUM(p.totalProducts), 0) as totalProducts 
+    FROM 
+        producttype pt
+        LEFT JOIN (
+            SELECT prodType, COUNT(*) as totalProducts FROM prods GROUP BY prodType
+        ) p ON pt.prodTypeId = p.prodType
+    WHERE 
+        pt.status = 1 `
     let groupStatement = ' GROUP BY pt.prodTypeId, pt.prodTypeName'
     let query
 
     let queryParams = [];
 
-    if (prodTypeId !== ':id' || !isNaN(prodTypeId)) {
-        query = ALL_PRODUCT_TYPES_QUERY + ' AND pt.prodTypeId = ?';
+    if (prodTypeId !== ':id' && !isNaN(prodTypeId) && prodTypeId.toLowerCase() !== 'all') {
+        ALL_PRODUCT_TYPES_QUERY += ' AND pt.prodTypeId = ?';
         queryParams.push(parseInt(prodTypeId));
     }
 
-    const finalQuery = (prodTypeId === ':id') ? ALL_PRODUCT_TYPES_QUERY + groupStatement : query + groupStatement;
+    const finalQuery = `${ALL_PRODUCT_TYPES_QUERY} ${groupStatement} UNION ${allQuery}`
 
     pool.query(finalQuery, queryParams, (error, result) => {
         if (error) {
+            console.log(error)
             res.status(500).json({ error: 'Internal Server Error' });
             return;
         }
@@ -53,57 +65,79 @@ app.get('/listCategory/:id', (req, res) => {
     const categoryId = req.params.id;
     const prodTypeId = req.query.prodTypeId;
     const status = req.query.status;
-    let ALL_PRODUCT_TYPES_QUERY = `
-    SELECT
-    c.categoryName,
-    c.categoryId,
-    pt.prodTypeId, 
-    pt.prodTypeName,
 
-    COALESCE(SUM(p.totalProducts), 0) as totalProducts
+    let ALL_CATEGORIES_QUERY = `
+        SELECT
+            c.categoryName,
+            c.categoryId,
+            pt.prodTypeId, 
+            pt.prodTypeName,
+            COALESCE(SUM(p.totalProducts), 0) as totalProducts
         FROM 
             producttype pt
-        INNER JOIN category c ON c.prodTypeId = pt.prodTypeId
-        LEFT JOIN (
-            SELECT prodCategory, COUNT(*) as totalProducts FROM prods GROUP BY prodCategory
-        ) p ON c.categoryId = p.prodCategory
+            INNER JOIN category c ON c.prodTypeId = pt.prodTypeId
+            LEFT JOIN (
+                SELECT prodCategory, COUNT(*) as totalProducts FROM prods GROUP BY prodCategory
+            ) p ON c.categoryId = p.prodCategory
         WHERE 
-    pt.status = 1`;
-    const groupStatement = ' GROUP BY c.categoryName, pt.prodTypeId, pt.prodTypeName'
-
+            pt.status = 1`;
+    let ALL_CATEGORIES_ALL_OPTION_QUERY = `
+            SELECT
+                'ALL' as categoryName,
+                'ALL' as categoryId,
+                'ALL' as prodTypeId, 
+                'ALL' as prodTypeName,
+                COALESCE(SUM(p.totalProducts), 0) as totalProducts
+            FROM 
+                producttype pt
+                INNER JOIN category c ON c.prodTypeId = pt.prodTypeId
+                LEFT JOIN (
+                    SELECT prodCategory, COUNT(*) as totalProducts FROM prods GROUP BY prodCategory
+                ) p ON c.categoryId = p.prodCategory
+            WHERE 
+                pt.status = 1`;
     const queryParams = [];
 
-    if (prodTypeId !== undefined && prodTypeId !== null) {
-        ALL_PRODUCT_TYPES_QUERY += ' AND c.prodTypeId = ?';
+    if (prodTypeId !== undefined && prodTypeId !== null && prodTypeId.toLowerCase() !== 'all') {
+        ALL_CATEGORIES_ALL_OPTION_QUERY += ' AND pt.prodTypeId = ?';
+        ALL_CATEGORIES_QUERY += ' AND pt.prodTypeId = ?';
         queryParams.push(prodTypeId);
     }
 
-
-    if (categoryId !== ':id') {
-        ALL_PRODUCT_TYPES_QUERY += ' AND c.categoryId = ?';
+    if (categoryId !== ':id' && categoryId !== undefined && categoryId !== null) {
+        ALL_CATEGORIES_ALL_OPTION_QUERY += ' AND c.categoryId = ?';
+        ALL_CATEGORIES_QUERY += ' AND c.categoryId = ?';
         queryParams.push(categoryId);
     }
-    ALL_PRODUCT_TYPES_QUERY += groupStatement
+    queryParams.forEach(e => {
+        queryParams.push(e)
+    })
 
+    ALL_CATEGORIES_QUERY += ' GROUP BY c.categoryName, pt.prodTypeId, pt.prodTypeName, c.categoryId';
 
-    pool.query(ALL_PRODUCT_TYPES_QUERY, queryParams, (error, result) => {
+    const finalQuery = `${ALL_CATEGORIES_ALL_OPTION_QUERY} UNION ${ALL_CATEGORIES_QUERY}`;
 
+    pool.query(finalQuery, queryParams, (error, result) => {
         if (error) {
-            console.log(error)
+            console.log(error);
             res.status(500).json({ error: 'Internal Server Error' });
             return;
         }
-
         res.status(200).json({ data: result });
     });
 });
 
 
 
+
+
 app.get('/listSubCategory/:id', (req, res) => {
+
     const subCategoryId = req.params.id;
     const categoryId = req.query.categoryId;
-    let ALL_PRODUCT_TYPES_QUERY = `
+    const prodTypeId = req.query.prodTypeId;
+
+    let ALL_SUB_CATEGORY_TYPES_QUERY = `
     SELECT 
         sc.subCategoryName,
         sc.subCategoryId, 
@@ -114,32 +148,61 @@ app.get('/listSubCategory/:id', (req, res) => {
     COALESCE(SUM(p.totalProducts), 0) as totalProducts
     FROM producttype pt
     INNER JOIN subcategory sc ON pt.prodTypeId = sc.prodTypeId
-
     LEFT JOIN (
         SELECT prodSubCategory, COUNT(*) as totalProducts FROM prods GROUP BY prodSubCategory
     ) p ON sc.subCategoryId = p.prodSubCategory
     INNER JOIN category c ON c.categoryId = sc.categoryId
     WHERE 
     pt.status = 1`;
-    const groupStatement = ' GROUP BY sc.subCategoryName,c.categoryName, pt.prodTypeId, pt.prodTypeName'
+
+
+    let ALL_SUB_CATEGORY_ALL_OPTION_TYPES_QUERY = `
+    SELECT 
+        'ALL' as subCategoryName,
+        'ALL' as subCategoryId,  
+        'ALL' as categoryName,
+        'ALL' as categoryId,
+        'ALL' as prodTypeId, 
+        'ALL' as prodTypeName,
+    COALESCE(SUM(p.totalProducts), 0) as totalProducts
+    FROM producttype pt
+    INNER JOIN subcategory sc ON pt.prodTypeId = sc.prodTypeId
+    LEFT JOIN (
+        SELECT prodSubCategory, COUNT(*) as totalProducts FROM prods GROUP BY prodSubCategory
+    ) p ON sc.subCategoryId = p.prodSubCategory
+    INNER JOIN category c ON c.categoryId = sc.categoryId
+    WHERE 
+    pt.status = 1`;
+
+    const groupStatement = ' GROUP BY sc.subCategoryName,c.categoryName, pt.prodTypeId, pt.prodTypeName';
 
     let query = 'SELECT sc.*, pt.prodTypeName, c.categoryName FROM subcategory sc LEFT JOIN category c ON sc.categoryId = c.categoryId LEFT JOIN producttype pt ON pt.prodTypeId = c.prodTypeId WHERE 1 = 1';
     const queryParams = [];
 
-    if (categoryId !== undefined && categoryId !== null) {
-        ALL_PRODUCT_TYPES_QUERY += ' AND sc.categoryId = ?';
+
+
+    if (prodTypeId !== undefined && prodTypeId !== null && prodTypeId.toLowerCase() !== 'all') {
+        ALL_SUB_CATEGORY_ALL_OPTION_TYPES_QUERY += ' AND pt.prodTypeId = ?';
+        ALL_SUB_CATEGORY_TYPES_QUERY += ' AND pt.prodTypeId = ?';
+        queryParams.push(prodTypeId);
+    }
+    if (categoryId !== undefined && categoryId !== null && categoryId.toLowerCase() !== 'all') {
+        ALL_SUB_CATEGORY_ALL_OPTION_TYPES_QUERY += ' AND sc.categoryId = ?';
+        ALL_SUB_CATEGORY_TYPES_QUERY += ' AND sc.categoryId = ?';
         queryParams.push(categoryId);
     }
 
-
     if (subCategoryId !== ':id') {
-        ALL_PRODUCT_TYPES_QUERY += ' AND sc.subCategoryId = ?';
+        ALL_SUB_CATEGORY_ALL_OPTION_TYPES_QUERY += ' AND sc.subCategoryId = ?';
+        ALL_SUB_CATEGORY_TYPES_QUERY += ' AND sc.subCategoryId = ?';
         queryParams.push(subCategoryId);
     }
-
-    pool.query(ALL_PRODUCT_TYPES_QUERY + groupStatement, queryParams, (error, result) => {
+    queryParams.forEach(e => {
+        queryParams.push(e)
+    })
+    ALL_SUB_CATEGORY_TYPES_QUERY += groupStatement
+    pool.query(`${ALL_SUB_CATEGORY_ALL_OPTION_TYPES_QUERY} UNION ${ALL_SUB_CATEGORY_TYPES_QUERY}`, queryParams, (error, result) => {
         if (error) {
-            console.log(error)
             res.status(500).json({ error: 'Internal Server Error' });
             return;
         }
@@ -189,23 +252,22 @@ app.get('/listProducts/:id', (req, res) => {
         ALL_PRODUCT_TYPES_QUERY += ' AND p.prodId = ?';
         queryParams.push(prodId);
     }
-    if (categoryId !== undefined && categoryId !== null) {
+    if (categoryId !== undefined && categoryId !== null && categoryId.toLowerCase()!=='all') {
         ALL_PRODUCT_TYPES_QUERY += ' AND c.categoryId = ?';
         queryParams.push(categoryId);
     }
 
 
-    if (subCategoryId !== undefined && subCategoryId !== null) {
+    if (subCategoryId !== undefined && subCategoryId !== null && subCategoryId.toLowerCase()!=='all') {
         ALL_PRODUCT_TYPES_QUERY += ' AND sc.subCategoryId = ?';
         queryParams.push(subCategoryId);
     }
-    if (prodTypeId !== undefined && prodTypeId !== null) {
+    if (prodTypeId !== undefined && prodTypeId !== null && prodTypeId.toLowerCase()!=='all') {
         ALL_PRODUCT_TYPES_QUERY += ' AND pt.prodTypeId = ?';
         queryParams.push(prodTypeId);
     }
-    pool.query(ALL_PRODUCT_TYPES_QUERY+groupStatement , queryParams, (error, result) => {
+    pool.query(ALL_PRODUCT_TYPES_QUERY + groupStatement, queryParams, (error, result) => {
         if (error) {
-            console.log(error)
             res.status(500).json({ error: 'Internal Server Error' });
             return;
         }

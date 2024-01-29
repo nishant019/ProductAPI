@@ -8,25 +8,30 @@ async function fetchProductTypes() {
         const productTypes = await fetchData('http://localhost:3000/listProductType/:id');
         const productTypesContainer = document.getElementById('productTypes');
         productTypesContainer.innerHTML = '';
-
+        
         productTypes.forEach(productType => {
             const productTypeDiv = document.createElement('div');
             productTypeDiv.className = 'product-type';
-            // productTypeDiv.style.display = 'table';
-
             const prodTypeName = document.createElement('div');
             prodTypeName.className = 'prod-type-name';
+            prodTypeName.innerText = "ALL"
             prodTypeName.innerText = `${productType.prodTypeName} (${productType.totalProducts})`;
-            fetchCategories(productType, productTypeDiv, prodTypeName);
 
             prodTypeName.addEventListener('click', async () => {
-                setSearchParams('categoryId');
-                setSearchParams('subCategoryId');
-                setSearchParams('prodTypeId', productType.prodTypeId)
+                const redirectUrl = new URL(window.location.origin + "/customer/product/list")
+                redirectUrl.searchParams.set('prodTypeId', productType.prodTypeId)
 
-                await listProducts();
+
+                window.location.href = redirectUrl
+                fetchCategories()
+
             })
+            productTypeDiv.id = productType.prodTypeId
 
+            const prodTypeId = new URL(window.location.href).searchParams.get('prodTypeId')
+            if (productTypeDiv.id === prodTypeId) {
+                productTypeDiv.classList.add('active')
+            }
             productTypeDiv.appendChild(prodTypeName);
             productTypesContainer.appendChild(productTypeDiv);
         });
@@ -35,75 +40,60 @@ async function fetchProductTypes() {
     }
 }
 
-async function fetchCategories(productType, productDiv, prodTypeName) {
+async function fetchCategories() {
     try {
+
         const url = new URL('http://localhost:3000/listCategory/:id');
-        url.searchParams.set('prodTypeId', productType.prodTypeId);
+        const prodTypeId = new URL(window.location.href).searchParams.get('prodTypeId')
+        if (prodTypeId) {
+            url.searchParams.set('prodTypeId', prodTypeId);
+
+        }
         const categories = await fetchData(url);
-        const categoryDiv = document.createElement('div');
-        categoryDiv.className = 'category';
+
         categories.forEach(category => {
+            
+            const categoriesList = document.getElementById('categoryList')
 
-            const categoryList = document.createElement('div');
-            categoryList.className = 'category-list';
+            const options = document.createElement("option")
 
-            const categoryName = document.createElement('div');
-            categoryName.className = 'category-name';
-            categoryName.innerText = `${category.categoryName} (${category.totalProducts})`;
+            options.value = `${category.categoryId}`;
+            options.innerText = `${category.categoryName} (${category.totalProducts})`;
 
-            // Use handleClick with correct parameters
-            handleClick(prodTypeName, categoryDiv);
-            categoryName.addEventListener('click', async (e) => {
-                setSearchParams('subCategoryId');
-                setSearchParams('prodTypeId', category.prodTypeId);
-                setSearchParams('categoryId', category.categoryId);
-                await listProducts();
 
-            });
 
-            fetchSubCategories(productType, category, categoryList, categoryName);
-            categoryList.appendChild(categoryName);
-
-            categoryDiv.appendChild(categoryList);
-            productDiv.appendChild(categoryDiv);
+            categoriesList.appendChild(options);
         });
+
     } catch (error) {
         console.error(error);
     }
 }
 
 
-async function fetchSubCategories(productType, category, categoryDiv, categoryName) {
+async function fetchSubCategories() {
     try {
+
         const url = new URL('http://localhost:3000/listSubCategory/:id');
-        url.searchParams.set('prodTypeId', productType.prodTypeId);
-        url.searchParams.set('categoryId', category.categoryId);
+        const prodTypeId = new URL(window.location.href).searchParams.get('prodTypeId')
+        if (prodTypeId) {
+            url.searchParams.set('prodTypeId', prodTypeId);
+
+        }
+        const categoryId = new URL(window.location.href).searchParams.get('categoryId')
+        if (categoryId) {
+            url.searchParams.set('categoryId', categoryId);
+        }
+        console.log(url)
         const subCategories = await fetchData(url);
-        const subCategoryDiv = document.createElement('div');
-        subCategoryDiv.className = 'sub-category';
         subCategories.forEach(subCategory => {
 
+            const subCategorylist = document.getElementById('subCategoryList')
+            const options = document.createElement("option")
 
-            // subCategoryDiv.style.display = 'none';
-
-            const subCategoryName = document.createElement('div');
-            subCategoryName.className = 'sub-category-name';
-            subCategoryName.innerText = `${subCategory.subCategoryName} (${subCategory.totalProducts})`;
-            handleClick(categoryName, subCategoryDiv);
-
-            subCategoryDiv.addEventListener('click', async () => {
-
-                setSearchParams('prodTypeId', subCategory.prodTypeId);
-                setSearchParams('categoryId', subCategory.categoryId);
-                setSearchParams('subCategoryId', subCategory.subCategoryId);
-
-                await listProducts();
-
-
-            });
-
-            subCategoryDiv.appendChild(subCategoryName);
-            categoryDiv.appendChild(subCategoryDiv);
+            options.value = `${subCategory.subCategoryId}`;
+            options.innerText = `${subCategory.subCategoryName} (${subCategory.totalProducts})`;
+            subCategorylist.appendChild(options);
         });
     } catch (error) {
         console.error(error);
@@ -134,7 +124,6 @@ function setSearchParams(name, value) {
     window.history.replaceState(null, null, url);
     return url
 }
-
 
 async function listProducts() {
 
@@ -337,18 +326,24 @@ function scrollButtonHide() {
         return;
     }
 
+    // Check if .prev and .next buttons exist
+    const prevButton = document.querySelector('.prev');
+    const nextButton = document.querySelector('.next');
+    if (!prevButton || !nextButton) {
+        return;
+    }
+
     const containerWidth = prodsContainer.offsetWidth;
     const totalItemsWidth = listProds.scrollWidth;
 
     // Check if scrollbar is present by comparing scrollWidth and offsetWidth
     const isScrollbarPresent = totalItemsWidth > containerWidth;
 
-    document.querySelector('.prev').style.display = prodsContainer.scrollLeft < 100 ? 'none' : 'inline';
-    document.querySelector('.next').style.display = isScrollbarPresent ? 'none' : 'inline';
+    // Display/hide .prev based on scroll position
+    prevButton.style.display = prodsContainer.scrollLeft < 100 ? 'none' : 'inline';
 
-    // Adjusted logic for showing/hiding .next based on scroll position
-    document.querySelector('.next').style.display = prodsContainer.scrollLeft + containerWidth >= totalItemsWidth -100 ? 'none' : 'inline';
-
+    // Display/hide .next based on scroll position
+    nextButton.style.display = prodsContainer.scrollLeft + containerWidth >= totalItemsWidth - 100 ? 'none' : 'inline';
 }
 
 

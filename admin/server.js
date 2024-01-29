@@ -121,6 +121,12 @@ app.get('/customer/product/detail',  (req, res) => {
 
 });
 
+app.get('/customer/product/list',  (req, res) => {
+
+  res.sendFile(path.join(__dirname, '/views/Customer Management/productList.html'));
+
+});
+
 //scripts
 app.get('/pagination.js', (req, res) => {
   res.sendFile(path.join(__dirname, '/scripts/pagination.js'));
@@ -198,6 +204,13 @@ app.get('/mainStyle.css', (req, res) => {
 
 app.get('/customer/main.css', (req, res) => {
   res.sendFile(path.join(__dirname, '/styles/customer/main.css'));
+});
+
+app.get('/customer/productlist.css', (req, res) => {
+  res.sendFile(path.join(__dirname, '/styles/customer/productlist.css'));
+});
+app.get('/customer/dashboard.css', (req, res) => {
+  res.sendFile(path.join(__dirname, '/styles/customer/dashboard.css'));
 });
 
 
