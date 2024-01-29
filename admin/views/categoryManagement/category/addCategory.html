@@ -30,11 +30,11 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="productTypeSelect">Product Type Select:</label>
+                        <!-- <label for="productTypeSelect">Product Type Select:</label>
                         <select id="productTypeSelect">
                             <option value="" selected>select</option>
 
-                        </select>
+                        </select> -->
                     </div>
 
                     <input type="submit" id="addCategory" value="Add Category" />
@@ -63,16 +63,13 @@
 
 
             const data = {
-                categoryName,prodTypeId, status
+                categoryName, status
             };
             console.log(data)
             addCategory(data);
 
         });
 
-        document.addEventListener('DOMContentLoaded', () => {
-            getProductType('1')
-        })
     </script>
 </body>
 

@@ -1,3 +1,4 @@
+const e = require('express')
 const functions = require('../functions/scripts')
 const express = require('express')
 const pool = functions.pool
@@ -136,7 +137,7 @@ app.put('/updateProductType/:id', bearer, superPrivilege, (req, res, next) => {
 app.post('/addCategory', bearer, superPrivilege, (req, res) => {
     const user = req.headers.loggedinuser
     let categoryId
-    const { prodTypeId, categoryName, status } = req.body;
+    const {  categoryName, status } = req.body;
     checkTokenExpiry(req, res, () => {
         pool.query('SELECT * from adminuser where userId = ?', [user], (error, result) => {
             if (error) {
@@ -153,7 +154,7 @@ app.post('/addCategory', bearer, superPrivilege, (req, res) => {
                     categoryId = r[0].last++ + 1;
                 }
 
-                const category = { categoryId, prodTypeId, categoryName, status, createdby, createddate };
+                const category = { categoryId, categoryName, status, createdby, createddate };
 
                 pool.query('INSERT INTO category SET ?', [category], (error, result) => {
                     if (error) {
@@ -170,17 +171,12 @@ app.post('/addCategory', bearer, superPrivilege, (req, res) => {
 
 app.get('/getCategory/:id', bearer, (req, res) => {
     const categoryId = req.params.id;
-    const prodTypeId = req.query.prodTypeId;
     const status = req.query.status;
-
+    console.log(categoryId,status)
     checkTokenExpiry(req, res, () => {
-        let query = 'SELECT c.*, pt.prodTypeName FROM category c LEFT JOIN producttype pt ON c.prodTypeId = pt.prodTypeId WHERE 1=1';
+        let query = 'SELECT c.* FROM category c WHERE 1=1';
         const queryParams = [];
 
-        if (prodTypeId !== undefined && prodTypeId !== null) {
-            query += ' AND c.prodTypeId = ?';
-            queryParams.push(prodTypeId);
-        }
 
         if (status) {
             query += ' AND c.status = ?';
@@ -194,6 +190,7 @@ app.get('/getCategory/:id', bearer, (req, res) => {
 
         pool.query(query, queryParams, (error, result) => {
             if (error) {
+                console.log(error)
                 res.status(500).json({ error: 'Internal Server Error' });
                 return;
             }
@@ -234,7 +231,7 @@ app.delete('/deleteCategory/:id', bearer, superPrivilege, (req, res) => {
 app.put('/updateCategory/:id', bearer, superPrivilege, (req, res, next) => {
     const categoryId = req.params.id;
     const loggedInUser = req.headers.loggedinuser
-    const { prodTypeId, categoryName, status } = req.body;
+    const {  categoryName, status } = req.body;
     checkTokenExpiry(req, res, () => {
         const date = Date.now()
         pool.query('SELECT categoryId FROM category WHERE categoryId = ?', [categoryId], (error, result) => {
@@ -244,8 +241,8 @@ app.put('/updateCategory/:id', bearer, superPrivilege, (req, res, next) => {
             }
             if (result.length > 0) {
                 pool.query(
-                    'UPDATE category SET prodTypeId=?,categoryName = ?, status = ?,updatedby=?,updateddate=? WHERE categoryId = ?',
-                    [prodTypeId, categoryName, status, loggedInUser, date, categoryId],
+                    'UPDATE category SET categoryName = ?, status = ?,updatedby=?,updateddate=? WHERE categoryId = ?',
+                    [ categoryName, status, loggedInUser, date, categoryId],
                     (error, result) => {
                         if (error) {
                             console.error('Error updating category:', error);
@@ -264,7 +261,7 @@ app.put('/updateCategory/:id', bearer, superPrivilege, (req, res, next) => {
 
 app.post('/addSubCategory', bearer, superPrivilege, (req, res) => {
     const user = req.headers.loggedinuser
-    let subCategoryId, prodTypeId
+    let subCategoryId
     const { categoryId, subCategoryName, status } = req.body;
     checkTokenExpiry(req, res, () => {
         pool.query('SELECT * from adminuser where userId = ?', [user], (error, result) => {
@@ -287,8 +284,7 @@ app.post('/addSubCategory', bearer, superPrivilege, (req, res) => {
                         } else {
                             subCategoryId = r[0].last++ + 1;
                         }
-                        prodTypeId = resp[0].prodTypeId
-                        const subCategory = { subCategoryId, categoryId, prodTypeId, subCategoryName, status, createdby, createddate };
+                        const subCategory = { subCategoryId, categoryId,  subCategoryName, status, createdby, createddate };
 
                         pool.query('INSERT INTO subcategory SET ?', [subCategory], (error, result) => {
                             if (error) {
@@ -311,7 +307,7 @@ app.get('/getSubCategory/:id', bearer, (req, res) => {
     const status = req.query.status;
 
     checkTokenExpiry(req, res, () => {
-        let query = 'SELECT sc.*, pt.prodTypeName, c.categoryName FROM subcategory sc LEFT JOIN category c ON sc.categoryId = c.categoryId LEFT JOIN producttype pt ON pt.prodTypeId = c.prodTypeId WHERE 1 = 1';
+        let query = 'SELECT sc.*,  c.categoryName FROM subcategory sc LEFT JOIN category c ON sc.categoryId = c.categoryId WHERE 1 = 1';
         const queryParams = [];
 
         if (categoryId !== undefined && categoryId !== null) {

@@ -70,39 +70,28 @@ app.get('/listCategory/:id', (req, res) => {
         SELECT
             c.categoryName,
             c.categoryId,
-            pt.prodTypeId, 
-            pt.prodTypeName,
             COALESCE(SUM(p.totalProducts), 0) as totalProducts
         FROM 
-            producttype pt
-            INNER JOIN category c ON c.prodTypeId = pt.prodTypeId
+        category c
             LEFT JOIN (
                 SELECT prodCategory, COUNT(*) as totalProducts FROM prods GROUP BY prodCategory
             ) p ON c.categoryId = p.prodCategory
         WHERE 
-            pt.status = 1`;
+            c.status = 1`;
     let ALL_CATEGORIES_ALL_OPTION_QUERY = `
             SELECT
                 'ALL' as categoryName,
                 'ALL' as categoryId,
-                'ALL' as prodTypeId, 
-                'ALL' as prodTypeName,
                 COALESCE(SUM(p.totalProducts), 0) as totalProducts
             FROM 
-                producttype pt
-                INNER JOIN category c ON c.prodTypeId = pt.prodTypeId
+                category c
                 LEFT JOIN (
                     SELECT prodCategory, COUNT(*) as totalProducts FROM prods GROUP BY prodCategory
                 ) p ON c.categoryId = p.prodCategory
             WHERE 
-                pt.status = 1`;
+                c.status = 1`;
     const queryParams = [];
 
-    if (prodTypeId !== undefined && prodTypeId !== null && prodTypeId.toLowerCase() !== 'all') {
-        ALL_CATEGORIES_ALL_OPTION_QUERY += ' AND pt.prodTypeId = ?';
-        ALL_CATEGORIES_QUERY += ' AND pt.prodTypeId = ?';
-        queryParams.push(prodTypeId);
-    }
 
     if (categoryId !== ':id' && categoryId !== undefined && categoryId !== null) {
         ALL_CATEGORIES_ALL_OPTION_QUERY += ' AND c.categoryId = ?';
@@ -113,7 +102,7 @@ app.get('/listCategory/:id', (req, res) => {
         queryParams.push(e)
     })
 
-    ALL_CATEGORIES_QUERY += ' GROUP BY c.categoryName, pt.prodTypeId, pt.prodTypeName, c.categoryId';
+    ALL_CATEGORIES_QUERY += ' GROUP BY c.categoryName,  c.categoryId';
 
     const finalQuery = `${ALL_CATEGORIES_ALL_OPTION_QUERY} UNION ${ALL_CATEGORIES_QUERY}`;
 
@@ -135,7 +124,7 @@ app.get('/listSubCategory/:id', (req, res) => {
 
     const subCategoryId = req.params.id;
     const categoryId = req.query.categoryId;
-    const prodTypeId = req.query.prodTypeId;
+    // const prodTypeId = req.query.prodTypeId;
 
     let ALL_SUB_CATEGORY_TYPES_QUERY = `
     SELECT 
@@ -143,17 +132,15 @@ app.get('/listSubCategory/:id', (req, res) => {
         sc.subCategoryId, 
         c.categoryName,
         c.categoryId,
-        pt.prodTypeId, 
-        pt.prodTypeName,
+
     COALESCE(SUM(p.totalProducts), 0) as totalProducts
-    FROM producttype pt
-    INNER JOIN subcategory sc ON pt.prodTypeId = sc.prodTypeId
+    FROM subCategory sc
     LEFT JOIN (
         SELECT prodSubCategory, COUNT(*) as totalProducts FROM prods GROUP BY prodSubCategory
     ) p ON sc.subCategoryId = p.prodSubCategory
     INNER JOIN category c ON c.categoryId = sc.categoryId
     WHERE 
-    pt.status = 1`;
+    sc.status = 1`;
 
 
     let ALL_SUB_CATEGORY_ALL_OPTION_TYPES_QUERY = `
@@ -162,30 +149,27 @@ app.get('/listSubCategory/:id', (req, res) => {
         'ALL' as subCategoryId,  
         'ALL' as categoryName,
         'ALL' as categoryId,
-        'ALL' as prodTypeId, 
-        'ALL' as prodTypeName,
     COALESCE(SUM(p.totalProducts), 0) as totalProducts
-    FROM producttype pt
-    INNER JOIN subcategory sc ON pt.prodTypeId = sc.prodTypeId
+    FROM subCategory sc
     LEFT JOIN (
         SELECT prodSubCategory, COUNT(*) as totalProducts FROM prods GROUP BY prodSubCategory
     ) p ON sc.subCategoryId = p.prodSubCategory
     INNER JOIN category c ON c.categoryId = sc.categoryId
     WHERE 
-    pt.status = 1`;
+    sc.status = 1`;
 
-    const groupStatement = ' GROUP BY sc.subCategoryName,c.categoryName, pt.prodTypeId, pt.prodTypeName';
+    const groupStatement = ' GROUP BY sc.subCategoryName,c.categoryName';
 
     let query = 'SELECT sc.*, pt.prodTypeName, c.categoryName FROM subcategory sc LEFT JOIN category c ON sc.categoryId = c.categoryId LEFT JOIN producttype pt ON pt.prodTypeId = c.prodTypeId WHERE 1 = 1';
     const queryParams = [];
 
 
 
-    if (prodTypeId !== undefined && prodTypeId !== null && prodTypeId.toLowerCase() !== 'all') {
-        ALL_SUB_CATEGORY_ALL_OPTION_TYPES_QUERY += ' AND pt.prodTypeId = ?';
-        ALL_SUB_CATEGORY_TYPES_QUERY += ' AND pt.prodTypeId = ?';
-        queryParams.push(prodTypeId);
-    }
+    // if (prodTypeId !== undefined && prodTypeId !== null && prodTypeId.toLowerCase() !== 'all') {
+    //     ALL_SUB_CATEGORY_ALL_OPTION_TYPES_QUERY += ' AND pt.prodTypeId = ?';
+    //     ALL_SUB_CATEGORY_TYPES_QUERY += ' AND pt.prodTypeId = ?';
+    //     queryParams.push(prodTypeId);
+    // }
     if (categoryId !== undefined && categoryId !== null && categoryId.toLowerCase() !== 'all') {
         ALL_SUB_CATEGORY_ALL_OPTION_TYPES_QUERY += ' AND sc.categoryId = ?';
         ALL_SUB_CATEGORY_TYPES_QUERY += ' AND sc.categoryId = ?';
@@ -203,6 +187,7 @@ app.get('/listSubCategory/:id', (req, res) => {
     ALL_SUB_CATEGORY_TYPES_QUERY += groupStatement
     pool.query(`${ALL_SUB_CATEGORY_ALL_OPTION_TYPES_QUERY} UNION ${ALL_SUB_CATEGORY_TYPES_QUERY}`, queryParams, (error, result) => {
         if (error) {
+            console.log(error)
             res.status(500).json({ error: 'Internal Server Error' });
             return;
         }

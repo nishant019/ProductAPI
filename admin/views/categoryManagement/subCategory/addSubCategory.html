@@ -20,13 +20,13 @@
                         <label for="subCategoryName">Sub Category Name:</label>
                         <input type="text" id="subCategoryName" name="subCategoryName">
                     </div>
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label for="productTypeSelect">Product Type Select:</label>
                         <select id="productTypeSelect">
                             <option value="" selected>select</option>
 
                         </select>
-                    </div>
+                    </div> -->
                     <div class="form-group">
                         <label for="categorySelect">Category Select:</label>
                         <select id="categorySelect">
@@ -66,7 +66,6 @@
 
         document.addEventListener('submit', function (e) {
             e.preventDefault();
-            const productTypeSelect = document.getElementById('productTypeSelect');
             const subCategoryName = document.getElementById('subCategoryName').value;
             const categorySelect = document.getElementById('categorySelect');
             const status = document.getElementById('subCategoryStatus').value;
@@ -77,21 +76,12 @@
             addSubCategory(data);
 
         });
-        // document.addEventListener('DOMContentLoaded', () => {
-            productTypeSelect.addEventListener('change',()=>{
-                const prodTypeQuery = "?prodTypeId=" + productTypeSelect.value;
-                categorySelect.innerHTML = '<option value="" selected>select</option>';
-                getCategory(prodTypeQuery,'1')
 
-            })
-        // })
 
         document.addEventListener('DOMContentLoaded', () => {
-            getSubCategory('','1')
+            getCategory('1')
         })
-        document.addEventListener('DOMContentLoaded', () => {
-            getProductType('1')
-        })
+
     </script>
 </body>
 

@@ -44,11 +44,7 @@ async function fetchCategories() {
     try {
 
         const url = new URL('http://localhost:3000/listCategory/:id');
-        const prodTypeId = new URL(window.location.href).searchParams.get('prodTypeId')
-        if (prodTypeId) {
-            url.searchParams.set('prodTypeId', prodTypeId);
 
-        }
         const categories = await fetchData(url);
 
         categories.forEach(category => {

@@ -84,20 +84,18 @@ function addCategory(data) {
     })
 }
 
-function getCategory(categoryType,status) {
+function getCategory(status) {
     let query
     if(status){
-        query = '&status=1'
+        query = '?status=1'
     }else{
         query = ''
     }
     return new Promise((resolve, reject) => {
-        if (!categoryType) {
-            categoryType = '';
-        }
+
         axios({
             method: "get",
-            url: `${getCategoryUrl}${':id'}${categoryType}${query}`,
+            url: `${getCategoryUrl}${':id'}${query}`,
             headers: headers
         }).then((response) => {
             const data = response.data.data;
