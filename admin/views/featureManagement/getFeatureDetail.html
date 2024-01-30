@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feature Detail</title>
+</head>
+
+<body>
+  <div id="featureDetail"></div>
+  <div id="imageContainer"></div>
+  <input type="file" id="fileInput" multiple>
+  <button id="uploadImage">Upload Images</button>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script type="text/javascript" src="/loggedIn.js"></script>
+  <script type="text/javascript" src="/featureMgmt.js">  </script>
+  <script type="text/javascript" src="/menu.js"></script>
+  <script>
+
+    getFeatureDetail()
+    const featureId = new URL(document.location.href).searchParams.get('featureId')
+    document.getElementById('uploadImage').addEventListener('click',()=>{
+      uploadImages(featureId)
+    })
+    getFeatureImage(featureId)
+
+  </script>
+</body>
+
+</html>

@@ -107,7 +107,21 @@ app.get('/productManagement/addSubCategory', requireLogin, (req, res) => {
   res.sendFile(path.join(__dirname, '/views/categoryManagement/subCategory/addSubCategory.html'));
 
 });
+app.get('/featureManagement/addFeatures', requireLogin, (req, res) => {
 
+  res.sendFile(path.join(__dirname, '/views/featureManagement/addFeatures.html'));
+
+});
+app.get('/featureManagement/listFeatures', requireLogin, (req, res) => {
+
+  res.sendFile(path.join(__dirname, '/views/featureManagement/listFeatures.html'));
+
+});
+app.get('/featureManagement/getFeatureDetail', requireLogin, (req, res) => {
+
+  res.sendFile(path.join(__dirname, '/views/featureManagement/getFeatureDetail.html'));
+
+});
 
 app.get('/customer/getProds',  (req, res) => {
 
@@ -162,7 +176,9 @@ app.get('/prodMgmt.js', (req, res) => {
 app.get('/menu.js', (req, res) => {
   res.sendFile(path.join(__dirname, '/scripts/menu.js'));
 });
-
+app.get('/featureMgmt.js', (req, res) => {
+  res.sendFile(path.join(__dirname, '/scripts/featureMgmt.js'));
+});
 app.get('/Customer_Management/scripts.js', (req, res) => {
   res.sendFile(path.join(__dirname, '/scripts/Customer Management/scripts.js'));
 });

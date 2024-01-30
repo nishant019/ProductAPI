@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Add featureName</title>
+</head>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<link rel="stylesheet" href="/mainStyle.css">
+
+<body>
+    <div id="menu"></div>
+    <div class="form-main">
+        <h1 class="pageTitle">Add New Feature</h1>
+
+        <div class="form-container">
+            <div class="form-column">
+                <form id="addFeatureForm" method="post">
+
+                    <div class="form-group">
+                        <label for="featureName">Feature Name:</label>
+                        <input type="text" id="featureName" name="featureName">
+                    </div>
+                    <div class="form-group">
+                        <label for="featureDescription">Feature Description:</label>
+                        <textarea type="text" id="featureDescription" name="featureDescription"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="featureStatus">Feature Status:</label>
+                        <select id="featureStatus">
+                            <option value="" selected>select</option>
+                            <option value="0">Blocked</option>
+                            <option value="1">Active</option>
+                        </select>
+                    </div>
+
+                    <input type="submit" id="addFeature" value="Add Feature" />
+
+                </form>
+                <p id="error"></p>
+                <p id="success"></p>
+
+            </div>
+
+
+        </div>
+    </div>
+
+    <script type="text/javascript" src="/loggedIn.js"></script>
+    <script type="text/javascript" src="/featureMgmt.js">  </script>
+    <script type="text/javascript" src="/menu.js">  </script>
+
+    <script>
+
+        document.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const featureName = document.getElementById('featureName').value;
+            const status = document.getElementById('featureStatus').value;
+            const featureDescription = document.getElementById('featureDescription').value
+
+            const data = {
+                featureName, featureDescription, status
+            };
+            console.log(data)
+
+            addFeature(data);
+
+        });
+
+    </script>
+</body>
+
+</html>

@@ -248,6 +248,30 @@ const getProductImage = async (productId) => {
         throw error;
     }
 };
+
+async function deleteImage(imagePath) {
+    console.log(`${deleteImageUrl}${imagePath}`)
+
+    try {
+        const response = await axios.delete(`${deleteImageUrl}${imagePath}`, {
+            headers
+        });
+        window.location.reload()
+        return response.data;
+    } catch (error) {
+
+        const errorMsg = document.getElementById('error')
+        const errorMessage = JSON.parse(JSON.stringify(error.response.data)).error;
+        errorMsg.style.color = 'red';
+        errorMsg.innerHTML = errorMessage;
+        setTimeout(() => {
+            errorMsg.style.color = 'black';
+            errorMsg.innerHTML = '';
+        }, 3000);      // Handle error if needed
+        throw error; // Throw the error for handling in the calling code if needed
+    }
+}
+
 function newDate(msString) {
     let ms = parseInt(msString, 10);
     let date = new Date(ms);
@@ -338,25 +362,3 @@ const displayProduct = async (productId) => {
 };
 
 //request to delete image
-async function deleteImage(imagePath) {
-    console.log(`${deleteImageUrl}${imagePath}`)
-
-    try {
-        const response = await axios.delete(`${deleteImageUrl}${imagePath}`, {
-            headers
-        });
-        window.location.reload()
-        return response.data;
-    } catch (error) {
-
-        const errorMsg = document.getElementById('error')
-        const errorMessage = JSON.parse(JSON.stringify(error.response.data)).error;
-        errorMsg.style.color = 'red';
-        errorMsg.innerHTML = errorMessage;
-        setTimeout(() => {
-            errorMsg.style.color = 'black';
-            errorMsg.innerHTML = '';
-        }, 3000);      // Handle error if needed
-        throw error; // Throw the error for handling in the calling code if needed
-    }
-}

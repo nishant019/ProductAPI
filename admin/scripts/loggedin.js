@@ -44,3 +44,10 @@ const getProductTypeUrl = 'http://localhost:3000/getProductType/'
 const getSubCategoryUrl = 'http://localhost:3000/getSubCategory/'
 
 const addSubCategoryUrl = 'http://localhost:3000/addSubCategory'
+
+const addFeaturesUrl = 'http://localhost:3000/addFeature'
+
+const listFeaturesUrl = 'http://localhost:3000/getFeature/'
+
+const uploadFeatureImageUrl = `http://localhost:3000/featureUploadImage/`
+const listFeatureImageUrl = `http://localhost:3000/featureImages/`
