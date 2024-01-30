@@ -8,22 +8,19 @@ async function fetchProductTypes() {
         const productTypes = await fetchData('http://localhost:3000/listProductType/:id');
         const productTypesContainer = document.getElementById('productTypes');
         productTypesContainer.innerHTML = '';
-        
+
         productTypes.forEach(productType => {
             const productTypeDiv = document.createElement('div');
             productTypeDiv.className = 'product-type';
             const prodTypeName = document.createElement('div');
             prodTypeName.className = 'prod-type-name';
-            prodTypeName.innerText = "ALL"
             prodTypeName.innerText = `${productType.prodTypeName} (${productType.totalProducts})`;
 
             prodTypeName.addEventListener('click', async () => {
                 const redirectUrl = new URL(window.location.origin + "/customer/product/list")
                 redirectUrl.searchParams.set('prodTypeId', productType.prodTypeId)
-
-
                 window.location.href = redirectUrl
-                fetchCategories()
+                // fetchCategories()
 
             })
             productTypeDiv.id = productType.prodTypeId
@@ -42,29 +39,49 @@ async function fetchProductTypes() {
 
 async function fetchCategories() {
     try {
-
         const url = new URL('http://localhost:3000/listCategory/:id');
-
         const categories = await fetchData(url);
+        const categoriesList = document.getElementById('categoryList');
 
         categories.forEach(category => {
-            
-            const categoriesList = document.getElementById('categoryList')
+            const categoryDiv = document.createElement('div');
+            categoryDiv.className = 'category';
+            const categoryName = document.createElement('div');
 
-            const options = document.createElement("option")
+            categoryName.className = 'category-name';
+            categoryName.id = category.categoryId;
+            categoryName.innerText = `${category.categoryName} (${category.totalProducts})`;
 
-            options.value = `${category.categoryId}`;
-            options.innerText = `${category.categoryName} (${category.totalProducts})`;
+            categoryDiv.addEventListener('click', () => {
+                const categoryList = document.querySelectorAll('.category');
+                categoryList.forEach(name => name.classList.remove('active'));
+
+                categoryDiv.classList.add('active');
+                setSearchParams('subCategoryId');
+                setSearchParams('categoryId', category.categoryId);
+                fetchSubCategories()
+                listProducts()
 
 
 
-            categoriesList.appendChild(options);
+            });
+            const categoryId = new URL(window.location.href).searchParams.get('categoryId')
+            if (categoryName.id === categoryId) {
+                categoryDiv.classList.add('active')
+            }
+
+
+            categoryDiv.appendChild(categoryName);
+            categoriesList.appendChild(categoryDiv);
         });
+
+        
 
     } catch (error) {
         console.error(error);
     }
 }
+
 
 
 async function fetchSubCategories() {
@@ -80,16 +97,39 @@ async function fetchSubCategories() {
         if (categoryId) {
             url.searchParams.set('categoryId', categoryId);
         }
-        console.log(url)
         const subCategories = await fetchData(url);
+        const subCategorylist = document.getElementById('subCategoryList')
+        subCategorylist.innerHTML=''
+
         subCategories.forEach(subCategory => {
+            const subCategoryDiv = document.createElement('div');
+            subCategoryDiv.className = 'sub-category';
+            const subCategoryName = document.createElement('div');
 
-            const subCategorylist = document.getElementById('subCategoryList')
-            const options = document.createElement("option")
+            subCategoryName.className = 'sub-category-name';
+            subCategoryName.id = subCategory.subCategoryId;
+            subCategoryName.innerText = `${subCategory.subCategoryName} (${subCategory.totalProducts})`;
 
-            options.value = `${subCategory.subCategoryId}`;
-            options.innerText = `${subCategory.subCategoryName} (${subCategory.totalProducts})`;
-            subCategorylist.appendChild(options);
+            subCategoryDiv.appendChild(subCategoryName)
+            subCategorylist.appendChild(subCategoryDiv);
+
+
+
+            const subCategoryId = new URL(window.location.href).searchParams.get('subCategoryId')
+            if (subCategoryName.id === subCategoryId) {
+                subCategoryDiv.classList.add('active')
+            }
+            
+            subCategoryDiv.addEventListener('click', () => {
+                const subCategoryList = document.querySelectorAll('.sub-category');
+                subCategoryList.forEach(name => name.classList.remove('active'));
+
+                subCategoryDiv.classList.add('active');
+
+                setSearchParams('subCategoryId', subCategory.subCategoryId);
+                listProducts()
+            });
+
         });
     } catch (error) {
         console.error(error);
@@ -131,11 +171,15 @@ async function listProducts() {
     const prodTypeId = url.searchParams.get('prodTypeId');
     const categoryId = url.searchParams.get('categoryId');
     const subCategoryId = url.searchParams.get('subCategoryId');
+    const sort = url.searchParams.get('sort');
 
     const apiUrl = new URL(`http://localhost:3000/listProducts/:id`);
 
     if (prodTypeId) {
         apiUrl.searchParams.set('prodTypeId', prodTypeId);
+    }
+    if (sort) {
+        apiUrl.searchParams.set('sort', sort);
     }
     if (categoryId) {
         apiUrl.searchParams.set('categoryId', categoryId);
@@ -247,7 +291,6 @@ async function getProductDetail() {
 
     try {
         const response = await axios.get(apiUrl);
-        console.log(response)
         const product = response.data.data[0];
 
         // Display product image

@@ -41,7 +41,7 @@
         <div id="prods">
             <div id="productsFilter">
                 <div id="sort">
-                    <div id="selected-option" class="custom-option" onclick="toggleDropdown()">Sort <i class="fa fa-sort"></i></div>
+                    <div id="selected-option" onclick="toggleDropdown()">Sort <i class="fa fa-sort"></i></div>
                     <div id="order-by-select">
                         <div class="custom-option">Latest</div>
                         <div class="custom-option">Price High to Low</div>
@@ -52,15 +52,15 @@
                 </div>
                 <div id="categories">
                     <label id="filterLabel">Categories</label>
-                    <select id="categoryList" class="filter-select" type="select">
+                    <div id="categoryList" class="filter-select">
                         <!-- <option value="">--select category--</option> -->
-                    </select>
+                    </div>
                 </div>
                 <div id="subCategories">
                     <label id="filterLabel">Sub Categories</label>
-                    <select id="subCategoryList" class="filter-select" type="select">
+                    <div id="subCategoryList" class="filter-select">
                         <!-- <option value="">--select sub category--</option> -->
-                    </select>
+                    </div>
                 </div>
 
 
@@ -79,31 +79,37 @@
 <script>
 
     document.addEventListener('DOMContentLoaded', () => {
-        // getProductDetail();
         fetchProductTypes()
-        fetchCategories()
-        fetchSubCategories()
-        listProducts()
+
     });
-    document.getElementById('categoryList').addEventListener('change', () => {
-        setSearchParams('categoryId', document.getElementById('categoryList').value)
-        const subCategorylist = document.getElementById('subCategoryList')
-        subCategorylist.innerHTML = ''
-        setSearchParams('subCategoryId')
-        fetchSubCategories()
-        listProducts()
+    fetchCategories()
+    fetchSubCategories()
+    listProducts()
 
 
-    })
-    document.getElementById('subCategoryList').addEventListener('change', () => {
-        setSearchParams('subCategoryId', document.getElementById('subCategoryList').value)
-        listProducts()
-
-    })
     function toggleDropdown() {
         const dropdown = document.getElementById('order-by-select');
         dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
     }
+
+    document.querySelectorAll('.custom-option').forEach(option => {
+        option.addEventListener('click', (e) => {
+            const url = new URL(document.location.href);
+            const sort = url.searchParams.get('sort');
+            if (sort === option.innerText.replace(/\s/g, '').toLowerCase()) {
+                // If the clicked option is the same as the current sort parameter,
+                // set the sort parameter to null.
+                setSearchParams('sort');
+            } else {
+                // If the clicked option is different from the current sort parameter,
+                // set the sort parameter to the clicked option.
+                setSearchParams('sort', option.innerText.replace(/\s/g, '').toLowerCase());
+            }
+
+            listProducts();
+        });
+    });
+
 </script>
 
 </html>

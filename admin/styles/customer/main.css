@@ -174,53 +174,7 @@ p {
     text-align: center;
 }
 
-.category {
-    position: relative;
-    margin-top: 28px;
-    width: 100%;
-    display: flex;
-    vertical-align: top;
-    justify-content: space-evenly;
-}
 
-
-
-.category-name,
-.sub-category-name {
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.category-name {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-
-.sub-category {
-    display: none;
-    position: relative;
-    /* Change to relative */
-    margin-top: 5px;
-    /* Add margin to separate from the category */
-    width: 150px;
-    z-index: 1000;
-    background-color: #f2f2f2;
-    white-space: normal;
-    flex-direction: column;
-}
-
-.category-list:hover .sub-category {
-    /* top: 100%;
-    left: 100%; */
-    display: flex;
-}
-
-.sub-category-name {
-    display: block;
-    padding: 5px;
-    margin-bottom: 5px;
-}
 
 
 
