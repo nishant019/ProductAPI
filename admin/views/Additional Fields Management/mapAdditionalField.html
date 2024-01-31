@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Additional Field Mapping CRUD</title>
+    <!-- Include any necessary stylesheets or libraries here -->
+</head>
+
+<body>
+    <div id="menu"></div>
+    <h1>Category Additional Field Mapping CRUD</h1>
+
+    <!-- Create Form -->
+    <h2>Create Mapping</h2>
+    <form id="createForm">
+        <label for="categorySelect">Select Category:</label>
+        <select id="categorySelect" name="categoryId" required></select><br>
+
+        <label for="additionalFieldSelect">Select Additional Field:</label>
+        <select id="additionalFieldSelect" name="fieldId" required></select><br>
+
+
+        <button type="submit">Create Mapping</button>
+    </form>
+
+    <!-- Read Table -->
+    <h2>Mapping List</h2>
+    <table id="mappingTable">
+        <thead>
+            <tr>
+                <th>Mapping ID</th>
+                <th>Category ID</th>
+                <th>Field ID</th>
+                <th>Value</th>
+                <!-- Include other columns as needed -->
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="mappingTableBody"></tbody>
+    </table>
+
+    <!-- Update Form -->
+    <h2>Update Mapping</h2>
+    <form id="updateForm">
+        <label for="updateMappingId">Mapping ID:</label>
+        <input type="number" id="updateMappingId" name="mappingId" required>
+        <label for="updateValue">New Value:</label>
+        <input type="text" id="updateValue" name="value" required>
+        <!-- Include other fields as needed for updating a mapping -->
+        <button type="submit">Update Mapping</button>
+    </form>
+
+    <!-- Delete Form -->
+    <h2>Delete Mapping</h2>
+    <form id="deleteForm">
+        <label for="deleteMappingId">Mapping ID:</label>
+        <input type="number" id="deleteMappingId" name="mappingId" required>
+        <button type="submit">Delete Mapping</button>
+    </form>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script type="text/javascript" src="/loggedIn.js"></script>
+    <script type="text/javascript" src="/categoryMgmt.js"></script>
+    <script type="text/javascript" src="/menu.js">  </script>
+    <script>
+        async function additionalFieldSelectFunction() {
+            const additionalFieldsResponse = await axios.get('http://localhost:3000/additionalfields',headers);
+            const additionalFields = additionalFieldsResponse.data;
+
+            const additionalFieldSelect = document.getElementById('additionalFieldSelect');
+            additionalFieldSelect.innerHTML = ''; // Clear previous options
+
+            additionalFields.forEach(field => {
+                const optionElement = document.createElement('option');
+                optionElement.value = field.fieldId;
+                optionElement.textContent = field.fieldName;
+                additionalFieldSelect.appendChild(optionElement);
+            });
+        }
+        async function loadMappings() {
+            try {
+                const response = await axios.get('http://localhost:3000/categoryadditionalfieldmapping',headers);
+                const mappings = response.data;
+
+                const mappingTableBody = document.getElementById('mappingTableBody');
+                mappingTableBody.innerHTML = '';
+
+                mappings.forEach(mapping => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${mapping.mappingId}</td>
+                        <td>${mapping.categoryId}</td>
+                        <td>${mapping.fieldId}</td>
+                        <td>${mapping.value}</td>
+                        <!-- Include other columns as needed -->
+                        <td>
+                            <button onclick="openUpdateForm(${mapping.mappingId}, '${mapping.value}')">Update</button>
+                            <button onclick="deleteMapping(${mapping.mappingId})">Delete</button>
+                        </td>
+                    `;
+                    mappingTableBody.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        // Function to open update form with pre-filled values
+        function openUpdateForm(mappingId, value) {
+            document.getElementById('updateMappingId').value = mappingId;
+            document.getElementById('updateValue').value = value;
+            // Additional fields can be set here based on the requirements
+        }
+
+        // Function to handle create form submission
+        document.getElementById('createForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const categoryId = document.getElementById('categorySelect').value;
+            const fieldId = document.getElementById('additionalFieldSelect').value;
+            const value = document.getElementById('additionalFieldSelect').innerText;
+
+            try {
+                await axios.post('http://localhost:3000/categoryadditionalfieldmapping', { categoryId, fieldId, value },{headers});
+                loadMappings();
+            } catch (error) {
+                console.error(error);
+            }
+        });
+
+        // Function to handle update form submission
+        document.getElementById('updateForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const mappingId = document.getElementById('updateMappingId').value;
+            const value = document.getElementById('updateValue').value;
+
+            try {
+                await axios.put(`http://localhost:3000/categoryadditionalfieldmapping/${mappingId}`, { value },headers);
+                loadMappings();
+            } catch (error) {
+                console.error(error);
+            }
+        });
+
+        // Function to handle delete form submission
+        document.getElementById('deleteForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const mappingId = document.getElementById('deleteMappingId').value;
+
+            try {
+                await axios.delete(`http://localhost:3000/categoryadditionalfieldmapping/${mappingId}`,headers);
+                loadMappings();
+            } catch (error) {
+                console.error(error);
+            }
+        });
+
+        // Initial load of categories and mappings when the page loads
+        getCategory();
+        additionalFieldSelectFunction();
+        loadMappings();
+    </script>
+</body>
+
+</html>

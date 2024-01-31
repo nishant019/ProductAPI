@@ -115,6 +115,7 @@ function uploadImages(featureId) {
 const getFeatureImage = async (featureId) => {
     try {
         const response = await axios.get(`${listFeatureImageUrl}${featureId}`);
+        console.log(response.data.result.map(item => new URL(response.request.responseURL).origin + item.imageUrl))
         return response.data.result.map(item => new URL(response.request.responseURL).origin + item.imageUrl);
     } catch (error) {
         console.error('Error fetching product image:', error);
@@ -122,11 +123,9 @@ const getFeatureImage = async (featureId) => {
     }
 };
 
-async function deleteImage(imagePath) {
-    console.log(`${deleteImageUrl}${imagePath}`)
-
+async function deleteFeatureImg(imagePath) {
     try {
-        const response = await axios.delete(`${deleteImageUrl}${imagePath}`, {
+        const response = await axios.delete(`${deleteFeatureImageUrl}${imagePath}`, {
             headers
         });
         window.location.reload()

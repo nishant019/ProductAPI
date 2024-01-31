@@ -182,7 +182,6 @@ app.delete('/deleteImage/:imageUrl', bearer, (req, res, next) => {
                         console.error('Error retrieving image details:', error);
                         return res.status(500).send('Internal Server Error');
                     }
-                    console.log(result)
                     if (result.length > 0 && result[0].user === loggedInUser) {
                         deleteImage(imageUrl, imagePath, res, loggedInUser);
                     } else {

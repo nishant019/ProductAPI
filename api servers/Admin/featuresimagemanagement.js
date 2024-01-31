@@ -47,14 +47,12 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
-const upload = multer({ 
+const upload = multer({
     storage: storage,
-    fileFilter: fileFilter 
+    fileFilter: fileFilter
 });
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads/features')));
-
-function deleteImage(imageUrl, replacedUrl, res, loggedInUser) {
+function deleteFeatureImage(imageUrl, replacedUrl, res, loggedInUser) {
     pool.query('SELECT featureId FROM featureimage WHERE imageUrl = ?', [imageUrl], (err, response) => {
         if (err) {
             return res.status(500).send('Internal Server Error');
@@ -85,7 +83,7 @@ function deleteImage(imageUrl, replacedUrl, res, loggedInUser) {
 app.post('/featureUploadImage/:featureId', bearer, upload.array('featureImage', 5), (req, res) => {
     const featureId = req.params.featureId;
     const loggedInUser = req.headers.loggedinuser;
-    const uploadedImages = req.files; // Access the uploaded image using req.file
+    const uploadedImages = req.files;
 
     if (!uploadedImages || uploadedImages.length === 0) {
         return res.status(400).send('No files were uploaded.');
@@ -96,12 +94,14 @@ app.post('/featureUploadImage/:featureId', bearer, upload.array('featureImage', 
             console.error('Error checking user privileges:', error);
             return res.status(500).send('Internal Server Error');
         }
-        if (result.length === 0 || result[0].user !== loggedInUser) {
+
+        if (result.length === 0 || result[0].createdby.toString() !== loggedInUser.toString()) {
             return res.status(403).send('Unauthorized - Insufficient privileges to upload images for this product.');
+
         }
 
         const imageTable = uploadedImages.map(file => {
-            const imageUrl = `/image/features/${featureId}/${file.filename}`; // Adjust the URL/path as needed
+            const imageUrl = `/featureImage/${featureId}/${file.filename}`; // Adjust the URL/path as needed
             createddate = Date.now();
             return {
                 featureId,
@@ -110,9 +110,11 @@ app.post('/featureUploadImage/:featureId', bearer, upload.array('featureImage', 
                 createdby: loggedInUser,
             };
         });
+
         pool.query('UPDATE features set updateddate = ? , updatedby = ? where featureId=?', [Date.now(), loggedInUser, featureId], (error, result) => {
             if (error) {
                 res.status(500).send('Internal Server Error');
+                console.log(error)
             } else {
                 pool.query('INSERT INTO featureimage (featureId, imageUrl, createddate, createdby) VALUES ?', [imageTable.map(e => Object.values(e))], (error, result) => {
                     if (error) {
@@ -132,11 +134,9 @@ app.post('/featureUploadImage/:featureId', bearer, upload.array('featureImage', 
 
 app.get('/featureImage/:featureId/:imageName', (req, res) => {
     const { featureId, imageName } = req.params;
-    const imagePath = path.join(__dirname, '..','uploads/features', featureId, imageName);
-
+    const imagePath = path.join(__dirname, '..', 'uploads/features', featureId, imageName);
     try {
         if (fs.existsSync(imagePath)) {
-            // Set Content-Type based on file extension (example for JPEG)
             res.sendFile(imagePath);
         } else {
             res.status(404).send('Image not found');
@@ -149,7 +149,7 @@ app.get('/featureImage/:featureId/:imageName', (req, res) => {
 
 
 app.get('/featureImages/:featureId', (req, res) => {
-    const { featureId, imageName } = req.params;
+    const { featureId } = req.params;
     pool.query('SELECT imageUrl FROM featureimage WHERE featureId = ?', [featureId], (error, result) => {
         if (error) {
             res.status(500).json({ error: 'Internal Server Error' });
@@ -165,7 +165,7 @@ app.delete('/deleteFeatureImage/:imageUrl', bearer, (req, res, next) => {
     const encodedImgURl = req.params.imageUrl;
     const imageUrl = decodeURIComponent(encodedImgURl);
     const loggedInUser = req.headers.loggedinuser;
-    const replacedUrl = imageUrl.replace('/image', '/uploads');
+    const replacedUrl = imageUrl.replace('/featureImage', '/uploads/features');
     const imagePath = path.join(__dirname, '..', replacedUrl);
     checkTokenExpiry(req, res, () => {
         pool.query('SELECT role FROM adminuser WHERE userId = ?', [loggedInUser], (error, result) => {
@@ -175,7 +175,7 @@ app.delete('/deleteFeatureImage/:imageUrl', bearer, (req, res, next) => {
             }
 
             if (result.length > 0 && result[0].role === 69) {
-                deleteImage(imageUrl, imagePath, res, loggedInUser);
+                deleteFeatureImage(imageUrl, imagePath, res, loggedInUser);
             } else {
                 pool.query('SELECT p.user FROM featureimage pi JOIN features p ON pi.featureId = p.featureId WHERE pi.imageUrl = ?', [imageUrl], (error, result) => {
                     if (error) {
@@ -184,7 +184,7 @@ app.delete('/deleteFeatureImage/:imageUrl', bearer, (req, res, next) => {
                     }
                     console.log(result)
                     if (result.length > 0 && result[0].user === loggedInUser) {
-                        deleteImage(imageUrl, imagePath, res, loggedInUser);
+                        deleteFeatureImage(imageUrl, imagePath, res, loggedInUser);
                     } else {
                         return res.status(403).send({ error: 'Unauthorized - Insufficient privileges' });
                     }

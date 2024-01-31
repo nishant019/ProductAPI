@@ -99,8 +99,10 @@ app.put('/updateProds/:id', bearer, (req, res, next) => {
     const updateddate = Date.now();
 
 
-    const productTable = { prodId, prodName, prodLocation, prodLocation1, prodLocation2, status, prodTitle, prodSubTitle, prodShortDescription, prodDescription, prodType, prodCategory, prodSubCategory, cost, quantity, quantityType, updateddate,
-        updatedBy };
+    const productTable = {
+        prodId, prodName, prodLocation, prodLocation1, prodLocation2, status, prodTitle, prodSubTitle, prodShortDescription, prodDescription, prodType, prodCategory, prodSubCategory, cost, quantity, quantityType, updateddate,
+        updatedBy
+    };
 
 
     checkTokenExpiry(req, res, () => {
@@ -193,7 +195,7 @@ app.delete('/deleteProd/:id', bearer, (req, res, next) => {
 });
 
 
-app.get('/getProds/:id', bearer, checkUserRole, (req, res) => {
+app.get('/getProds/:id', bearer, (req, res) => {
     const prodId = req.params.id;
     const userId = req.headers.loggedinuser;
     const page = parseInt(req.query.page) || 1;
@@ -271,6 +273,167 @@ app.get('/getProds/:id', bearer, checkUserRole, (req, res) => {
     });
 });
 
+// Create a new additional field
+app.post('/additionalfields', bearer, (req, res) => {
+    const loggedInUser = req.headers.loggedinuser;
+    const createdby = loggedInUser;
+    const createddate = Date.now();
+    const { fieldName } = req.body;
+    checkTokenExpiry(req, res, () => {
+        pool.query('SELECT * from adminuser where userId = ?', [loggedInUser], (error, result) => {
+            if (error) {
+                res.status(500).json({ error: 'Internal Server Error' });
+            }
+                pool.query('SELECT MAX(fieldId) as last FROM additionalfields', (e, r) => {
+                    if (r[0].last === null) {
+                        fieldId = 10000
+    
+                    } else {
+                        fieldId = r[0].last++ + 1;
+    
+                    }
+                    const bodyData = 
+                    [fieldId,fieldName, createdby, createddate]
+            pool.query('INSERT INTO additionalfields (fieldId,fieldName,createdby,createddate) VALUES (?,?,?,?)', bodyData, (error, result) => {
+                if (error) {
+                    console.error(error);
+                    res.status(500).json({ error: 'Internal Server Error' });
+                } else {
+                    const newFieldId = result.insertId;
+                    res.status(201).json({ id: newFieldId, fieldName });
+                }
+            });
+        })
+    })
+    })
+});
+
+// Read all additional fields
+app.get('/additionalfields', (req, res) => {
+    
+    pool.query('SELECT * FROM additionalfields', (error, result) => {
+        if (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            const rows = result;
+            res.status(200).json(rows);
+        }
+    });
+});
+
+// Update an additional field
+app.put('/additionalfields/:fieldId', (req, res) => {
+    const { fieldName } = req.body;
+    const { fieldId } = req.params;
+
+    pool.query('UPDATE additionalfields SET fieldName = ? WHERE fieldId = ?', [fieldName, fieldId], (error, result) => {
+        if (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            res.status(200).json({ id: fieldId, fieldName });
+        }
+    });
+});
+
+// Delete an additional field
+app.delete('/additionalfields/:fieldId', (req, res) => {
+    const { fieldId } = req.params;
+
+    pool.query('DELETE FROM additionalfields WHERE fieldId = ?', [fieldId], (error, result) => {
+        if (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            res.status(204).end();
+        }
+    });
+});
+
+// Create a new category additional field mapping
+app.post('/categoryadditionalfieldmapping', bearer, (req, res) => {
+    const loggedInUser = req.headers.loggedinuser;
+    const createdby = loggedInUser;
+    const createddate = new Date();
+    const { categoryId, fieldId, value } = req.body;
+
+    checkTokenExpiry(req, res, () => {
+        pool.query('SELECT * FROM adminuser WHERE userId = ?', [loggedInUser], (error, result) => {
+            if (error) {
+                res.status(500).json({ error: 'Internal Server Error' });
+            } else {
+                const bodyData = [categoryId, fieldId, value, createdby, createddate];
+
+                pool.query('INSERT INTO categoryadditionalfieldmapping (categoryId, fieldId, value, createdby, createddate) VALUES (?, ?, ?, ?, ?)', bodyData, (error, result) => {
+                    if (error) {
+                        console.error(error);
+                        res.status(500).json({ error: 'Internal Server Error' });
+                    } else {
+                        const newMappingId = result.insertId;
+                        res.status(201).json({ id: newMappingId, categoryId, fieldId, value });
+                    }
+                });
+            }
+        });
+    });
+});
+
+// Read all category additional field mappings
+app.get('/categoryadditionalfieldmapping', (req, res) => {
+    pool.query('SELECT * FROM categoryadditionalfieldmapping', (error, result) => {
+        if (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            const mappings = result;
+            res.status(200).json(mappings);
+        }
+    });
+});
+
+// Update a category additional field mapping
+app.put('/categoryadditionalfieldmapping/:mappingId', bearer, (req, res) => {
+    const loggedInUser = req.headers.loggedinuser;
+    const updatedby = loggedInUser;
+    const updateddate = new Date();
+    const { categoryId, fieldId, value } = req.body;
+    const { mappingId } = req.params;
+
+    checkTokenExpiry(req, res, () => {
+        pool.query('SELECT * FROM adminuser WHERE userId = ?', [loggedInUser], (error, result) => {
+            if (error) {
+                res.status(500).json({ error: 'Internal Server Error' });
+            } else {
+                pool.query('UPDATE categoryadditionalfieldmapping SET categoryId = ?, fieldId = ?, value = ?, updatedby = ?, updateddate = ? WHERE mappingId = ?', [categoryId, fieldId, value, updatedby, updateddate, mappingId], (error, result) => {
+                    if (error) {
+                        console.error(error);
+                        res.status(500).json({ error: 'Internal Server Error' });
+                    } else {
+                        res.status(200).json({ id: mappingId, categoryId, fieldId, value });
+                    }
+                });
+            }
+        });
+    });
+});
+
+// Delete a category additional field mapping
+app.delete('/categoryadditionalfieldmapping/:mappingId', bearer, (req, res) => {
+    const loggedInUser = req.headers.loggedinuser;
+    const { mappingId } = req.params;
+
+    checkTokenExpiry(req, res, () => {
+        pool.query('DELETE FROM categoryadditionalfieldmapping WHERE mappingId = ?', [mappingId], (error, result) => {
+            if (error) {
+                console.error(error);
+                res.status(500).json({ error: 'Internal Server Error' });
+            } else {
+                res.status(204).end();
+            }
+        });
+    });
+});
 
 
 module.exports = app;

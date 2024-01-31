@@ -17,13 +17,6 @@ function getProducts(currentPage) {
             <td>${prod.prodTypeName || ''} </td>
             <td>${prod.categoryName || ''} </td>
             <td>${prod.subCategoryName || ''}</td>
-            <td>${prod.prodLocation || ''}</td>
-            <td>${prod.prodLocation1 || ''}</td>
-            <td>${prod.prodLocation2 || ''}</td>
-            <td>${prod.prodSubTitle || ''}</td>
-            <td>${prod.prodTitle || ''}</td>
-            <td>${prod.prodShortDescription || ''}</td>
-            <td>${prod.prodDescription || ''}</td>
             <td>${prod.createdByUser || ''}</td>
             <td>${newDate(prod.createddate) || ''}</td>
             <td>${prod.updatedByUser || ''}</td>

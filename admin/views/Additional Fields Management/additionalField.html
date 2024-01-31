@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/mainStyle.css">
+    <title>Additional Fields CRUD</title>
+</head>
+<body>
+    <div id="menu"></div>
+    <h1>Additional Fields CRUD</h1>
+
+    <!-- Create Form -->
+    <h2>Create Additional Field</h2>
+    <form id="createForm">
+        <label for="fieldName">Field Name:</label>
+        <input type="text" id="fieldName" name="fieldName" required>
+        <button type="submit">Create</button>
+    </form>
+
+    <!-- Read Form -->
+    <h2>Additional Fields List</h2>
+    <ul id="fieldsList"></ul>
+
+    <!-- Update Form -->
+    <h2>Update Additional Field</h2>
+    <form id="updateForm">
+        <label for="updateFieldId">Field ID:</label>
+        <input type="number" id="updateFieldId" name="updateFieldId" required>
+        <label for="updateFieldName">New Field Name:</label>
+        <input type="text" id="updateFieldName" name="updateFieldName" required>
+        <button type="submit">Update</button>
+    </form>
+
+    <!-- Delete Form -->
+    <h2>Delete Additional Field</h2>
+    <form id="deleteForm">
+        <label for="deleteFieldId">Field ID:</label>
+        <input type="number" id="deleteFieldId" name="deleteFieldId" required>
+        <button type="submit">Delete</button>
+    </form>
+    <script type="text/javascript" src="/loggedIn.js"></script>
+    <script type="text/javascript" src="/menu.js">  </script>
+    <script>
+        document.getElementById('createForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const fieldName = document.getElementById('fieldName').value;
+            const response = await fetch('http://localhost:3000/additionalfields', {
+                method: 'POST',
+                headers,
+                body: JSON.stringify({ fieldName: fieldName }),
+            });
+
+            if (response.ok) {
+                alert('Additional Field created successfully!');
+                document.getElementById('fieldName').value = '';
+                // You might want to refresh the fields list after creating a new field
+                loadFields();
+            } else {
+                alert('Error creating Additional Field.');
+            }
+        });
+
+        document.getElementById('updateForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const fieldId = document.getElementById('updateFieldId').value;
+            const fieldName = document.getElementById('updateFieldName').value;
+            const response = await fetch(`http://localhost:3000/additionalfields/${fieldId}`, {
+                method: 'PUT',
+                headers,
+                body: JSON.stringify({ fieldName: fieldName }),
+            });
+
+            if (response.ok) {
+                alert('Additional Field updated successfully!');
+                document.getElementById('updateFieldId').value = '';
+                document.getElementById('updateFieldName').value = '';
+                // You might want to refresh the fields list after updating a field
+                loadFields();
+            } else {
+                alert('Error updating Additional Field.');
+            }
+        });
+
+        document.getElementById('deleteForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const fieldId = document.getElementById('deleteFieldId').value;
+            const response = await fetch(`http://localhost:3000/additionalfields/${fieldId}`, {
+                method: 'DELETE',
+                headers
+            });
+
+            if (response.ok) {
+                alert('Additional Field deleted successfully!');
+                document.getElementById('deleteFieldId').value = '';
+                // You might want to refresh the fields list after deleting a field
+                loadFields();
+            } else {
+                alert('Error deleting Additional Field.');
+            }
+        });
+
+        // Function to load the list of additional fields
+        async function loadFields() {
+            const response = await fetch('http://localhost:3000/additionalfields',{
+                headers
+            });
+            const fields = await response.json();
+
+            const fieldsList = document.getElementById('fieldsList');
+            fieldsList.innerHTML = '';
+
+            fields.forEach(field => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `ID: ${field.fieldId}, Name: ${field.fieldName}`;
+                fieldsList.appendChild(listItem);
+            });
+        }
+
+        // Initial load of fields when the page loads
+        loadFields();
+    </script>
+</body>
+</html>

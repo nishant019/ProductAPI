@@ -51,3 +51,4 @@ const listFeaturesUrl = 'http://localhost:3000/getFeature/'
 
 const uploadFeatureImageUrl = `http://localhost:3000/featureUploadImage/`
 const listFeatureImageUrl = `http://localhost:3000/featureImages/`
+const deleteFeatureImageUrl = `http://localhost:3000/deleteFeatureImage/`

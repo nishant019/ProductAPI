@@ -122,6 +122,16 @@ app.get('/featureManagement/getFeatureDetail', requireLogin, (req, res) => {
   res.sendFile(path.join(__dirname, '/views/featureManagement/getFeatureDetail.html'));
 
 });
+app.get('/additionalFieldManagement/additionalField', requireLogin, (req, res) => {
+
+  res.sendFile(path.join(__dirname, '/views/Additional Fields Management/additionalField.html'));
+
+});
+app.get('/additionalFieldManagement/mapAdditionalField', requireLogin, (req, res) => {
+
+  res.sendFile(path.join(__dirname, '/views/Additional Fields Management/mapAdditionalField.html'));
+
+});
 
 app.get('/customer/getProds',  (req, res) => {
 

@@ -5,7 +5,9 @@ CREATE TABLE features (
     featureDescription TEXT,
     status VARCHAR(20) NOT NULL
     createddate VARCHAR(255) NOT NULL,
-    createdby INT
+    createdby INT,
+    updateddate VARCHAR(255) NOT NULL,
+    updatedby INT
 );
 
 CREATE TABLE featureimage (
@@ -14,4 +16,16 @@ CREATE TABLE featureimage (
     featureId INT,
     createddate VARCHAR(255) NOT NULL,
     createdby INT
+);
+
+CREATE TABLE additionalfields( fieldId INT PRIMARY KEY, fieldName VARCHAR(255) NOT NULL, createdby VARCHAR(100), createddate VARCHAR(255), updatedby VARCHAR(100), updateddate VARCHAR(255) );
+
+CREATE TABLE CategoryAdditionalFieldMapping (
+    categoryId INT,
+    fieldId INT,
+    value VARCHAR(255),
+    createdby VARCHAR(100),
+    createddate VARCHAR(255),
+    updatedby VARCHAR(100),
+    updateddate VARCHAR(255)
 );

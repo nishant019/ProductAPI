@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Feature List</title>
+    <link rel="stylesheet" href="/mainStyle.css">
 </head>
 <body>
+    <div id="menu"></div>
+
     <div id="success"></div>
     <div id="errorMsg"></div>
     <ul id="featureList"></ul>
@@ -18,12 +21,11 @@
 
 
         function viewFeature(featureId) {
-            // Navigate to the detail view by passing the featureId
-            window.location.href = `/featureManagement/getFeatureDetail?featureId=${featureId}`; // Update the URL pattern accordingly
+
+            window.location.href = `/featureManagement/getFeatureDetail?featureId=${featureId}`; 
         }
 
-        // Example usage
-        listFeature(/* your data object here */);
+        listFeature();
     </script>
 </body>
 </html>
