@@ -405,7 +405,7 @@ app.put('/categoryadditionalfieldmapping/:mappingId', bearer, (req, res) => {
             if (error) {
                 res.status(500).json({ error: 'Internal Server Error' });
             } else {
-                pool.query('UPDATE categoryadditionalfieldmapping SET categoryId = ?, fieldId = ?, value = ?, updatedby = ?, updateddate = ? WHERE mappingId = ?', [categoryId, fieldId, value, updatedby, updateddate, mappingId], (error, result) => {
+                pool.query('UPDATE categoryadditionalfieldmapping SET categoryId = ?, fieldId = ?, value = ?, updatedby = ?, updateddate = ? WHERE id = ?', [categoryId, fieldId, value, updatedby, updateddate, mappingId], (error, result) => {
                     if (error) {
                         console.error(error);
                         res.status(500).json({ error: 'Internal Server Error' });
@@ -424,7 +424,7 @@ app.delete('/categoryadditionalfieldmapping/:mappingId', bearer, (req, res) => {
     const { mappingId } = req.params;
 
     checkTokenExpiry(req, res, () => {
-        pool.query('DELETE FROM categoryadditionalfieldmapping WHERE mappingId = ?', [mappingId], (error, result) => {
+        pool.query('DELETE FROM categoryadditionalfieldmapping WHERE id = ?', [mappingId], (error, result) => {
             if (error) {
                 console.error(error);
                 res.status(500).json({ error: 'Internal Server Error' });
