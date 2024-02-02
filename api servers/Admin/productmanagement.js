@@ -284,33 +284,33 @@ app.post('/additionalfields', bearer, (req, res) => {
             if (error) {
                 res.status(500).json({ error: 'Internal Server Error' });
             }
-                pool.query('SELECT MAX(fieldId) as last FROM additionalfields', (e, r) => {
-                    if (r[0].last === null) {
-                        fieldId = 10000
-    
-                    } else {
-                        fieldId = r[0].last++ + 1;
-    
-                    }
-                    const bodyData = 
-                    [fieldId,fieldName, createdby, createddate]
-            pool.query('INSERT INTO additionalfields (fieldId,fieldName,createdby,createddate) VALUES (?,?,?,?)', bodyData, (error, result) => {
-                if (error) {
-                    console.error(error);
-                    res.status(500).json({ error: 'Internal Server Error' });
+            pool.query('SELECT MAX(fieldId) as last FROM additionalfields', (e, r) => {
+                if (r[0].last === null) {
+                    fieldId = 10000
+
                 } else {
-                    const newFieldId = result.insertId;
-                    res.status(201).json({ id: newFieldId, fieldName });
+                    fieldId = r[0].last++ + 1;
+
                 }
-            });
+                const bodyData =
+                    [fieldId, fieldName, createdby, createddate]
+                pool.query('INSERT INTO additionalfields (fieldId,fieldName,createdby,createddate) VALUES (?,?,?,?)', bodyData, (error, result) => {
+                    if (error) {
+                        console.error(error);
+                        res.status(500).json({ error: 'Internal Server Error' });
+                    } else {
+                        const newFieldId = result.insertId;
+                        res.status(201).json({ id: newFieldId, fieldName });
+                    }
+                });
+            })
         })
-    })
     })
 });
 
 // Read all additional fields
 app.get('/additionalfields', (req, res) => {
-    
+
     pool.query('SELECT * FROM additionalfields', (error, result) => {
         if (error) {
             console.error(error);
@@ -356,16 +356,16 @@ app.post('/categoryadditionalfieldmapping', bearer, (req, res) => {
     const loggedInUser = req.headers.loggedinuser;
     const createdby = loggedInUser;
     const createddate = new Date();
-    const { categoryId, fieldId, value } = req.body;
+    const { categoryId, subCategoryId, fieldId, value, units, sold, size } = req.body;
 
     checkTokenExpiry(req, res, () => {
         pool.query('SELECT * FROM adminuser WHERE userId = ?', [loggedInUser], (error, result) => {
             if (error) {
                 res.status(500).json({ error: 'Internal Server Error' });
             } else {
-                const bodyData = [categoryId, fieldId, value, createdby, createddate];
+                const bodyData = [categoryId, subCategoryId, fieldId, value, units, sold, size, createdby, createddate];
 
-                pool.query('INSERT INTO categoryadditionalfieldmapping (categoryId, fieldId, value, createdby, createddate) VALUES (?, ?, ?, ?, ?)', bodyData, (error, result) => {
+                pool.query('INSERT INTO categoryadditionalfieldmapping (categoryId, subCategoryId, fieldId, value, units,sold,size,createdby, createddate) VALUES (?, ?, ?, ?, ?,?,?,?,?)', bodyData, (error, result) => {
                     if (error) {
                         console.error(error);
                         res.status(500).json({ error: 'Internal Server Error' });
@@ -397,7 +397,7 @@ app.put('/categoryadditionalfieldmapping/:mappingId', bearer, (req, res) => {
     const loggedInUser = req.headers.loggedinuser;
     const updatedby = loggedInUser;
     const updateddate = new Date();
-    const { categoryId, fieldId, value } = req.body;
+    const { categoryId, subCategoryId, fieldId, value } = req.body;
     const { mappingId } = req.params;
 
     checkTokenExpiry(req, res, () => {
@@ -405,7 +405,7 @@ app.put('/categoryadditionalfieldmapping/:mappingId', bearer, (req, res) => {
             if (error) {
                 res.status(500).json({ error: 'Internal Server Error' });
             } else {
-                pool.query('UPDATE categoryadditionalfieldmapping SET categoryId = ?, fieldId = ?, value = ?, updatedby = ?, updateddate = ? WHERE id = ?', [categoryId, fieldId, value, updatedby, updateddate, mappingId], (error, result) => {
+                pool.query('UPDATE categoryadditionalfieldmapping SET categoryId = ?, subCategoryId =  ? ,fieldId = ?, value = ?, updatedby = ?, updateddate = ? WHERE id = ?', [categoryId, subCategoryId, fieldId, value, updatedby, updateddate, mappingId], (error, result) => {
                     if (error) {
                         console.error(error);
                         res.status(500).json({ error: 'Internal Server Error' });
@@ -434,6 +434,91 @@ app.delete('/categoryadditionalfieldmapping/:mappingId', bearer, (req, res) => {
         });
     });
 });
+
+// Create a new child additional field
+app.post('/childadditionalfield', bearer, (req, res) => {
+    const loggedInUser = req.headers.loggedinuser;
+    const createdby = loggedInUser;
+    const createddate = Date.now();
+    const { childFieldTitle, parentFieldId } = req.body;
+
+    checkTokenExpiry(req, res, () => {
+        pool.query('SELECT * FROM adminuser WHERE userId = ?', [loggedInUser], (error, result) => {
+            if (error) {
+                res.status(500).json({ error: 'Internal Server Error' });
+            } else {
+                const bodyData = [childFieldTitle, parentFieldId,createddate, createdby];
+
+                pool.query('INSERT INTO childadditionalfield (childFieldTitle,  parentFieldId, createddate, createdby) VALUES (?, ?, ?, ?)', bodyData, (error, result) => {
+                    if (error) {
+                        console.error(error);
+                        res.status(500).json({ error: 'Internal Server Error' });
+                    } else {
+                        const newFieldId = result.insertId;
+                        res.status(201).json({ id: newFieldId });
+                    }
+                });
+            }
+        });
+    });
+});
+
+// Read all child additional fields
+app.get('/childadditionalfield', (req, res) => {
+    pool.query('SELECT caf.* ,af.fieldName FROM childadditionalfield caf LEFT JOIN additionalfields af ON caf.parentFieldId = af.fieldId ', (error, result) => {
+        if (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            const fields = result;
+            res.status(200).json(fields);
+        }
+    });
+});
+
+// Update a child additional field
+app.put('/childadditionalfield/:fieldId', bearer, (req, res) => {
+    const loggedInUser = req.headers.loggedinuser;
+    const updatedby = loggedInUser;
+    const updateddate = new Date();
+    const { title, description, list } = req.body;
+    const { fieldId } = req.params;
+
+    checkTokenExpiry(req, res, () => {
+        pool.query('SELECT * FROM adminuser WHERE userId = ?', [loggedInUser], (error, result) => {
+            if (error) {
+                res.status(500).json({ error: 'Internal Server Error' });
+            } else {
+                pool.query('UPDATE childadditionalfield SET title = ?, description = ?, list = ?, updatedby = ?, updateddate = ? WHERE id = ?', [title, description, list, updatedby, updateddate, fieldId], (error, result) => {
+                    if (error) {
+                        console.error(error);
+                        res.status(500).json({ error: 'Internal Server Error' });
+                    } else {
+                        res.status(200).json({ id: fieldId, title, description, list });
+                    }
+                });
+            }
+        });
+    });
+});
+
+// Delete a child additional field
+app.delete('/childadditionalfield/:fieldId', bearer, (req, res) => {
+    const loggedInUser = req.headers.loggedinuser;
+    const { fieldId } = req.params;
+
+    checkTokenExpiry(req, res, () => {
+        pool.query('DELETE FROM childadditionalfield WHERE id = ?', [fieldId], (error, result) => {
+            if (error) {
+                console.error(error);
+                res.status(500).json({ error: 'Internal Server Error' });
+            } else {
+                res.status(204).end();
+            }
+        });
+    });
+});
+
 
 
 module.exports = app;

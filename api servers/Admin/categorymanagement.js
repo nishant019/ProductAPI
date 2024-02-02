@@ -174,10 +174,36 @@ app.get('/getCategory/:id', bearer, (req, res) => {
     const status = req.query.status;
     console.log(categoryId,status)
     checkTokenExpiry(req, res, () => {
-        let query = 'SELECT c.* FROM category c WHERE 1=1';
+        let query = `SELECT
+        c.categoryId,
+        c.categoryName,
+        GROUP_CONCAT(
+            CONCAT(
+                '{"fieldId": ', cafm.fieldId,
+                ', "fieldName": "', af.fieldName,
+                '", "childFields": [', caf.childFields, ']}'
+            )
+        ) AS additionalFields
+    FROM
+        category c
+    LEFT JOIN
+        categoryadditionalfieldmapping cafm ON c.categoryId = cafm.categoryId
+    LEFT JOIN
+        additionalfields af ON cafm.fieldId = af.fieldId `
+    const joinTable = `LEFT JOIN (
+        SELECT
+            parentFieldId,
+            GROUP_CONCAT(DISTINCT CONCAT('{"childFieldId": ', id, ', "childFieldTitle": "', childFieldTitle, '"}') ORDER BY childFieldTitle) AS childFields
+        FROM
+            childadditionalfield
+            WHERE 1=1 `;
         const queryParams = [];
 
-
+        const groupStatement = ` GROUP BY
+        parentFieldId
+            ) caf ON caf.parentFieldId = af.fieldId
+        GROUP BY
+        c.categoryId, c.categoryName;`
         if (status) {
             query += ' AND c.status = ?';
             queryParams.push(status);
@@ -188,7 +214,7 @@ app.get('/getCategory/:id', bearer, (req, res) => {
             queryParams.push(categoryId);
         }
 
-        pool.query(query, queryParams, (error, result) => {
+        pool.query(query+joinTable+groupStatement, queryParams, (error, result) => {
             if (error) {
                 console.log(error)
                 res.status(500).json({ error: 'Internal Server Error' });
@@ -409,3 +435,4 @@ app.put('/updateSubCategory/:subCategoryId', bearer, superPrivilege, (req, res) 
 });
 
 module.exports = app;
+

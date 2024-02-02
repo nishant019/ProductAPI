@@ -133,6 +133,14 @@ app.get('/additionalFieldManagement/mapAdditionalField', requireLogin, (req, res
 
 });
 
+app.get('/additionalFieldManagement/childAdditionalField', requireLogin, (req, res) => {
+
+  res.sendFile(path.join(__dirname, '/views/Additional Fields Management/Child Additional Fields Management/childAdditionalField.html'));
+
+});
+
+
+
 app.get('/customer/getProds',  (req, res) => {
 
   res.sendFile(path.join(__dirname, '/views/Customer Management/dashboard.html'));

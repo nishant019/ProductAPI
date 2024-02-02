@@ -112,6 +112,10 @@
                         <label for="prodLocation2">Location 2:</label>
                         <input type="text" id="prodLocation2" name="prodLocation2">
                     </div>
+                    <div class="form-group" id="additionalFields">
+                        <!-- <label for="prodLocation2">Location 2:</label>
+                        <input type="text" id="prodLocation2" name="prodLocation2"> -->
+                    </div>
 
                 </form>
             </div>
@@ -130,7 +134,8 @@
 
     <script type="text/javascript" src="/menu.js">  </script>
     <script>
-        getCategoriesDropdown()
+        getProductType('1')
+        getCategoriesDropdown('1')
 
         document.addEventListener("DOMContentLoaded", function () {
             const prodName = document.getElementById('prodName');

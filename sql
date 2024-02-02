@@ -29,3 +29,10 @@ CREATE TABLE CategoryAdditionalFieldMapping (
     updatedby VARCHAR(100),
     updateddate VARCHAR(255)
 );
+
+
+
+SELECT c.*, cafm.fieldId, af.fieldName, caf.childFieldTitle FROM category c 
+    LEFT JOIN categoryadditionalfieldmapping cafm ON c.categoryId = cafm.categoryId 
+    LEFT JOIN additionalfields af ON cafm.fieldId=af.fieldId 
+    LEFT JOIN childadditionalfield caf ON caf.parentFieldId=af.fieldId;

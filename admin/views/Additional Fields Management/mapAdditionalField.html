@@ -12,15 +12,28 @@
     <div id="menu"></div>
     <h1>Category Additional Field Mapping CRUD</h1>
 
-    <!-- Create Form -->
     <h2>Create Mapping</h2>
     <form id="createForm">
         <label for="categorySelect">Select Category:</label>
         <select id="categorySelect" name="categoryId" required></select><br>
+        
+        <label for="subCategorySelect">Select Sub Category:</label>
+        <select id="subCategorySelect" name="subCategoryId" required></select><br>
 
         <label for="additionalFieldSelect">Select Additional Field:</label>
         <select id="additionalFieldSelect" name="fieldId" required></select><br>
 
+        <label for="value">Value:</label>
+        <input type="text" id="value" name="value" required><br>
+
+        <label for="units">Units:</label>
+        <input type="text" id="units" name="units" required><br>
+
+        <label for="sold">Sold:</label>
+        <input type="text" id="sold" name="sold" required><br>
+
+        <label for="size">Size:</label>
+        <input type="text" id="size" name="size" required><br>
 
         <button type="submit">Create Mapping</button>
     </form>
@@ -66,7 +79,7 @@
     <script type="text/javascript" src="/menu.js">  </script>
     <script>
         async function additionalFieldSelectFunction() {
-            const additionalFieldsResponse = await axios.get('http://localhost:3000/additionalfields',{headers});
+            const additionalFieldsResponse = await axios.get('http://localhost:3000/additionalfields', { headers });
             const additionalFields = additionalFieldsResponse.data;
 
             const additionalFieldSelect = document.getElementById('additionalFieldSelect');
@@ -81,7 +94,7 @@
         }
         async function loadMappings() {
             try {
-                const response = await axios.get('http://localhost:3000/categoryadditionalfieldmapping',{headers});
+                const response = await axios.get('http://localhost:3000/categoryadditionalfieldmapping', { headers });
                 const mappings = response.data;
 
                 const mappingTableBody = document.getElementById('mappingTableBody');
@@ -115,16 +128,27 @@
             // Additional fields can be set here based on the requirements
         }
 
-        // Function to handle create form submission
         document.getElementById('createForm').addEventListener('submit', async function (event) {
             event.preventDefault();
 
             const categoryId = document.getElementById('categorySelect').value;
+            const subCategoryId = document.getElementById('subCategorySelect').value;
             const fieldId = document.getElementById('additionalFieldSelect').value;
-            const value = document.getElementById('additionalFieldSelect').textContent;
+            const value = document.getElementById('value').value;
+            const units = document.getElementById('units').value;
+            const sold = document.getElementById('sold').value;
+            const size = document.getElementById('size').value;
 
             try {
-                await axios.post('http://localhost:3000/categoryadditionalfieldmapping', { categoryId, fieldId, value },{headers});
+                await axios.post('http://localhost:3000/categoryadditionalfieldmapping', {
+                    categoryId,
+                    subCategoryId,
+                    fieldId,
+                    value,
+                    units,
+                    sold,
+                    size
+                }, { headers });
                 loadMappings();
             } catch (error) {
                 console.error(error);
@@ -139,7 +163,7 @@
             const value = document.getElementById('updateValue').value;
 
             try {
-                await axios.put(`http://localhost:3000/categoryadditionalfieldmapping/${mappingId}`, { value },{headers});
+                await axios.put(`http://localhost:3000/categoryadditionalfieldmapping/${mappingId}`, { value }, { headers });
                 loadMappings();
             } catch (error) {
                 console.error(error);
@@ -153,7 +177,7 @@
             const mappingId = document.getElementById('deleteMappingId').value;
 
             try {
-                await axios.delete(`http://localhost:3000/categoryadditionalfieldmapping/${mappingId}`,{headers});
+                await axios.delete(`http://localhost:3000/categoryadditionalfieldmapping/${mappingId}`, { headers });
                 loadMappings();
             } catch (error) {
                 console.error(error);
@@ -162,6 +186,13 @@
 
         // Initial load of categories and mappings when the page loads
         getCategory();
+        const catSel = document.querySelector('#categorySelect')
+        
+        catSel.addEventListener('change', () => {
+            console.log(catSel.value)
+            getSubCategory(catSel.value)
+        })
+
         additionalFieldSelectFunction();
         loadMappings();
     </script>
